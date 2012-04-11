@@ -1,0 +1,9 @@
+ipch/
+Debug/
+Release/
+*.swp
+*.dll
+*.user
+*.suo
+*.log
+*sdf*
