@@ -75,6 +75,7 @@
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneNode.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
@@ -94,6 +95,7 @@
     <ClInclude Include="SceneNode.hpp" />
     <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="Teapot.hpp" />
+    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
     <ClInclude Include="Tree.hpp" />
     <ClInclude Include="Vector2.hpp" />
