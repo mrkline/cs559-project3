@@ -1,7 +1,5 @@
+#include "StdAfx.hpp"
 #include "Material.hpp"
-
-#include <Windows.h>
-#include <GL/GL.h>
 
 #include "Texture.hpp"
 
