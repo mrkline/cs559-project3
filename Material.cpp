@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <GL/GL.h>
 
+#include "Texture.hpp"
+
 static Material* defaultMat = nullptr;
 
 static Material* activeMat = nullptr;
@@ -31,6 +33,7 @@ Material::Material()
 	specular[1] = 0.0f;
 	specular[2] = 0.0f;
 	specular[3] = 1.0f;
+	texture = nullptr;
 }
 
 Material* getDefaultMaterial()
@@ -65,6 +68,8 @@ void setActiveMaterial(Material* mat)
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
+	if (mat->texture != nullptr)
+		mat->texture->setAsActiveTexture();
 }
 
 void setShadowMaterialMode(bool drawingShadows)
