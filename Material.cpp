@@ -66,8 +66,13 @@ void setActiveMaterial(Material* mat)
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
-	if (mat->texture != nullptr)
+	if (mat->texture != nullptr) {
+		glEnable(GL_TEXTURE_2D);
 		mat->texture->setAsActiveTexture();
+	}
+	else {
+		glDisable(GL_TEXTURE_2D);
+	}
 }
 
 void setShadowMaterialMode(bool drawingShadows)
