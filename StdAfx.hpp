@@ -11,3 +11,4 @@
 #include <GL/glut.h>
 #include <CEGUI.h>
 #include <RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
+#include <SILLY.h>

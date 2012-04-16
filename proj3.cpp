@@ -11,6 +11,7 @@
 #include "Plane.hpp"
 #include "Teapot.hpp"
 #include "Tree.hpp"
+#include "Texture.hpp"
 
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
@@ -117,9 +118,7 @@ void init()
 	groundNode->getTransform().setScale(Vector3(15.0f));
 	Material* groundMat = new Material;
 	groundMat->lighting = false;
-	groundMat->color[0] = 0.0f;
-	groundMat->color[1] = 0.3f;
-	groundMat->color[2] = 0.0f;
+	groundMat->texture = new Texture("./resources/textures/Awesome.png");
 	auto ground = new Plane(groundMat);
 	groundNode->addRenderable(ground);
 	sm.getSceneNodes().push_back(groundNode);

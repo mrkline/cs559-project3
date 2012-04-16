@@ -9,10 +9,12 @@
 class Texture
 {
 public:
-	Texture(const std::string& filename, GLenum format, bool mipmaps = true);
-	
-	Texture(void *data, int colorComponents, size_t width, size_t height,
-			GLenum format, GLenum type, bool mipmaps = true);
+	Texture(const char* filename, GLenum format = GL_RGBA, bool mipmaps = true);
+
+	Texture(const void* data, int colorComponents, size_t width, size_t height,
+	        GLenum format, GLenum type, bool mipmaps = true);
+
+	~Texture();
 
 	//! \todo We'll have to change this when we support multitexturing
 	void setAsActiveTexture();
@@ -23,11 +25,12 @@ public:
 	std::map<GLenum, int>& getIntParams() { return intParams; }
 
 	std::map<GLenum, float>& getFloatParams() { return floatParams; }
-	
+
 private:
-	void init(void* data, int colorComponents, size_t width, size_t height,
-			GLenum format, GLenum type, bool mipmaps);
-	
+	void init(const void* data, int colorComponents,
+	          size_t width, size_t height,
+	          GLenum format, GLenum type, bool mipmaps);
+
 	unsigned int id;
 	bool hasMipmaps;
 	std::map<GLenum, int> intParams;
