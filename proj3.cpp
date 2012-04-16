@@ -157,10 +157,14 @@ void init()
 		    (CEGUI::System::getSingleton().getResourceProvider());
 
 		// Tell CEGUI where to find resources
-		rp->setResourceGroupDirectory("schemes", "./CEGUI_resources/schemes/");
-		rp->setResourceGroupDirectory("imagesets", "./CEGUI_resources/imagesets/");
-		rp->setResourceGroupDirectory("fonts", "./CEGUI_resources/fonts/");
-		rp->setResourceGroupDirectory("looknfeels", "./CEGUI_resources/looknfeel/");
+		rp->setResourceGroupDirectory("schemes",
+		                              "./resources/CEGUI/schemes/");
+		rp->setResourceGroupDirectory("imagesets",
+		                              "./resources/CEGUI/imagesets/");
+		rp->setResourceGroupDirectory("fonts",
+		                              "./resources/CEGUI/fonts/");
+		rp->setResourceGroupDirectory("looknfeels",
+		                              "./resources/CEGUI/looknfeel/");
 		CEGUI::Imageset::setDefaultResourceGroup("imagesets");
 		CEGUI::Font::setDefaultResourceGroup("fonts");
 		CEGUI::Scheme::setDefaultResourceGroup("schemes");
