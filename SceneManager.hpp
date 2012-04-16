@@ -4,7 +4,6 @@
 
 class Camera;
 class SceneNode;
-class Renderable;
 
 class SceneManager
 {
