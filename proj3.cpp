@@ -76,7 +76,7 @@ void init()
 {
 	glClearColor (0.7f, 0.7f, 1.0f, 1.0f);
 
-	//! Create and place our cameras
+	// Create and place our cameras
 	freeCam = new Camera;
 	freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
 	sm.setActiveCamera(freeCam);
@@ -99,11 +99,11 @@ void init()
 	trainCamNode->addRenderable(trainCam);
 	sm.getSceneNodes().push_back(trainCamNode);
 
-	//! Create and place our light.
+	// Create and place our light.
 	Light* light = new Light;
 	SceneNode* lightNode = new SceneNode(nullptr, Vector3(10.0f, 10.0f, -10.0f));
 	lightNode->addRenderable(light);
-	//! Give the light a yellow sphere (sun?)
+	// Give the light a yellow sphere (sun?)
 	Material* lightMat = new Material;
 	lightMat->lighting = false;
 	lightMat->color[0] = 1.0f;
@@ -113,7 +113,7 @@ void init()
 	lightNode->addRenderable(sun);
 	sm.getSceneNodes().push_back(lightNode);
 
-	//! Set up our "ground"
+	// Set up our "ground"
 	SceneNode* groundNode = new SceneNode;
 	groundNode->getTransform().setScale(Vector3(15.0f));
 	Material* groundMat = new Material;
