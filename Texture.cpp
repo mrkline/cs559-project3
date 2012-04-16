@@ -58,6 +58,7 @@ Texture::Texture(const void* data, int colorComponents,
 Texture::~Texture()
 {
 	// Shut SILLY down
+	glDeleteTextures(1, &id);
 	SILLY::SILLYCleanup();
 }
 
