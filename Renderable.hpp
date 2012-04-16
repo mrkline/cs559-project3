@@ -9,9 +9,10 @@ class Renderable
 public:
 	//! Type of renderable
 	enum RenderableType {
-	    RT_CAMERA,
-	    RT_LIGHT,
-	    RT_NORMAL
+	    RT_CAMERA, //!< A camera
+		RT_BACKGROUND, //!< A sky box or other background object
+	    RT_LIGHT, //!< A light (currently only one is supported)
+	    RT_NORMAL //!< An ordinary object
 	};
 
 	Renderable() : owner(nullptr) { }
