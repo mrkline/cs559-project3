@@ -92,6 +92,7 @@
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneNode.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StdAfx.hpp</PrecompiledHeaderFile>
@@ -122,6 +123,7 @@
     <ClInclude Include="Renderable.hpp" />
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="SceneNode.hpp" />
+    <ClInclude Include="SkyBox.hpp" />
     <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="StdAfx.hpp" />
     <ClInclude Include="Teapot.hpp" />

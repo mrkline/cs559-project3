@@ -12,6 +12,7 @@
 #include "Teapot.hpp"
 #include "Tree.hpp"
 #include "Texture.hpp"
+#include "SkyBox.hpp"
 
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
@@ -74,7 +75,7 @@ bool onShowGUIClicked(const CEGUI::EventArgs& e)
 
 void init()
 {
-	glClearColor (0.7f, 0.7f, 1.0f, 1.0f);
+	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Create and place our cameras
 	freeCam = new Camera;
@@ -112,6 +113,11 @@ void init()
 	auto sun = new Sphere(lightMat);
 	lightNode->addRenderable(sun);
 	sm.getSceneNodes().push_back(lightNode);
+
+	// Set up our sky box
+	SceneNode* skyboxNode = new SceneNode;
+	skyboxNode->addRenderable(new SkyBox);
+	sm.getSceneNodes().push_back(skyboxNode);
 
 	// Set up our "ground"
 	SceneNode* groundNode = new SceneNode;
