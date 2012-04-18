@@ -1,0 +1,18 @@
+
+struct VertexShaderOutput {
+	float4 position : POSITION;
+	float2 uv : TEXCOORD0;
+};
+
+VertexShaderOutput main(float4 local : POSITION,
+                        float2 uv : TEXCOORD0,
+                        uniform float4x4 modelViewProj,
+                        uniform float t)
+{
+	VertexShaderOutput OUT;
+	// Adjust the scale sinusoidally
+	local.xyz += local.xyz * 0.1f * cos(t);
+	OUT.position = mul(modelViewProj, local);
+	OUT.uv = uv;
+	return OUT;
+}

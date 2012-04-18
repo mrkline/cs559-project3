@@ -12,3 +12,4 @@
 #include <CEGUI.h>
 #include <RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
 #include <SILLY.h>
+#include <Cg/cgGL.h>

@@ -1,11 +1,13 @@
 #include "StdAfx.hpp"
 #include "Material.hpp"
 
+#include "CgProfile.hpp"
+#include "CgProgram.hpp"
 #include "Texture.hpp"
 
 static Material* defaultMat = nullptr;
 
-static Material* activeMat = nullptr;
+static Material* activeMat = getDefaultMaterial();
 
 static Material* shadowMat = nullptr;
 
@@ -32,6 +34,9 @@ Material::Material()
 	specular[2] = 0.0f;
 	specular[3] = 1.0f;
 	texture = nullptr;
+	vertexShader = nullptr;
+	fragmentShader = nullptr;
+	callback = nullptr;
 }
 
 Material* getDefaultMaterial()
@@ -54,6 +59,12 @@ void setActiveMaterial(Material* mat)
 	if (mat == nullptr)
 		mat = getDefaultMaterial();
 
+	// If the last material had active shaders, shut them down
+	if (activeMat->vertexShader != nullptr)
+		activeMat->vertexShader->getProfile().disable();
+	if (activeMat->fragmentShader != nullptr)
+		activeMat->fragmentShader->getProfile().disable();
+
 	activeMat = mat;
 
 	if (mat->lighting)
@@ -72,6 +83,18 @@ void setActiveMaterial(Material* mat)
 	}
 	else {
 		glDisable(GL_TEXTURE_2D);
+	}
+
+	if (mat->callback != nullptr)
+		mat->callback(mat);
+
+	if (mat->vertexShader != nullptr) {
+		mat->vertexShader->bind();
+		mat->vertexShader->getProfile().enable();
+	}
+	if (mat->fragmentShader != nullptr) {
+		mat->fragmentShader->bind();
+		mat->fragmentShader->getProfile().enable();
 	}
 }
 

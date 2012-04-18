@@ -41,13 +41,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;$(CG_INC_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>StdAfx.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CEGUIBase_d.lib;CEGUIOpenGLRenderer_d.lib;SILLY_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;$(CG_LIB_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CEGUIBase_d.lib;CEGUIOpenGLRenderer_d.lib;SILLY_d.lib;%(AdditionalDependencies);cg.lib;cgGL.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -56,15 +56,15 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;$(CG_INC_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>StdAfx.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CEGUIBase.lib;CEGUIOpenGLRenderer.lib;SILLY.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;$(CG_LIB_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CEGUIBase.lib;CEGUIOpenGLRenderer.lib;SILLY.lib;cg.lib;cgGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -76,6 +76,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CgErrors.cpp" />
     <ClCompile Include="Light.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -113,6 +114,11 @@
     <ClInclude Include="Arrow.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="CEGUIStyleManager.hpp" />
+    <ClInclude Include="CgContext.hpp" />
+    <ClInclude Include="CgErrors.hpp" />
+    <ClInclude Include="CgNamedParameter.hpp" />
+    <ClInclude Include="CgProfile.hpp" />
+    <ClInclude Include="CgProgram.hpp" />
     <ClInclude Include="Cube.hpp" />
     <ClInclude Include="Exceptions.hpp" />
     <ClInclude Include="Light.hpp" />

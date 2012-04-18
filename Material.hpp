@@ -1,6 +1,10 @@
 #pragma once
 
+#include <functional>
+
 class Texture;
+class CgProgram;
+class Renderable;
 
 //! A material is attached to renderables and holds rendering options
 struct Material
@@ -11,7 +15,10 @@ struct Material
 	float ambient[4]; //!< Ambient light coefficients
 	float diffuse[4]; //!< Diffuse light coefficients
 	float specular[4]; //!< Specular light coefficients
-	Texture* texture;
+	Texture* texture; //!< Texture of the object
+	CgProgram* vertexShader; //!< The Cg program to run on each vertex
+	CgProgram* fragmentShader; //!< The Cg program to run on each pixel
+	std::function<void(Material*)> callback;
 
 	// The constructor initializes the material to default values
 	Material();

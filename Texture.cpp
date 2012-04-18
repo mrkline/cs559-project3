@@ -84,8 +84,8 @@ void Texture::init(const void* data, int colorComponents,
 
 	intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR_MIPMAP_NEAREST;
 	intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
-	intParams[GL_TEXTURE_WRAP_S] = GL_REPEAT;
-	intParams[GL_TEXTURE_WRAP_T] = GL_REPEAT;
+	intParams[GL_TEXTURE_WRAP_S] = GL_CLAMP;
+	intParams[GL_TEXTURE_WRAP_T] = GL_CLAMP;
 
 	if (mipmaps) {
 		gluBuild2DMipmaps(GL_TEXTURE_2D, colorComponents, width, height,

@@ -1,21 +1,36 @@
 #include "StdAfx.hpp"
 #include <ctime>
 
+// CEGUI styles
+#include "CEGUIStyleManager.hpp"
+
+// Engine core
+#include "Material.hpp"
 #include "SceneManager.hpp"
 #include "SceneNode.hpp"
+#include "Texture.hpp"
+
+// renderables
 #include "Camera.hpp"
-#include "Light.hpp"
-#include "CEGUIStyleManager.hpp"
 #include "Cube.hpp"
-#include "Sphere.hpp"
+#include "Light.hpp"
 #include "Plane.hpp"
+#include "SkyBox.hpp"
+#include "Sphere.hpp"
 #include "Teapot.hpp"
 #include "Tree.hpp"
-#include "Texture.hpp"
-#include "SkyBox.hpp"
+
+// Cg support
+#include "CgContext.hpp"
+#include "CgProfile.hpp"
+#include "CgProgram.hpp"
 
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
+
+static CgContext* cgContext;
+static CgProfile* cgVertexProfile;
+static CgProfile* cgFragmentProfile;
 
 static SceneManager sm;
 static bool animate = false;
@@ -75,6 +90,11 @@ bool onShowGUIClicked(const CEGUI::EventArgs& e)
 
 void init()
 {
+	// Start up Cg
+	cgContext = new CgContext;
+	cgVertexProfile = new CgProfile(CG_GL_VERTEX);
+	cgFragmentProfile = new CgProfile(CG_GL_FRAGMENT);
+
 	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
 	// Avoid stupid problems with OGL and RGB formats
 	// (since OGL tries to read textures to the nearest 4-byte boundary)
@@ -128,6 +148,23 @@ void init()
 	Material* groundMat = new Material;
 	groundMat->lighting = false;
 	groundMat->texture = new Texture("./resources/textures/Awesome.png");
+	groundMat->vertexShader = new CgProgram(*cgContext, false,
+										"./resources/shaders/TestVert.cg",
+										*cgVertexProfile, "main");
+	groundMat->fragmentShader = new CgProgram(*cgContext, false,
+	                                   "./resources/shaders/TestFrag.cg",
+	                                   *cgFragmentProfile, "main");
+	groundMat->callback = [](Material* mat)
+	{
+		auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
+		mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+		float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
+			* Math::kPi * 2.0f;;
+		auto tVert = mat->vertexShader->getNamedParameter("t");
+		tVert.set1f(t);
+		auto tFrag = mat->fragmentShader->getNamedParameter("t");
+		tFrag.set1f(t);
+	};
 	auto ground = new Plane(groundMat);
 	groundNode->addRenderable(ground);
 	sm.getSceneNodes().push_back(groundNode);
@@ -488,25 +525,33 @@ void onReshape (int w, int h)
 
 int main(int argc, char** argv)
 {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(kWindowWidth, kWindowHeight);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow(argv[0]);
-	init();
-	glutReshapeFunc(onReshape);
-	glutDisplayFunc(onDisplay);
-	// We signal a render inside the timer function. 16 ms is approximately
-	// one frame every 60th of a second
-	glutTimerFunc(16, onTimer, 1);
-	// Respond to mouse input by enabling and disabling animation
-	glutMouseFunc(onMouse);
-	glutMotionFunc(onMotion);
-	glutPassiveMotionFunc(onPassiveMotion);
-	glutKeyboardFunc(onKeyboardDown);
-	glutKeyboardUpFunc(onKeyboardUp);
-	glutSpecialFunc(onSpecialKeyDown);
-	glutSpecialUpFunc(onSpecialKeyUp);
-	glutMainLoop();
-	return 0;
+	try {
+		glutInit(&argc, argv);
+		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+		glutInitWindowSize(kWindowWidth, kWindowHeight);
+		glutInitWindowPosition(100, 100);
+		glutCreateWindow(argv[0]);
+		init();
+		glutReshapeFunc(onReshape);
+		glutDisplayFunc(onDisplay);
+		// We signal a render inside the timer function. 16 ms is approximately
+		// one frame every 60th of a second
+		glutTimerFunc(16, onTimer, 1);
+		// Respond to mouse input by enabling and disabling animation
+		glutMouseFunc(onMouse);
+		glutMotionFunc(onMotion);
+		glutPassiveMotionFunc(onPassiveMotion);
+		glutKeyboardFunc(onKeyboardDown);
+		glutKeyboardUpFunc(onKeyboardUp);
+		glutSpecialFunc(onSpecialKeyDown);
+		glutSpecialUpFunc(onSpecialKeyUp);
+		glutMainLoop();
+		return 0;
+	}
+	catch (const Exceptions::Exception& ex) {
+		std::string msg = "The following Exception occurred: ";
+		msg += ex.message;
+		MessageBox(nullptr, msg.c_str(),
+		           "Unhandled Exception", MB_OK | MB_ICONERROR);
+	}
 }
