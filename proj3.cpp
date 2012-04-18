@@ -76,6 +76,9 @@ bool onShowGUIClicked(const CEGUI::EventArgs& e)
 void init()
 {
 	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
+	// Avoid stupid problems with OGL and RGB formats
+	// (since OGL tries to read textures to the nearest 4-byte boundary)
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	// Create and place our cameras
 	freeCam = new Camera;
