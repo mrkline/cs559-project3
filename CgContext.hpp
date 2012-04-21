@@ -12,6 +12,7 @@ public:
 
 	~CgContext() { cgDestroyContext(ctx); }
 
+	//! Gets the Cg context handle
 	CGcontext getHandle() { return ctx; }
 
 private:

@@ -18,6 +18,8 @@ struct Material
 	Texture* texture; //!< Texture of the object
 	CgProgram* vertexShader; //!< The Cg program to run on each vertex
 	CgProgram* fragmentShader; //!< The Cg program to run on each pixel
+	//! A callback, useful for setting shader options. std::function is used so
+	//! that functors and lambdas can be used.
 	std::function<void(Material*)> callback;
 
 	// The constructor initializes the material to default values
@@ -27,6 +29,7 @@ struct Material
 //! Gets a pointer to the default material
 Material* getDefaultMaterial();
 
+//! Gets a pointer to the active material
 Material* getActiveMaterial();
 
 //! Sets the material with which OpenGL will render lines and polygons.

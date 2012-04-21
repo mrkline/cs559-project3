@@ -31,13 +31,17 @@ public:
 
 	~CgProgram() { cgDestroyProgram(prog); }
 
+	//! Retrieves a named parameter from the shader for assignmetn
 	CgNamedParameter getNamedParameter(const char* name)
 	{ return CgNamedParameter(prog, name); }
 
+	//! Used by setActiveMaterial to set up this shader
 	void bind() { cgGLBindProgram(prog); throwCgExceptions(__FUNCTION__); }
 
+	//! Gets the profile this shader is using
 	CgProfile& getProfile() { return prof; }
 
+	//! Gets the Cg program handle
 	CGprogram getHandle() { return prog; }
 
 

@@ -28,6 +28,7 @@
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
 
+// We can't initialize these here since OpenGL needs to be initialized first
 static CgContext* cgContext;
 static CgProfile* cgVertexProfile;
 static CgProfile* cgFragmentProfile;
@@ -92,8 +93,8 @@ void init()
 {
 	// Start up Cg
 	cgContext = new CgContext;
-	cgVertexProfile = new CgProfile(CG_GL_VERTEX);
-	cgFragmentProfile = new CgProfile(CG_GL_FRAGMENT);
+	cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
+	cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
 
 	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
 	// Avoid stupid problems with OGL and RGB formats
@@ -147,19 +148,25 @@ void init()
 	groundNode->getTransform().setScale(Vector3(15.0f));
 	Material* groundMat = new Material;
 	groundMat->lighting = false;
+	// Load the ground's texture
 	groundMat->texture = new Texture("./resources/textures/Awesome.png");
+	// Load the ground's vertex shader
 	groundMat->vertexShader = new CgProgram(*cgContext, false,
-										"./resources/shaders/TestVert.cg",
-										*cgVertexProfile, "main");
+	                                        "./resources/shaders/TestVert.cg",
+	                                        *cgVertexProfile, "main");
+	// Load the ground's pixel shader
 	groundMat->fragmentShader = new CgProgram(*cgContext, false,
-	                                   "./resources/shaders/TestFrag.cg",
-	                                   *cgFragmentProfile, "main");
-	groundMat->callback = [](Material* mat)
-	{
+	        "./resources/shaders/TestFrag.cg",
+	        *cgFragmentProfile, "main");
+	// Use a lambda function to set the ground's material callback
+	groundMat->callback = [](Material * mat) {
+		// Retrieve then set modelViewProj inside the vertex shader
 		auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
 		mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+		// Retrieve then set t for both the vertex and fragment shader
 		float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
-			* Math::kPi * 2.0f;;
+		          * Math::kPi * 2.0f;
 		auto tVert = mat->vertexShader->getNamedParameter("t");
 		tVert.set1f(t);
 		auto tFrag = mat->fragmentShader->getNamedParameter("t");
