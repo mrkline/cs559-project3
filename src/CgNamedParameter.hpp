@@ -25,7 +25,7 @@ public:
 	 * \brief Sets this parameter to an enumerated 4x4 OpenGL state matrix
 	 * \param matrix CG_GL_MODELVIEW_MATRIX, CG_GL_PROJECTION_MATRIX,
 	 *               CG_GL_TEXTURE_MATRIX, or CG_GL_MODELVIEW_PROJECTION_MATRIX
-	 * \param A modifier to the provide matrix. CG_GL_MATRIX_IDENTITY,
+	 * \param transform A modifier to the provide matrix. CG_GL_MATRIX_IDENTITY,
 	 *        CG_GL_MATRIX_TRANSPOSE, CG_GL_MATRIX_INVERSE,
 	 *        or CG_GL_MATRIX_INVERSE_TRANSPOSE
 	 */
