@@ -1,0 +1,20 @@
+To do list:
+
+Goal: Deferred Shading
+[X] Shader support - to be able to do MRT (see below), we need shaders.
+                     Plus, they look awesome.
+[ ] Render To Target (RTT) - Render to a texture instead of the screen buffer.
+                             This is also a prerequisite to MRT.
+[ ] Multiple Render Targets (MRT) - Deferred shading requires that we write out
+                                    information to multiple render targets at
+									once so that we don't have to render the
+									scene multiple times.
+[ ] Post processing - To use our render targets to create a final lit scene, we
+                      need to render a full-screen texture to the screen. This
+					  is extremely simple after RTT is done.
+
+Goal: High Dynamic Range
+[ ] RTT with floating-point textures - This should be pretty simple after basic
+                                       RTT is done since OpenGL already supports
+									   them.
+[ ] Post processing - See above
