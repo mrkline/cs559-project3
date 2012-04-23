@@ -357,7 +357,7 @@ void onDisplay()
 	glEnable(GL_DEPTH_TEST);
 	sm.renderScene();
 	// Disable lighting and depth tests for rendering the GUI
-	glDisable(GL_LIGHTING);
+	setActiveMaterial(getDefaultMaterial());
 	glDisable(GL_DEPTH_TEST);
 	CEGUI::System::getSingleton().renderGUI();
 	// Push our newly rendered frame to the screen
