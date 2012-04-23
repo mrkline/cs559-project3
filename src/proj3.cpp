@@ -176,21 +176,6 @@ void init()
 	groundNode->addRenderable(ground);
 	sm.getSceneNodes().push_back(groundNode);
 
-	// Generate some random scenery
-	srand((unsigned int)time(nullptr));
-	for (int c = 0; c < 5; ++c) {
-		using namespace Math;
-		SceneNode* sceneryNode = new SceneNode(
-		    nullptr, Vector3(frand(-9.5f, 9.5f), 0.0f, frand(-9.5f, 9.5f)));
-		float widthScale = frand(1.0f, 2.0f);
-		float heightScale = frand(2.0f, 5.0f);
-		sceneryNode->getTransform().setScale(
-		    Vector3(widthScale, heightScale, widthScale));
-		Renderable* r = new Tree;
-		sceneryNode->addRenderable(r);
-		sm.getSceneNodes().push_back(sceneryNode);
-	}
-
 	// Enable our first (and only) light
 	//! \todo Support more lights later
 	glEnable(GL_LIGHT0);
