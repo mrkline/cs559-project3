@@ -17,22 +17,22 @@ void SceneManager::renderScene() const
 		return;
 
 	// List of renderables to render
-	list<Renderable*> lights;
-	list<Renderable*> bg;
-	list<Renderable*> normals;
+	list<shared_ptr<Renderable>> lights;
+	list<shared_ptr<Renderable>> bg;
+	list<shared_ptr<Renderable>> normals;
 
 	// Update the transforms of all scene nodes via bfs and add their
 	// renderables to the various queues
-	deque<SceneNode*> q;
+	deque<shared_ptr<SceneNode>> q;
 	for (auto it = sceneNodes.begin(); it != sceneNodes.end(); ++it)
 		q.push_back(*it);
 
 	while (!q.empty()) {
-		SceneNode* curr = q.front();
+		auto curr = q.front();
 		q.pop_front();
 
 		curr->updateAbsoluteTransform();
-		const list<Renderable*>& renderables = curr->getRenderables();
+		const auto& renderables = curr->getRenderables();
 		for (auto it = renderables.begin(); it != renderables.end(); ++it) {
 			switch ((*it)->getType()) {
 			case Renderable::RT_LIGHT:
@@ -50,7 +50,7 @@ void SceneManager::renderScene() const
 		}
 
 		// Enqueue all the node's children
-		const list<SceneNode*>& currChildren = curr->getChildren();
+		const auto& currChildren = curr->getChildren();
 		for (auto it = currChildren.begin(); it != currChildren.end(); ++it)
 			q.push_back(*it);
 	}
@@ -65,7 +65,8 @@ void SceneManager::renderScene() const
 	// Draw all background objects
 	for (auto it = bg.begin(); it != bg.end(); ++it) {
 		glPushMatrix();
-		glMultMatrixf((*it)->getOwner()->getAbsoluteTransform().getArray());
+		glMultMatrixf((*it)->getOwner().lock()->
+		              getAbsoluteTransform().getArray());
 		(*it)->render();
 		glPopMatrix();
 	}
@@ -77,7 +78,8 @@ void SceneManager::renderScene() const
 	// Draw all normal objects
 	for (auto it = normals.begin(); it != normals.end(); ++it) {
 		glPushMatrix();
-		glMultMatrixf((*it)->getOwner()->getAbsoluteTransform().getArray());
+		glMultMatrixf((*it)->getOwner().lock()->
+		              getAbsoluteTransform().getArray());
 		(*it)->render();
 		glPopMatrix();
 	}

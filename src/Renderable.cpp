@@ -2,10 +2,13 @@
 
 #include "SceneNode.hpp"
 
-void Renderable::setOwner(SceneNode* newOwner)
+using namespace std;
+
+void Renderable::setOwner(const weak_ptr<SceneNode>& newOwner)
 {
-	if (owner != nullptr)
-		owner->removeRenderable(this);
+	auto o = owner.lock();
+	if (o)
+		o->removeRenderable(shared_from_this());
 
 	owner = newOwner;
 }

@@ -1,5 +1,6 @@
 #include "StdAfx.hpp"
 #include <ctime>
+#include <memory>
 
 // CEGUI styles
 #include "CEGUIStyleManager.hpp"
@@ -25,6 +26,8 @@
 #include "CgProfile.hpp"
 #include "CgProgram.hpp"
 
+using namespace std;
+
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
 
@@ -35,12 +38,12 @@ static CgProfile* cgFragmentProfile;
 
 static SceneManager sm;
 static bool animate = false;
-static Camera* freeCam;
-static SceneNode* freeCamNode;
-static Camera* topCam;
-static SceneNode* topCamNode;
-static Camera* trainCam;
-static SceneNode* trainCamNode;
+static shared_ptr<Camera> freeCam;
+static shared_ptr<SceneNode> freeCamNode;
+static shared_ptr<Camera> topCam;
+static shared_ptr<SceneNode> topCamNode;
+static shared_ptr<Camera> trainCam;
+static shared_ptr<SceneNode> trainCamNode;
 
 static struct {
 	CEGUI::Checkbox* chkEnableGUI;
@@ -102,31 +105,31 @@ void init()
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	// Create and place our cameras
-	freeCam = new Camera;
+	freeCam = make_shared<Camera>();
 	freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
 	sm.setActiveCamera(freeCam);
-	freeCamNode = new SceneNode(nullptr, Vector3(0.0f, 6.0f, -10.0f));
+	freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
 	freeCamNode->addRenderable(freeCam);
 	sm.getSceneNodes().push_back(freeCamNode);
 
-	topCam = new Camera;
+	topCam = make_shared<Camera>();
 	topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
 	topCam->setTarget(Vector3());
 	topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
-	topCamNode = new SceneNode(nullptr, Vector3(0.0, 20.0f, 0.0f));
+	topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
 	topCamNode->addRenderable(topCam);
 	sm.getSceneNodes().push_back(topCamNode);
 
-	trainCam = new Camera;
+	trainCam = make_shared<Camera>();
 	trainCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.01f, 50.0f);
 	sm.setActiveCamera(trainCam);
-	trainCamNode = new SceneNode;
+	trainCamNode = make_shared<SceneNode>();
 	trainCamNode->addRenderable(trainCam);
 	sm.getSceneNodes().push_back(trainCamNode);
 
 	// Create and place our light.
-	Light* light = new Light;
-	SceneNode* lightNode = new SceneNode(nullptr, Vector3(10.0f, 10.0f, -10.0f));
+	auto light = make_shared<Light>();
+	auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
 	lightNode->addRenderable(light);
 	// Give the light a yellow sphere (sun?)
 	Material* lightMat = new Material;
@@ -134,17 +137,17 @@ void init()
 	lightMat->color[0] = 1.0f;
 	lightMat->color[1] = 1.0f;
 	lightMat->color[2] = 0.0f;
-	auto sun = new Sphere(lightMat);
+	auto sun = make_shared<Sphere>(lightMat);
 	lightNode->addRenderable(sun);
 	sm.getSceneNodes().push_back(lightNode);
 
 	// Set up our sky box
-	SceneNode* skyboxNode = new SceneNode;
-	skyboxNode->addRenderable(new SkyBox);
-	sm.getSceneNodes().push_back(skyboxNode);
+	auto skyboxNode = make_shared<SceneNode>();
+	skyboxNode->addRenderable(make_shared<SkyBox>());
+	sm.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
 	// Set up our "ground"
-	SceneNode* groundNode = new SceneNode;
+	auto groundNode = make_shared<SceneNode>();
 	groundNode->getTransform().setScale(Vector3(15.0f));
 	Material* groundMat = new Material;
 	groundMat->lighting = false;
@@ -172,7 +175,7 @@ void init()
 		auto tFrag = mat->fragmentShader->getNamedParameter("t");
 		tFrag.set1f(t);
 	};
-	auto ground = new Plane(groundMat);
+	auto ground = make_shared<Plane>(groundMat);
 	groundNode->addRenderable(ground);
 	sm.getSceneNodes().push_back(groundNode);
 
