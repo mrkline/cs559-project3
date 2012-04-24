@@ -25,8 +25,9 @@ public:
 	std::weak_ptr<SceneNode> getOwner() { return owner; }
 
 	//! Called by the owning scene node when this renderable object is attached
-	//! to it
-	void setOwner(const std::weak_ptr<SceneNode>& newOwner);
+	//! or removed from it
+	void setOwner(const std::weak_ptr<SceneNode>& newOwner)
+	{ owner = newOwner; }
 
 protected:
 	std::weak_ptr<SceneNode> owner;
