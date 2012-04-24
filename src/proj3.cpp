@@ -355,17 +355,11 @@ void onDisplay()
 
 void onTimer(int value)
 {
-	static int frames = 0;
-	static clock_t start = clock();
 	// Tell CEGUI how much time has passed
 	CEGUI::System::getSingleton().injectTimePulse((float)0.016f);
 	glutPostRedisplay(); // Render a frame
 	// Render another frame in a 60th of a second
 	glutTimerFunc(16, onTimer, 1);
-	if (++frames == 1000) {
-		printf("Average fps: %f\n", (float)(clock() - start)
-				/ (float)CLOCKS_PER_SEC / (float)frames);
-	}
 }
 
 void onMouse(int button, int state, int x, int y)
@@ -537,7 +531,7 @@ int main(int argc, char** argv)
 		glutDisplayFunc(onDisplay);
 		// We signal a render inside the timer function. 16 ms is approximately
 		// one frame every 60th of a second
-		glutTimerFunc(0, onTimer, 1);
+		glutTimerFunc(16, onTimer, 1);
 		// Respond to mouse input by enabling and disabling animation
 		glutMouseFunc(onMouse);
 		glutMotionFunc(onMotion);
