@@ -35,10 +35,6 @@ Material::Material()
 	specular[1] = 0.0f;
 	specular[2] = 0.0f;
 	specular[3] = 1.0f;
-	texture = nullptr;
-	vertexShader = nullptr;
-	fragmentShader = nullptr;
-	callback = nullptr;
 }
 
 const shared_ptr<Material>& getDefaultMaterial()

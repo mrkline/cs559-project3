@@ -152,13 +152,13 @@ void init()
 	auto groundMat = make_shared<Material>();
 	groundMat->lighting = false;
 	// Load the ground's texture
-	groundMat->texture = new Texture("./resources/textures/Awesome.png");
+	groundMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
 	// Load the ground's vertex shader
-	groundMat->vertexShader = new CgProgram(*cgContext, false,
+	groundMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
 	                                        "./resources/shaders/TestVert.cg",
 	                                        *cgVertexProfile, "main");
 	// Load the ground's pixel shader
-	groundMat->fragmentShader = new CgProgram(*cgContext, false,
+	groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
 	        "./resources/shaders/TestFrag.cg",
 	        *cgFragmentProfile, "main");
 	// Use a lambda function to set the ground's material callback
