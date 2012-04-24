@@ -132,7 +132,7 @@ void init()
 	auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
 	lightNode->addRenderable(light);
 	// Give the light a yellow sphere (sun?)
-	Material* lightMat = new Material;
+	auto lightMat =  make_shared<Material>();
 	lightMat->lighting = false;
 	lightMat->color[0] = 1.0f;
 	lightMat->color[1] = 1.0f;
@@ -149,7 +149,7 @@ void init()
 	// Set up our "ground"
 	auto groundNode = make_shared<SceneNode>();
 	groundNode->getTransform().setScale(Vector3(15.0f));
-	Material* groundMat = new Material;
+	auto groundMat = make_shared<Material>();
 	groundMat->lighting = false;
 	// Load the ground's texture
 	groundMat->texture = new Texture("./resources/textures/Awesome.png");
@@ -162,7 +162,7 @@ void init()
 	        "./resources/shaders/TestFrag.cg",
 	        *cgFragmentProfile, "main");
 	// Use a lambda function to set the ground's material callback
-	groundMat->callback = [](Material * mat) {
+	groundMat->callback = [](const shared_ptr<Material>& mat) {
 		// Retrieve then set modelViewProj inside the vertex shader
 		auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
 		mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);

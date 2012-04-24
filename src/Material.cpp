@@ -5,11 +5,13 @@
 #include "CgProgram.hpp"
 #include "Texture.hpp"
 
-static Material* defaultMat = nullptr;
+using namespace std;
 
-static Material* activeMat = getDefaultMaterial();
+static shared_ptr<Material> defaultMat = make_shared<Material>();
 
-static Material* shadowMat = nullptr;
+static shared_ptr<Material> activeMat = getDefaultMaterial();
+
+static shared_ptr<Material> shadowMat;
 
 static bool shadowMode = false;
 
@@ -39,26 +41,24 @@ Material::Material()
 	callback = nullptr;
 }
 
-Material* getDefaultMaterial()
+const shared_ptr<Material>& getDefaultMaterial()
 {
-	if (defaultMat == nullptr)
-		defaultMat = new Material;
 	return defaultMat;
 }
 
-Material* getActiveMaterial()
+const shared_ptr<Material>& getActiveMaterial()
 {
 	return activeMat;
 }
 
-void setActiveMaterial(Material* mat)
+void setActiveMaterial(const shared_ptr<Material>& mat)
 {
 	// Ignore material change requests when rendering shadows
 	if (shadowMode)
 		return;
 
-	if (mat == nullptr)
-		mat = getDefaultMaterial();
+	const shared_ptr<Material>& toUse =
+	    mat.get() == nullptr ? getDefaultMaterial() : mat;
 
 	// If the last material had active shaders, shut them down
 	if (activeMat->vertexShader != nullptr)
@@ -66,52 +66,52 @@ void setActiveMaterial(Material* mat)
 	if (activeMat->fragmentShader != nullptr)
 		activeMat->fragmentShader->getProfile().disable();
 
-	activeMat = mat;
+	activeMat = toUse;
 
 	// Set lighting options
-	if (mat->lighting)
+	if (toUse->lighting)
 		glEnable(GL_LIGHTING);
 	else
 		glDisable(GL_LIGHTING);
 
 	// Set fill mode
-	glPolygonMode(GL_FRONT_AND_BACK, mat->wireframe ? GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, toUse->wireframe ? GL_LINE : GL_FILL);
 
 	// Set color parameters
-	glColor3fv(mat->color);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
+	glColor3fv(toUse->color);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, toUse->ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, toUse->diffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, toUse->specular);
 
 	// Activate this material's texture (if it has one)
-	if (mat->texture != nullptr) {
+	if (toUse->texture != nullptr) {
 		glEnable(GL_TEXTURE_2D);
-		mat->texture->setAsActiveTexture();
+		toUse->texture->setAsActiveTexture();
 	}
 	else {
 		glDisable(GL_TEXTURE_2D);
 	}
 
 	// Issue this material's callback (if it has one)
-	if (mat->callback != nullptr)
-		mat->callback(mat);
+	if (toUse->callback != nullptr)
+		toUse->callback(toUse);
 
 	// Activate this material's vertex shader (if it has one)
-	if (mat->vertexShader != nullptr) {
-		mat->vertexShader->bind();
-		mat->vertexShader->getProfile().enable();
+	if (toUse->vertexShader != nullptr) {
+		toUse->vertexShader->bind();
+		toUse->vertexShader->getProfile().enable();
 	}
 	// Activate this material's pixel shader (if it has one)
-	if (mat->fragmentShader != nullptr) {
-		mat->fragmentShader->bind();
-		mat->fragmentShader->getProfile().enable();
+	if (toUse->fragmentShader != nullptr) {
+		toUse->fragmentShader->bind();
+		toUse->fragmentShader->getProfile().enable();
 	}
 }
 
 void setShadowMaterialMode(bool drawingShadows)
 {
-	if (shadowMat == nullptr) {
-		shadowMat = new Material;
+	if (!shadowMat) {
+		shadowMat = make_shared<Material>();
 		shadowMat->color[0] = 0.0f;
 		shadowMat->color[1] = 0.0f;
 		shadowMat->color[2] = 0.0f;
