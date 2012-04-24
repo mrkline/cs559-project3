@@ -13,7 +13,7 @@ using namespace std;
 void SceneManager::renderScene() const
 {
 	// There's no point in drawing a scene if we don't have an active camera
-	if (activeCamera == nullptr)
+	if (!activeCamera)
 		return;
 
 	// List of renderables to render

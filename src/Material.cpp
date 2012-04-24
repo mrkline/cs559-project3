@@ -54,12 +54,12 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 		return;
 
 	const shared_ptr<Material>& toUse =
-	    mat.get() == nullptr ? getDefaultMaterial() : mat;
+	    mat ? mat : getDefaultMaterial();
 
 	// If the last material had active shaders, shut them down
-	if (activeMat->vertexShader != nullptr)
+	if (activeMat->vertexShader)
 		activeMat->vertexShader->getProfile().disable();
-	if (activeMat->fragmentShader != nullptr)
+	if (activeMat->fragmentShader)
 		activeMat->fragmentShader->getProfile().disable();
 
 	activeMat = toUse;
@@ -80,7 +80,7 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, toUse->specular);
 
 	// Activate this material's texture (if it has one)
-	if (toUse->texture != nullptr) {
+	if (toUse->texture) {
 		glEnable(GL_TEXTURE_2D);
 		toUse->texture->setAsActiveTexture();
 	}
@@ -89,16 +89,16 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 	}
 
 	// Issue this material's callback (if it has one)
-	if (toUse->callback != nullptr)
+	if (toUse->callback)
 		toUse->callback(toUse);
 
 	// Activate this material's vertex shader (if it has one)
-	if (toUse->vertexShader != nullptr) {
+	if (toUse->vertexShader) {
 		toUse->vertexShader->bind();
 		toUse->vertexShader->getProfile().enable();
 	}
 	// Activate this material's pixel shader (if it has one)
-	if (toUse->fragmentShader != nullptr) {
+	if (toUse->fragmentShader) {
 		toUse->fragmentShader->bind();
 		toUse->fragmentShader->getProfile().enable();
 	}

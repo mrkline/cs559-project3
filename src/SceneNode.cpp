@@ -15,7 +15,7 @@ SceneNode::SceneNode(const shared_ptr<SceneNode>& parent,
                      int id, const string& name)
 	: NamedClass(id, name), trans(startingTransform), parent(parent)
 {
-	if (parent != nullptr)
+	if (parent)
 		parent->children.push_back(shared_from_this());
 }
 
@@ -29,7 +29,7 @@ void SceneNode::update()
 void SceneNode::updateAbsoluteTransform()
 {
 	auto p = parent.lock();
-	if (p == nullptr)
+	if (!p)
 		absTrans = trans;
 	else
 		absTrans = trans * p->absTrans;
@@ -85,7 +85,7 @@ bool SceneNode::hasChild(int childId) const
 
 bool SceneNode::hasAncestor(const shared_ptr<SceneNode>& ancestor) const
 {
-	for (auto curr = parent.lock(); curr != nullptr; curr = curr->parent.lock()) {
+	for (auto curr = parent.lock(); curr; curr = curr->parent.lock()) {
 		if (curr == ancestor)
 			return true;
 	}
@@ -94,7 +94,7 @@ bool SceneNode::hasAncestor(const shared_ptr<SceneNode>& ancestor) const
 
 bool SceneNode::hasAncestor(const string& ancestorName) const
 {
-	for (auto curr = parent.lock(); curr != nullptr; curr = curr->parent.lock()) {
+	for (auto curr = parent.lock(); curr; curr = curr->parent.lock()) {
 		if (curr->name == ancestorName)
 			return true;
 	}
@@ -103,7 +103,7 @@ bool SceneNode::hasAncestor(const string& ancestorName) const
 
 bool SceneNode::hasAncestor(int ancestorId) const
 {
-	for (auto curr = parent.lock(); curr != nullptr; curr = curr->parent.lock()) {
+	for (auto curr = parent.lock(); curr; curr = curr->parent.lock()) {
 		if (curr->id == ancestorId)
 			return true;
 	}
@@ -189,14 +189,14 @@ void SceneNode::setParent(const weak_ptr<SceneNode>& newParent)
 {
 	removeFromParent();
 	auto np = newParent.lock();
-	if (np != nullptr)
+	if (np)
 		np->addChild(shared_from_this());
 }
 
 void SceneNode::removeFromParent()
 {
 	auto p = parent.lock();
-	if (p != nullptr)
+	if (p)
 		p->removeChild(shared_from_this());
 }
 

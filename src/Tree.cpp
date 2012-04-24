@@ -6,12 +6,12 @@
 
 using namespace std;
 
-static shared_ptr<Material> trunkMat = nullptr;
-static shared_ptr<Material> branchesMat = nullptr;
+static shared_ptr<Material> trunkMat;
+static shared_ptr<Material> branchesMat;
 
 Tree::Tree()
 {
-	if (trunkMat == nullptr) {
+	if (trunkMat) {
 		// Initialize the materials
 		trunkMat = make_shared<Material>();
 		trunkMat->lighting = true;
