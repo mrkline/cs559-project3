@@ -147,7 +147,7 @@ public:
 	void setParent(const std::weak_ptr<SceneNode>& newParent);
 
 	//! Gets the object's parent
-	std::weak_ptr<SceneNode> getParent() const { return parent; }
+	const std::weak_ptr<SceneNode>& getParent() const { return parent; }
 
 	//! Gets a list of the node's children
 	std::list<std::shared_ptr<SceneNode>>& getChildren() { return children; }

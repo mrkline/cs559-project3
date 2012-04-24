@@ -22,7 +22,7 @@ public:
 
 	virtual void render() = 0;
 
-	std::weak_ptr<SceneNode> getOwner() { return owner; }
+	const std::weak_ptr<SceneNode>& getOwner() const { return owner; }
 
 	//! Called by the owning scene node when this renderable object is attached
 	//! or removed from it
