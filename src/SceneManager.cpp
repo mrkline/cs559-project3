@@ -17,15 +17,15 @@ void SceneManager::renderScene() const
 		return;
 
 	// List of renderables to render
-	list<shared_ptr<Renderable>> lights;
-	list<shared_ptr<Renderable>> bg;
-	list<shared_ptr<Renderable>> normals;
+	list<Renderable*> lights;
+	list<Renderable*> bg;
+	list<Renderable*> normals;
 
 	// Update the transforms of all scene nodes via bfs and add their
 	// renderables to the various queues
-	deque<shared_ptr<SceneNode>> q;
+	deque<SceneNode*> q;
 	for (auto it = sceneNodes.begin(); it != sceneNodes.end(); ++it)
-		q.push_back(*it);
+		q.push_back(it->get());
 
 	while (!q.empty()) {
 		auto curr = q.front();
@@ -36,15 +36,15 @@ void SceneManager::renderScene() const
 		for (auto it = renderables.begin(); it != renderables.end(); ++it) {
 			switch ((*it)->getType()) {
 			case Renderable::RT_LIGHT:
-				lights.push_back(*it);
+				lights.push_back(it->get());
 				break;
 
 			case Renderable::RT_BACKGROUND:
-				bg.push_back(*it);
+				bg.push_back(it->get());
 				break;
 
 			case Renderable::RT_NORMAL:
-				normals.push_back(*it);
+				normals.push_back(it->get());
 				break;
 			}
 		}
@@ -52,7 +52,7 @@ void SceneManager::renderScene() const
 		// Enqueue all the node's children
 		const auto& currChildren = curr->getChildren();
 		for (auto it = currChildren.begin(); it != currChildren.end(); ++it)
-			q.push_back(*it);
+			q.push_back(it->get());
 	}
 
 	// Draw our camera first

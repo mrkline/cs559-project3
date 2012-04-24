@@ -113,22 +113,22 @@ bool SceneNode::hasAncestor(int ancestorId) const
 bool SceneNode::hasDescendant(const shared_ptr<SceneNode>& descendant) const
 {
 	// Run a BFS
-	queue<shared_ptr<SceneNode>> q;
+	queue<SceneNode*> q;
 
 	for (auto it = children.begin(); it != children.end(); ++it)
-		q.push(*it);
+		q.push(it->get());
 
 	while (!q.empty()) {
 		auto curr = q.front();
 		q.pop();
 
-		if (curr == descendant) {
+		if (curr == descendant.get()) {
 			return true;
 		}
 		else {
 			const auto& currChildren = curr->children;
 			for (auto it = currChildren.begin(); it != currChildren.end(); ++it)
-				q.push(*it);
+				q.push(it->get());
 		}
 	}
 
@@ -138,10 +138,10 @@ bool SceneNode::hasDescendant(const shared_ptr<SceneNode>& descendant) const
 bool SceneNode::hasDescendant(const string& descendantName) const
 {
 	// Run a BFS
-	queue<shared_ptr<SceneNode>> q;
+	queue<SceneNode*> q;
 
 	for (auto it = children.begin(); it != children.end(); ++it)
-		q.push(*it);
+		q.push(it->get());
 
 	while (!q.empty()) {
 		auto curr = q.front();
@@ -153,7 +153,7 @@ bool SceneNode::hasDescendant(const string& descendantName) const
 		else {
 			const auto& currChildren = curr->children;
 			for (auto it = currChildren.begin(); it != currChildren.end(); ++it)
-				q.push(*it);
+				q.push(it->get());
 		}
 	}
 
@@ -163,10 +163,10 @@ bool SceneNode::hasDescendant(const string& descendantName) const
 bool SceneNode::hasDescendant(int descendantId) const
 {
 	// Run a BFS
-	queue<shared_ptr<SceneNode>> q;
+	queue<SceneNode*> q;
 
 	for (auto it = children.begin(); it != children.end(); ++it)
-		q.push(*it);
+		q.push(it->get());
 
 	while (!q.empty()) {
 		auto curr = q.front();
@@ -178,7 +178,7 @@ bool SceneNode::hasDescendant(int descendantId) const
 		else {
 			const auto& children = curr->children;
 			for (auto it = children.begin(); it != children.end(); ++it)
-				q.push(*it);
+				q.push(it->get());
 		}
 	}
 
