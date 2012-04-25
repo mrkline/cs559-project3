@@ -1,8 +1,6 @@
 #include "StdAfx.hpp"
 #include "Texture.hpp"
 
-#include <fstream> // TEMP
-
 #include "Exceptions.hpp"
 
 Texture::Texture(const char* filename, GLenum format, bool mipmaps)
@@ -77,6 +75,8 @@ void Texture::init(const void* data, int colorComponents,
                    size_t width, size_t height,
                    GLenum format, GLenum type, bool mipmaps)
 {
+	this->width = width;
+	this->height = height;
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 	// select modulate to mix texture with color for shading
