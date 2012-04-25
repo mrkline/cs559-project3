@@ -168,12 +168,12 @@ void init()
 		groundMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
 		// Load the ground's vertex shader
 		groundMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
-												"./resources/shaders/TestVert.cg",
-												*cgVertexProfile, "main");
+		                          "./resources/shaders/TestVert.cg",
+		                          *cgVertexProfile, "main");
 		// Load the ground's pixel shader
 		groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-				"./resources/shaders/TestFrag.cg",
-				*cgFragmentProfile, "main");
+		                            "./resources/shaders/TestFrag.cg",
+		                            *cgFragmentProfile, "main");
 		// Use a lambda function to set the ground's material callback
 		groundMat->callback = [](const shared_ptr<Material>& mat) {
 			// Retrieve then set modelViewProj inside the vertex shader
@@ -182,7 +182,7 @@ void init()
 
 			// Retrieve then set t for both the vertex and fragment shader
 			float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
-					  * Math::kPi * 2.0f;
+			          * Math::kPi * 2.0f;
 			auto tVert = mat->vertexShader->getNamedParameter("t");
 			tVert.set1f(t);
 			auto tFrag = mat->fragmentShader->getNamedParameter("t");
@@ -192,11 +192,11 @@ void init()
 		groundNode->addRenderable(ground);
 		sm.getSceneNodes().push_back(groundNode);
 	}
-	catch(const Exceptions::Exception& ex) {
+	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
-				"This computer does not support graphics features necessary"
-				" for this demo.", "Insufficient graphics hardware",
-				MB_OK | MB_ICONERROR);
+		           "This computer does not support graphics features necessary"
+		           " for this demo.", "Insufficient graphics hardware",
+		           MB_OK | MB_ICONERROR);
 		exit(1);
 	}
 
