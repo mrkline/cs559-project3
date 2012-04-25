@@ -94,90 +94,100 @@ bool onShowGUIClicked(const CEGUI::EventArgs& e)
 
 void init()
 {
-	// Start up Cg
-	cgContext = new CgContext;
-	cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
-	cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
+	// If any of this fails, we don't have sufficient hardware
+	try {
+		// Start up Cg
+		cgContext = new CgContext;
+		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
+		cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
 
-	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
-	// Avoid stupid problems with OGL and RGB formats
-	// (since OGL tries to read textures to the nearest 4-byte boundary)
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
+		// Avoid stupid problems with OGL and RGB formats
+		// (since OGL tries to read textures to the nearest 4-byte boundary)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	// Create and place our cameras
-	freeCam = make_shared<Camera>();
-	freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
-	sm.setActiveCamera(freeCam);
-	freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
-	freeCamNode->addRenderable(freeCam);
-	sm.getSceneNodes().push_back(freeCamNode);
+		// Create and place our cameras
+		freeCam = make_shared<Camera>();
+		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
+		sm.setActiveCamera(freeCam);
+		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
+		freeCamNode->addRenderable(freeCam);
+		sm.getSceneNodes().push_back(freeCamNode);
 
-	topCam = make_shared<Camera>();
-	topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
-	topCam->setTarget(Vector3());
-	topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
-	topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
-	topCamNode->addRenderable(topCam);
-	sm.getSceneNodes().push_back(topCamNode);
+		topCam = make_shared<Camera>();
+		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
+		topCam->setTarget(Vector3());
+		topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
+		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
+		topCamNode->addRenderable(topCam);
+		sm.getSceneNodes().push_back(topCamNode);
 
-	trainCam = make_shared<Camera>();
-	trainCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.01f, 50.0f);
-	sm.setActiveCamera(trainCam);
-	trainCamNode = make_shared<SceneNode>();
-	trainCamNode->addRenderable(trainCam);
-	sm.getSceneNodes().push_back(trainCamNode);
+		trainCam = make_shared<Camera>();
+		trainCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.01f, 50.0f);
+		sm.setActiveCamera(trainCam);
+		trainCamNode = make_shared<SceneNode>();
+		trainCamNode->addRenderable(trainCam);
+		sm.getSceneNodes().push_back(trainCamNode);
 
-	// Create and place our light.
-	auto light = make_shared<Light>();
-	auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
-	lightNode->addRenderable(light);
-	// Give the light a yellow sphere (sun?)
-	auto lightMat =  make_shared<Material>();
-	lightMat->lighting = false;
-	lightMat->color[0] = 1.0f;
-	lightMat->color[1] = 1.0f;
-	lightMat->color[2] = 0.0f;
-	auto sun = make_shared<Sphere>(lightMat);
-	lightNode->addRenderable(sun);
-	sm.getSceneNodes().push_back(lightNode);
+		// Create and place our light.
+		auto light = make_shared<Light>();
+		auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
+		lightNode->addRenderable(light);
+		// Give the light a yellow sphere (sun?)
+		auto lightMat =  make_shared<Material>();
+		lightMat->lighting = false;
+		lightMat->color[0] = 1.0f;
+		lightMat->color[1] = 1.0f;
+		lightMat->color[2] = 0.0f;
+		auto sun = make_shared<Sphere>(lightMat);
+		lightNode->addRenderable(sun);
+		sm.getSceneNodes().push_back(lightNode);
 
-	// Set up our sky box
-	auto skyboxNode = make_shared<SceneNode>();
-	skyboxNode->addRenderable(make_shared<SkyBox>());
-	sm.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
+		// Set up our sky box
+		auto skyboxNode = make_shared<SceneNode>();
+		skyboxNode->addRenderable(make_shared<SkyBox>());
+		sm.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
-	// Set up our "ground"
-	auto groundNode = make_shared<SceneNode>();
-	groundNode->getTransform().setScale(Vector3(15.0f));
-	auto groundMat = make_shared<Material>();
-	groundMat->lighting = false;
-	// Load the ground's texture
-	groundMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
-	// Load the ground's vertex shader
-	groundMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
-	                                        "./resources/shaders/TestVert.cg",
-	                                        *cgVertexProfile, "main");
-	// Load the ground's pixel shader
-	groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-	        "./resources/shaders/TestFrag.cg",
-	        *cgFragmentProfile, "main");
-	// Use a lambda function to set the ground's material callback
-	groundMat->callback = [](const shared_ptr<Material>& mat) {
-		// Retrieve then set modelViewProj inside the vertex shader
-		auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
-		mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+		// Set up our "ground"
+		auto groundNode = make_shared<SceneNode>();
+		groundNode->getTransform().setScale(Vector3(15.0f));
+		auto groundMat = make_shared<Material>();
+		groundMat->lighting = false;
+		// Load the ground's texture
+		groundMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
+		// Load the ground's vertex shader
+		groundMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
+												"./resources/shaders/TestVert.cg",
+												*cgVertexProfile, "main");
+		// Load the ground's pixel shader
+		groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
+				"./resources/shaders/TestFrag.cg",
+				*cgFragmentProfile, "main");
+		// Use a lambda function to set the ground's material callback
+		groundMat->callback = [](const shared_ptr<Material>& mat) {
+			// Retrieve then set modelViewProj inside the vertex shader
+			auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
+			mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
 
-		// Retrieve then set t for both the vertex and fragment shader
-		float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
-		          * Math::kPi * 2.0f;
-		auto tVert = mat->vertexShader->getNamedParameter("t");
-		tVert.set1f(t);
-		auto tFrag = mat->fragmentShader->getNamedParameter("t");
-		tFrag.set1f(t);
-	};
-	auto ground = make_shared<Plane>(groundMat);
-	groundNode->addRenderable(ground);
-	sm.getSceneNodes().push_back(groundNode);
+			// Retrieve then set t for both the vertex and fragment shader
+			float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
+					  * Math::kPi * 2.0f;
+			auto tVert = mat->vertexShader->getNamedParameter("t");
+			tVert.set1f(t);
+			auto tFrag = mat->fragmentShader->getNamedParameter("t");
+			tFrag.set1f(t);
+		};
+		auto ground = make_shared<Plane>(groundMat);
+		groundNode->addRenderable(ground);
+		sm.getSceneNodes().push_back(groundNode);
+	}
+	catch(const Exceptions::Exception& ex) {
+		MessageBox(GetActiveWindow(),
+				"This computer does not support graphics features necessary"
+				" for this demo.", "Insufficient graphics hardware",
+				MB_OK | MB_ICONERROR);
+		exit(1);
+	}
 
 	// Enable our first (and only) light
 	//! \todo Support more lights later
@@ -546,7 +556,7 @@ int main(int argc, char** argv)
 	catch (const Exceptions::Exception& ex) {
 		std::string msg = "The following Exception occurred: ";
 		msg += ex.message;
-		MessageBox(nullptr, msg.c_str(),
+		MessageBox(GetActiveWindow(), msg.c_str(),
 		           "Unhandled Exception", MB_OK | MB_ICONERROR);
 	}
 }
