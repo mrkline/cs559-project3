@@ -96,6 +96,17 @@ void init()
 {
 	// If any of this fails, we don't have sufficient hardware
 	try {
+
+		// Start GLEW and check for needed extensions
+		if (glewInit() != GLEW_OK) {
+			throw Exceptions::Exception("GLEW failed to initialize",
+			                            __FUNCTION__);
+		}
+		if (!GLEW_EXT_framebuffer_object) {
+			throw Exceptions::Exception("Frame buffer objects not supported",
+			                            __FUNCTION__);
+		}
+
 		// Start up Cg
 		cgContext = new CgContext;
 		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
