@@ -44,6 +44,11 @@ Dependencies:
 	  in SILLY_HOME\include and library files in SILLY_HOME\lib\dynamic.
 	  Since SILLY is dependency of CEGUI, SILLY_HOME is usually set to
 	  CEGUI_HOME\dependencies
+	- NVIDIA's Cg has been installed. The solution searches for Cg headers in
+	  CG_INC_PATH and library files in CG_LIB_PATH.
+	- GLEW has been built or downloaded in a directory pointed to by the
+	  environment variable GLEW_HOME. The solution searches for headers in
+	  GLEW_HOME\include and library files in GLEW_HOME\lib
 
 Program notes:
 

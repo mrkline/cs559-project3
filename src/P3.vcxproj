@@ -41,14 +41,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;$(CG_INC_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;$(CG_INC_PATH);$(GLEW_HOME)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>StdAfx.hpp</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;$(CG_LIB_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CEGUIBase_d.lib;CEGUIOpenGLRenderer_d.lib;SILLY_d.lib;%(AdditionalDependencies);cg.lib;cgGL.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;$(CG_LIB_PATH);$(GLEW_HOME)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CEGUIBase_d.lib;CEGUIOpenGLRenderer_d.lib;SILLY_d.lib;cg.lib;cgGL.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -57,7 +57,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;$(CG_INC_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FREEGLUT_HOME)/include/;$(CEGUI_HOME)/cegui/include/;$(SILLY_HOME)/include/;$(CG_INC_PATH);$(GLEW_HOME)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>StdAfx.hpp</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
@@ -65,8 +65,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;$(CG_LIB_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CEGUIBase.lib;CEGUIOpenGLRenderer.lib;SILLY.lib;cg.lib;cgGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_HOME)/lib/x86/;$(CEGUI_HOME)/lib;$(SILLY_HOME)/lib/dynamic;$(CG_LIB_PATH);$(GLEW_HOME)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CEGUIBase.lib;CEGUIOpenGLRenderer.lib;SILLY.lib;cg.lib;cgGL.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
