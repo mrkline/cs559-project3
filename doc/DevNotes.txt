@@ -7,14 +7,17 @@ Goal: Deferred Shading
                              This is also a prerequisite to MRT.
 [ ] Multiple Render Targets (MRT) - Deferred shading requires that we write out
                                     information to multiple render targets at
-									once so that we don't have to render the
-									scene multiple times.
+                                    once so that we don't have to render the
+                                    scene multiple times.
+[ ] Multiple Texture Support - We need to be able to feed multiple textures into
+                               one shader in order to do deferred rendering
+                               (and other neat tricks).
 [ ] Post processing - To use our render targets to create a final lit scene, we
                       need to render a full-screen texture to the screen. This
-					  is extremely simple after RTT is done.
+                      is extremely simple after RTT is done.
 
 Goal: High Dynamic Range
 [ ] RTT with floating-point textures - This should be pretty simple after basic
                                        RTT is done since OpenGL already supports
-									   them.
+                                       them.
 [ ] Post processing - See above
