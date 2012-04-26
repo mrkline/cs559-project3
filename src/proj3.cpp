@@ -10,6 +10,7 @@
 #include "SceneManager.hpp"
 #include "SceneNode.hpp"
 #include "Texture.hpp"
+#include "FrameBuffer.hpp"
 
 // renderables
 #include "Camera.hpp"
@@ -36,14 +37,15 @@ static CgContext* cgContext;
 static CgProfile* cgVertexProfile;
 static CgProfile* cgFragmentProfile;
 
+static FrameBuffer* testBuffer;
+
 static SceneManager sm;
 static bool animate = false;
 static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
 static shared_ptr<Camera> topCam;
 static shared_ptr<SceneNode> topCamNode;
-static shared_ptr<Camera> trainCam;
-static shared_ptr<SceneNode> trainCamNode;
+static shared_ptr<Plane> rttPlane;
 
 static struct {
 	CEGUI::Checkbox* chkEnableGUI;
@@ -107,6 +109,9 @@ void init()
 			                            __FUNCTION__);
 		}
 
+		// Set up a frame buffer to do a test render to texture
+		testBuffer = new FrameBuffer(512, 512);
+
 		// Start up Cg
 		cgContext = new CgContext;
 		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
@@ -132,13 +137,6 @@ void init()
 		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
 		sm.getSceneNodes().push_back(topCamNode);
-
-		trainCam = make_shared<Camera>();
-		trainCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.01f, 50.0f);
-		sm.setActiveCamera(trainCam);
-		trainCamNode = make_shared<SceneNode>();
-		trainCamNode->addRenderable(trainCam);
-		sm.getSceneNodes().push_back(trainCamNode);
 
 		// Create and place our light.
 		auto light = make_shared<Light>();
@@ -191,6 +189,19 @@ void init()
 		auto ground = make_shared<Plane>(groundMat);
 		groundNode->addRenderable(ground);
 		sm.getSceneNodes().push_back(groundNode);
+
+		Transform pnt;
+		pnt.setRotationDegrees(Vector3(90.0f, 0.0f, 0.0f));
+		pnt.setScale(Vector3(6.0f));
+		pnt.setTranslation(Vector3(0.0f, 10.0f, 5.0f));
+		auto planeNode = make_shared<SceneNode>(nullptr, pnt);
+		auto rttMat = make_shared<Material>();
+		auto rtt = make_shared<Texture>(nullptr, 3, 512, 512, GL_RGBA, GL_UNSIGNED_BYTE, false);
+		rttMat->texture = rtt;
+		testBuffer->attachTexture(rtt);
+		rttPlane = make_shared<Plane>(rttMat);
+		planeNode->addRenderable(rttPlane);
+		sm.getSceneNodes().push_back(planeNode);
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
@@ -360,19 +371,23 @@ void onDisplay()
 		sm.setActiveCamera(topCam);
 	}
 
-	// Reset the color and depth buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Enable depth testing and draw our scene
 	try {
-	glEnable(GL_DEPTH_TEST);
-	sm.renderScene();
-	// Disable lighting and depth tests for rendering the GUI
-	setActiveMaterial(getDefaultMaterial());
-	glDisable(GL_DEPTH_TEST);
-	CEGUI::System::getSingleton().renderGUI();
-	// Push our newly rendered frame to the screen
-	glFlush();
-	glutSwapBuffers();
+		glEnable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		rttPlane->setVisible(false);
+		testBuffer->setupRender();
+		sm.renderScene();
+		testBuffer->cleanupRender();
+		rttPlane->setVisible(true);
+		sm.renderScene();
+		// Disable lighting and depth tests for rendering the GUI
+		setActiveMaterial(getDefaultMaterial());
+		glDisable(GL_DEPTH_TEST);
+		CEGUI::System::getSingleton().renderGUI();
+		// Push our newly rendered frame to the screen
+		glFlush();
+		glutSwapBuffers();
 	}
 	catch (const Exceptions::Exception& ex) {
 		string msg = "Exception in render loop: ";

@@ -6,6 +6,7 @@ class Texture;
 
 class FrameBuffer
 {
+public:
 	FrameBuffer(size_t width, size_t height);
 
 	~FrameBuffer();
