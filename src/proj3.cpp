@@ -159,7 +159,7 @@ void init()
 
 		// Set up our "ground"
 		auto groundNode = make_shared<SceneNode>();
-		groundNode->getTransform().setScale(Vector3(15.0f));
+		groundNode->getTransform().scale(Vector3(15.0f));
 		auto groundMat = make_shared<Material>();
 		groundMat->lighting = false;
 		// Load the ground's texture
@@ -191,8 +191,8 @@ void init()
 		sm.getSceneNodes().push_back(groundNode);
 
 		Transform pnt;
-		pnt.setRotationDegrees(Vector3(90.0f, 0.0f, 0.0f));
-		pnt.setScale(Vector3(6.0f));
+		pnt.rotateDegrees(Vector3(90.0f, 0.0f, 0.0f));
+		pnt.scale(Vector3(6.0f));
 		pnt.setTranslation(Vector3(0.0f, 10.0f, 5.0f));
 		auto planeNode = make_shared<SceneNode>(nullptr, pnt);
 		auto rttMat = make_shared<Material>();
@@ -330,7 +330,7 @@ void onDisplay()
 			cameraYaw += deltaTheta;
 
 		Transform camTrans;
-		camTrans.setRotationRadians(Vector3(cameraPitch, cameraYaw, 0.0f));
+		camTrans.rotateRadians(Vector3(cameraPitch, cameraYaw, 0.0f));
 		Vector3 target(0.0f, 0.0f, 1.0f);
 		Vector3 up(0.0f, 1.0f, 0.0f);
 		camTrans.transformPoint(target);
