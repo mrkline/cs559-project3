@@ -363,6 +363,7 @@ void onDisplay()
 	// Reset the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Enable depth testing and draw our scene
+	try {
 	glEnable(GL_DEPTH_TEST);
 	sm.renderScene();
 	// Disable lighting and depth tests for rendering the GUI
@@ -372,6 +373,16 @@ void onDisplay()
 	// Push our newly rendered frame to the screen
 	glFlush();
 	glutSwapBuffers();
+	}
+	catch (const Exceptions::Exception& ex) {
+		string msg = "Exception in render loop: ";
+		msg += ex.message;
+		msg += "\nIn function: ";
+		msg += ex.callingFunction;
+		MessageBox(GetActiveWindow(), msg.c_str(), "Render Exception",
+		           MB_OK | MB_ICONERROR);
+		exit(1);
+	}
 }
 
 void onTimer(int value)
