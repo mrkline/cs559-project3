@@ -30,6 +30,8 @@ Vector3 Model::getNormal(int normidx)
 
 void Model::render()
 {
+	setActiveMaterial(getDefaultMaterial());
+	
 	for(auto iter = faces.begin(); iter != faces.end(); iter++)
 	{
 		iter->render();

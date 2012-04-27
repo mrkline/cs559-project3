@@ -12,8 +12,10 @@ private:
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texturecoords;
 	GLfloat * vertexarray;
-	GLuint vboId;
-	bool createdVBO;
+	GLfloat * normalarray;
+	GLuint vertVboId;
+	GLuint normVboId;
+	bool createdVBOs;
 	int numcoords;
 
 public:
