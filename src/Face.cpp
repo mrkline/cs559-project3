@@ -6,50 +6,56 @@
 
 Face::Face(void)
 {
+	createdVBO = false;
 }
 
 void Face::render()
 {
+	
 	setActiveMaterial(getDefaultMaterial());
-	///*
-	int numcoords = 3 * vertices.size();
-	// check if the vertex array has been built before.
-	if(vertexarray == nullptr)
-	{		
-		vertexarray = new GLfloat[numcoords];
-		for(int i = 0; i < vertices.size(); i += 3)
-		{
-			vertexarray[i] = vertices[i].X;
-			vertexarray[i+1] = vertices[i].Y;
-			vertexarray[i+2] = vertices[i].Z;
-		}		
-	}
-
-	//glBindT
 	
-	/*
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, vertexarray);
-	if(vertices.size() == 3)
-		glDrawArrays(GL_TRIANGLES, 0, numcoords);
-	else
-		glDrawArrays(GL_QUADS, 0, numcoords);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	*/
-	
-	/*	
-	if(vertices.size() == 3)
-		glBegin(GL_TRIANGLES);
-	else
-		glBegin(GL_QUADS);
-	for(auto i = vertices.begin(); i != vertices.end(); i++)
+	if(!createdVBO)
 	{
-		glVertex3f(i->X, i->Y, i->Z);
-	}
+		numcoords = 3 * vertices.size();
+		// copy the vertices into an array to store in the VBO
+		vertexarray = new GLfloat[numcoords];
+		for(int i = 0; i < vertices.size(); i++)
+		{
+			vertexarray[i*3] = vertices[i].X;
+			vertexarray[i*3+1] = vertices[i].Y;
+			vertexarray[i*3+2] = vertices[i].Z;
+		}
 
-	glEnd();
-	*/
+		// initialize the VBO:
+		// create the buffer
+		glGenBuffers(1, &vboId);
+		// bind GL to it
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+		// actually copy the data over
+		glBufferData(GL_ARRAY_BUFFER, numcoords * sizeof(GLfloat), vertexarray, GL_STATIC_DRAW);
+		// clear the binding (ugh, this was hard fought)
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		createdVBO = true;
+	}
+	
+	// rebind to the buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vboId);
+	// we're using these as position data
+	glEnableVertexAttribArray(0);
+	// tell GL what this buffer is
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	// draw the polygon
+	if(vertices.size() == 3)
+	{
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	}
+	else
+	{
+		glDrawArrays(GL_QUADS, 0, vertices.size());
+	}
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
 }
 
 Face::~Face(void)

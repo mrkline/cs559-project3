@@ -12,7 +12,9 @@ private:
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texturecoords;
 	GLfloat * vertexarray;
-	//Glunit vboId;
+	GLuint vboId;
+	bool createdVBO;
+	int numcoords;
 
 public:
 	Face(void);

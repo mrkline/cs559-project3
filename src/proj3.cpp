@@ -21,6 +21,8 @@
 #include "Sphere.hpp"
 #include "Teapot.hpp"
 #include "Tree.hpp"
+#include "OBJFile.hpp"
+#include "Model.hpp"
 
 // Cg support
 #include "CgContext.hpp"
@@ -189,6 +191,19 @@ void init()
 		auto ground = make_shared<Plane>(groundMat);
 		groundNode->addRenderable(ground);
 		sm.getSceneNodes().push_back(groundNode);
+
+		OBJFile* objfile = new OBJFile("./resources/models/sphere.obj");
+		auto ball = make_shared<Model>(*objfile->getModel());
+
+		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
+		nullptr, Vector3(5.0f, 2.5f, 5.0f))));
+		float widthScale = 1.0f;
+		float heightScale = 1.0f;
+		sceneryNode->getTransform().scale(
+			Vector3(widthScale, heightScale, widthScale));
+		auto r = make_shared<Tree>(*(new Tree));
+		sceneryNode->addRenderable(ball);
+		sm.getSceneNodes().push_back(sceneryNode);
 
 		Transform pnt;
 		pnt.rotateDegrees(Vector3(90.0f, 0.0f, 0.0f));
