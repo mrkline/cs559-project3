@@ -173,25 +173,17 @@ void init()
 		// Load the ground's texture
 		groundMat->textures.push_back(
 		    make_shared<Texture>("./resources/textures/Awesome.png"));
-		// Load the ground's vertex shader
-		groundMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
-		                          "./resources/shaders/TestVert.cg",
-		                          *cgVertexProfile, "main");
+		groundMat->textures.push_back(
+		    make_shared<Texture>("./resources/textures/Matrix.png"));
 		// Load the ground's pixel shader
 		groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-		                            "./resources/shaders/TestFrag.cg",
+		                            "./resources/shaders/TestMultitextureFrag.cg",
 		                            *cgFragmentProfile, "main");
 		// Use a lambda function to set the ground's material callback
 		groundMat->callback = [](const shared_ptr<Material>& mat) {
-			// Retrieve then set modelViewProj inside the vertex shader
-			auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
-			mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
-
 			// Retrieve then set t for both the vertex and fragment shader
-			float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
+			float t = (float)(clock() % (CLOCKS_PER_SEC * 5)) / (float)(CLOCKS_PER_SEC * 5)
 			          * Math::kPi * 2.0f;
-			auto tVert = mat->vertexShader->getNamedParameter("t");
-			tVert.set1f(t);
 			auto tFrag = mat->fragmentShader->getNamedParameter("t");
 			tFrag.set1f(t);
 		};
