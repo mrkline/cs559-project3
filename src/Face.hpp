@@ -13,8 +13,10 @@ private:
 	std::vector<Vector2> texturecoords;
 	GLfloat * vertexarray;
 	GLfloat * normalarray;
+	GLfloat * texcoordarray;
 	GLuint vertVboId;
 	GLuint normVboId;
+	GLuint texcoordVboId;
 	bool createdVBOs;
 	int numcoords;
 

@@ -1,0 +1,17 @@
+struct VertexShaderOutput {
+	float4 position : POSITION;
+	float4 color : COLOR;
+};
+
+VertexShaderOutput main(float4 local : POSITION,
+                        float2 uv : TEXCOORD0,
+                        uniform float4x4 modelViewProj)
+{
+	VertexShaderOutput OUT;
+	OUT.position = mul(modelViewProj, local);
+	OUT.color[0] = uv[0];
+	OUT.color[1] = uv[1];
+	OUT.color[2] = 0;
+	OUT.color[3] = 1;
+	return OUT;
+}

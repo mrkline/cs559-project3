@@ -22,7 +22,7 @@ OBJFile::OBJFile(char* filename)
 		{
 			model = new Model();
 			string key, temp;
-			float tmpx, tmpy, tmpz;
+			float tmpx, tmpy, tmpz, tmpu, tmpv, tmpw;
 			while(!objfile.eof() && objfile >> key)
 			{
 				if(key == "#" || key == "s" || key == "g")
@@ -55,6 +55,15 @@ OBJFile::OBJFile(char* filename)
 				else if(key == "vt")
 				{
 					// texture coord
+					string buff;
+					getline(objfile, buff);
+					stringstream line(buff);
+					line >> tmpu >> tmpv;
+					if(line.good())
+					{
+						line >> tmpw; // 3ds max exports 3d texture coords
+					}
+					model->addTextureCoord(Vector2(tmpu, tmpv));
 				}
 				else if(key == "usemtl")
 				{
@@ -66,6 +75,9 @@ OBJFile::OBJFile(char* filename)
 					Face* face = new Face();
 					string buff;
 					getline(objfile, buff);
+					// 3ds max pads the end of each face with a space
+					if(buff.at(buff.size() - 1) == ' ')
+						buff.erase(buff.size() - 1);
 					stringstream line(buff);
 					string verts[4];
 					string v, vt, vn;
@@ -84,7 +96,7 @@ OBJFile::OBJFile(char* filename)
 						getline(token, vt, '/');
 						token >> vn;
 						face->addVertex(model->getVertex(atoi(v.c_str())));
-						// need to add texture coord support
+						face->addTexCoord(model->getTexCoord(atoi(vt.c_str())));
 						face->addNormal(model->getNormal(atoi(vn.c_str())));
 					}
 					model->addFace(*face);
