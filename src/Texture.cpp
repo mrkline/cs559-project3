@@ -61,7 +61,7 @@ Texture::~Texture()
 	SILLY::SILLYCleanup();
 }
 
-void Texture::setAsActiveTexture()
+void Texture::activateTexture()
 {
 	// Bind the texture and set its parameters
 	glBindTexture(GL_TEXTURE_2D, id);
