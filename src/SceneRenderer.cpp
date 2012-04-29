@@ -14,12 +14,20 @@ using namespace std;
 SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	: fb(screenWidth, screenHeight)
 {
-	screen = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
+	unlit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                              GL_RGBA, GL_UNSIGNED_BYTE, false);
-	fb.attachTexture(screen);
+
+	normAndDepth = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
+			GL_RGBA, GL_UNSIGNED_BYTE, false);
+
+	lit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
+			GL_RGBA, GL_UNSIGNED_BYTE, false);
+	fb.attachTexture(unlit, 0);
+	fb.attachTexture(normAndDepth, 1);
+	fb.attachTexture(lit, 2);
 
 	screenMat = make_shared<Material>();
-	screenMat->textures.push_back(screen);
+	screenMat->textures.push_back(unlit);
 }
 
 void SceneRenderer::renderScene()
