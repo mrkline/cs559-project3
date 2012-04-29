@@ -19,6 +19,7 @@ Material::Material()
 {
 	wireframe = false;
 	lighting = false;
+	depthTest = true;
 	color[0] = 1.0f;
 	color[1] = 1.0f;
 	color[2] = 1.0f;
@@ -79,6 +80,11 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 		glEnable(GL_LIGHTING);
 	else
 		glDisable(GL_LIGHTING);
+
+	if (activeMat->depthTest)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
 
 	// Set fill mode
 	glPolygonMode(GL_FRONT_AND_BACK, activeMat->wireframe ? GL_LINE : GL_FILL);
