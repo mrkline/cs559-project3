@@ -121,9 +121,11 @@ void init()
 		// Start up Cg
 		cgContext = new CgContext;
 		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
+		printf("Cg vertex profile: %s\n", cgVertexProfile->getName());
 		cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
+		printf("Cg fragment profile: %s\n", cgFragmentProfile->getName());
 
-		glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
+		glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 		// Avoid stupid problems with OGL and RGB formats
 		// (since OGL tries to read textures to the nearest 4-byte boundary)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -154,6 +156,22 @@ void init()
 		lightMat->color[0] = 1.0f;
 		lightMat->color[1] = 1.0f;
 		lightMat->color[2] = 0.0f;
+		lightMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
+				"./resources/shaders/DeferredDefault.cg",
+				*cgVertexProfile, "VS_Main");
+		lightMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
+				"./resources/shaders/DeferredDefault.cg",
+				*cgFragmentProfile, "FS_Main");
+		lightMat->callback = [](const shared_ptr<Material>& mat) {
+			auto modelViewProj =
+				mat->vertexShader->getNamedParameter("modelViewProj");
+			modelViewProj.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			auto modelViewIT =
+				mat->vertexShader->getNamedParameter("modelViewIT");
+			modelViewIT.setStateMatrix(CG_GL_MODELVIEW_MATRIX,
+					CG_GL_MATRIX_INVERSE_TRANSPOSE);
+		};
 		auto sun = make_shared<Sphere>(lightMat);
 		lightNode->addRenderable(sun);
 		sr->getSceneNodes().push_back(lightNode);
@@ -204,10 +222,10 @@ void init()
 		sceneryNode->addRenderable(ball);
 		sr->getSceneNodes().push_back(sceneryNode);
 	}
-	catch (const Exceptions::Exception&) {
+	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
-		           "This computer does not support graphics features necessary"
-		           " for this demo.", "Insufficient graphics hardware",
+			(string("Initialization error: ") + ex.message).c_str(),
+			"Initialization Error",
 		           MB_OK | MB_ICONERROR);
 		exit(1);
 	}

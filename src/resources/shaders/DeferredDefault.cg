@@ -11,11 +11,11 @@ VertexShaderOutput VS_Main(float4 local : POSITION,
                         float4 normal : NORMAL,
                         float4 color : COLOR,
                         uniform float4x4 modelViewProj,
-						uniform float4x4 worldIT)
+						uniform float4x4 modelViewIT)
 {
 	VertexShaderOutput OUT;
 	OUT.position = mul(modelViewProj, local);
-	OUT.normal= mul(worldIT, normal).xyz;
+	OUT.normal= mul(modelViewIT, normal).xyz;
 	OUT.color = color;
 	return OUT;
 }
@@ -28,7 +28,7 @@ struct FragmentShaderOutput {
 FragmentShaderOutput FS_Main(VertexShaderOutput vsOut)
 {
 	FragmentShaderOutput OUT;
-	OUT.unlit = vsOut.color;
+	OUT.unlit = float4(1.0f, 1.0f, 0.0f, 1.0f);//vsOut.color;
 	OUT.normAndDepth.rgb = vsOut.normal;
 	// Calculate depth later
 	OUT.normAndDepth.a = 1.0f;

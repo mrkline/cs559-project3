@@ -53,6 +53,22 @@ void FrameBuffer::attachTexture(const shared_ptr<Texture>& tex, int rtNum)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void FrameBuffer::setNumRenderTargets(size_t num)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	unique_ptr<GLenum[]> arr(new GLenum[num]);
+	for (size_t c = 0; c < num; ++c)
+		arr[c] = GL_COLOR_ATTACHMENT0 + c;
+
+	glDrawBuffers(num, arr.get());
+	throwGLExceptions(__FUNCTION__);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		throw Exceptions::GLException("Frame buffer object is not complete.",
+		                            __FUNCTION__);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void FrameBuffer::setupRender()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);

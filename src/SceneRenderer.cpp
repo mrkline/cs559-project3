@@ -25,6 +25,7 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	fb.attachTexture(unlit, 0);
 	fb.attachTexture(normAndDepth, 1);
 	fb.attachTexture(lit, 2);
+	fb.setNumRenderTargets(2); //!< \todo Set to 3
 
 	screenMat = make_shared<Material>();
 	screenMat->textures.push_back(unlit);

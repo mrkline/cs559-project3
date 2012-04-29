@@ -27,7 +27,11 @@ public:
 		                               fileName, profile.getHandle(),
 		                               entryPoint, args)),
 		prof(profile)
-	{ cgGLLoadProgram(prog); throwCgExceptions(__FUNCTION__); }
+	{
+		throwCgExceptions(__FUNCTION__);
+		cgGLLoadProgram(prog);
+		throwCgExceptions(__FUNCTION__);
+	}
 
 	~CgProgram() { cgDestroyProgram(prog); }
 

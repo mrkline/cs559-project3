@@ -23,6 +23,8 @@ public:
 		throwCgExceptions(__FUNCTION__);
 	}
 
+	const char* getName() const { return cgGetProfileString(prof); }
+
 	//! Used by setActiveMaterial to set up shaders using this profile
 	void enable()
 	{ cgGLEnableProfile(prof); throwCgExceptions(__FUNCTION__); }

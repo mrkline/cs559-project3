@@ -13,6 +13,8 @@ public:
 
 	void attachTexture(const std::shared_ptr<Texture>& tex, int rtNum = 0);
 
+	void setNumRenderTargets(size_t num);
+
 	// Sets OpenGL up to render to this FBO
 	void setupRender();
 
