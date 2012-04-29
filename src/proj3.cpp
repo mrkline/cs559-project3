@@ -7,7 +7,7 @@
 
 // Engine core
 #include "Material.hpp"
-#include "SceneManager.hpp"
+#include "SceneRenderer.hpp"
 #include "SceneNode.hpp"
 #include "Texture.hpp"
 #include "FrameBuffer.hpp"
@@ -41,7 +41,7 @@ static CgProfile* cgFragmentProfile;
 
 static FrameBuffer* testBuffer;
 
-static SceneManager sm;
+static SceneRenderer sr;
 static bool animate = false;
 static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
@@ -133,10 +133,10 @@ void init()
 		// Create and place our cameras
 		freeCam = make_shared<Camera>();
 		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
-		sm.setActiveCamera(freeCam);
+		sr.setActiveCamera(freeCam);
 		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
-		sm.getSceneNodes().push_back(freeCamNode);
+		sr.getSceneNodes().push_back(freeCamNode);
 
 		topCam = make_shared<Camera>();
 		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
@@ -144,7 +144,7 @@ void init()
 		topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
 		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
-		sm.getSceneNodes().push_back(topCamNode);
+		sr.getSceneNodes().push_back(topCamNode);
 
 		// Create and place our light.
 		auto light = make_shared<Light>();
@@ -158,12 +158,12 @@ void init()
 		lightMat->color[2] = 0.0f;
 		auto sun = make_shared<Sphere>(lightMat);
 		lightNode->addRenderable(sun);
-		sm.getSceneNodes().push_back(lightNode);
+		sr.getSceneNodes().push_back(lightNode);
 
 		// Set up our sky box
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(make_shared<SkyBox>());
-		sm.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
+		sr.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
 		// Set up our "ground"
 		auto groundNode = make_shared<SceneNode>();
@@ -189,7 +189,7 @@ void init()
 		};
 		auto ground = make_shared<Plane>(groundMat);
 		groundNode->addRenderable(ground);
-		sm.getSceneNodes().push_back(groundNode);
+		sr.getSceneNodes().push_back(groundNode);
 
 		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
 		auto ball = make_shared<Model>(*objfile->getModel());		
@@ -204,7 +204,7 @@ void init()
 		sceneryNode->getTransform().scale(
 		Vector3(widthScale, heightScale, widthScale));
 		sceneryNode->addRenderable(ball);
-		sm.getSceneNodes().push_back(sceneryNode);
+		sr.getSceneNodes().push_back(sceneryNode);
 
 		Transform pnt;
 		pnt.rotateDegrees(Vector3(90.0f, 0.0f, 0.0f));
@@ -217,7 +217,7 @@ void init()
 		testBuffer->attachTexture(rtt);
 		rttPlane = make_shared<Plane>(rttMat);
 		planeNode->addRenderable(rttPlane);
-		sm.getSceneNodes().push_back(planeNode);
+		sr.getSceneNodes().push_back(planeNode);
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
@@ -334,7 +334,7 @@ void init()
 void onDisplay()
 {
 	if (controls.radFree->isSelected()) {
-		sm.setActiveCamera(freeCam);
+		sr.setActiveCamera(freeCam);
 		// Rotate the camera
 		if (cameraMovement.rotation.up)
 			cameraPitch -= deltaTheta;
@@ -384,7 +384,7 @@ void onDisplay()
 		freeCam->setUpDirection(up);
 	}
 	else if (controls.radTop->isSelected()) {
-		sm.setActiveCamera(topCam);
+		sr.setActiveCamera(topCam);
 	}
 
 	// Enable depth testing and draw our scene
@@ -393,10 +393,10 @@ void onDisplay()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		rttPlane->setVisible(false);
 		testBuffer->setupRender();
-		sm.renderScene();
+		sr.renderScene();
 		testBuffer->cleanupRender();
 		rttPlane->setVisible(true);
-		sm.renderScene();
+		sr.renderScene();
 		// Disable lighting and depth tests for rendering the GUI
 		setActiveMaterial(getDefaultMaterial());
 		glDisable(GL_DEPTH_TEST);

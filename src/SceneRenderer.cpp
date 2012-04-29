@@ -1,5 +1,5 @@
 #include "StdAfx.hpp"
-#include "SceneManager.hpp"
+#include "SceneRenderer.hpp"
 
 #include <deque>
 
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void SceneManager::renderScene() const
+void SceneRenderer::renderScene() const
 {
 	// There's no point in drawing a scene if we don't have an active camera
 	if (!activeCamera)

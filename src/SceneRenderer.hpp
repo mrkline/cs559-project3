@@ -6,7 +6,7 @@
 class Camera;
 class SceneNode;
 
-class SceneManager
+class SceneRenderer
 {
 public:
 	std::list<std::shared_ptr<SceneNode>>& getSceneNodes() { return sceneNodes; }
