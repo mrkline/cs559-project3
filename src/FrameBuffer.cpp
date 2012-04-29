@@ -32,7 +32,7 @@ FrameBuffer::~FrameBuffer()
 	glDeleteFramebuffers(1, &fbo);
 }
 
-void FrameBuffer::attachTexture(const shared_ptr<Texture>& tex)
+void FrameBuffer::attachTexture(const shared_ptr<Texture>& tex, int rtNum)
 {
 	if (tex->getWidth() != width || tex->getHeight() != height) {
 		throw Exceptions::ArgumentException("A texture must be the same"
@@ -42,8 +42,8 @@ void FrameBuffer::attachTexture(const shared_ptr<Texture>& tex)
 	}
 	// Bind the texture to the frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-	                       tex->getID(), 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + rtNum,
+			GL_TEXTURE_2D, tex->getID(), 0);
 	throwGLExceptions(__FUNCTION__);
 	// Check to make sure we're good to go
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {

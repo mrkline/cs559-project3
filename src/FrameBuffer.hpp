@@ -11,7 +11,7 @@ public:
 
 	~FrameBuffer();
 
-	void attachTexture(const std::shared_ptr<Texture>& tex);
+	void attachTexture(const std::shared_ptr<Texture>& tex, int rtNum = 0);
 
 	// Sets OpenGL up to render to this FBO
 	void setupRender();
