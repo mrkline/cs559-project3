@@ -1,0 +1,15 @@
+
+float4 main(float2 uv : TEXCOORD0,
+            uniform sampler2D tex1,
+			uniform sampler2D tex2,
+            uniform float t) : COLOR
+{
+	// Modulate the textures on a sine wave
+	float4 base = tex2D(tex1, uv);
+	float4 over = tex2D(tex2, uv);
+	over.a = base.a;
+
+	float coeff = sin(t) / 2.0f + 0.5f;
+
+	return max(base, over * coeff);
+}

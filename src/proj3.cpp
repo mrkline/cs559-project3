@@ -106,8 +106,14 @@ void init()
 			throw Exceptions::Exception("GLEW failed to initialize",
 			                            __FUNCTION__);
 		}
+		// Check for FBO support
 		if (!GLEW_EXT_framebuffer_object) {
 			throw Exceptions::Exception("Frame buffer objects not supported",
+			                            __FUNCTION__);
+		}
+		// CHeck for multitexture support
+		if (!GLEW_ARB_multitexture) {
+			throw Exceptions::Exception("Multitexture not supported",
 			                            __FUNCTION__);
 		}
 
@@ -165,26 +171,19 @@ void init()
 		auto groundMat = make_shared<Material>();
 		groundMat->lighting = false;
 		// Load the ground's texture
-		groundMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
-		// Load the ground's vertex shader
-		groundMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
-		                          "./resources/shaders/TestVert.cg",
-		                          *cgVertexProfile, "main");
+		groundMat->textures.push_back(
+		    make_shared<Texture>("./resources/textures/Awesome.png"));
+		groundMat->textures.push_back(
+		    make_shared<Texture>("./resources/textures/Matrix.png"));
 		// Load the ground's pixel shader
 		groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-		                            "./resources/shaders/TestFrag.cg",
+		                            "./resources/shaders/TestMultitextureFrag.cg",
 		                            *cgFragmentProfile, "main");
 		// Use a lambda function to set the ground's material callback
 		groundMat->callback = [](const shared_ptr<Material>& mat) {
-			// Retrieve then set modelViewProj inside the vertex shader
-			auto mvp = mat->vertexShader->getNamedParameter("modelViewProj");
-			mvp.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
-
 			// Retrieve then set t for both the vertex and fragment shader
-			float t = (float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC
+			float t = (float)(clock() % (CLOCKS_PER_SEC * 5)) / (float)(CLOCKS_PER_SEC * 5)
 			          * Math::kPi * 2.0f;
-			auto tVert = mat->vertexShader->getNamedParameter("t");
-			tVert.set1f(t);
 			auto tFrag = mat->fragmentShader->getNamedParameter("t");
 			tFrag.set1f(t);
 		};
@@ -196,14 +195,14 @@ void init()
 		auto ball = make_shared<Model>(*objfile->getModel());		
 		auto ballMat = make_shared<Material>();
 		ballMat->lighting = false;
-		ballMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
+		ballMat->textures.push_back(make_shared<Texture>("./resources/textures/Awesome.png"));
 		ball->setMaterial(ballMat);
 		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
-		nullptr, Vector3(5.0f, 2.5f, 5.0f))));
+		                       nullptr, Vector3(5.0f, 2.5f, 5.0f))));
 		float widthScale = 1.0f;
 		float heightScale = 1.0f;
 		sceneryNode->getTransform().scale(
-			Vector3(widthScale, heightScale, widthScale));
+		Vector3(widthScale, heightScale, widthScale));
 		sceneryNode->addRenderable(ball);
 		sm.getSceneNodes().push_back(sceneryNode);
 
@@ -214,7 +213,7 @@ void init()
 		auto planeNode = make_shared<SceneNode>(nullptr, pnt);
 		auto rttMat = make_shared<Material>();
 		auto rtt = make_shared<Texture>(nullptr, 3, 512, 512, GL_RGBA, GL_UNSIGNED_BYTE, false);
-		rttMat->texture = rtt;
+		rttMat->textures.push_back(rtt);
 		testBuffer->attachTexture(rtt);
 		rttPlane = make_shared<Plane>(rttMat);
 		planeNode->addRenderable(rttPlane);

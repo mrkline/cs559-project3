@@ -9,7 +9,7 @@ Goal: Deferred Shading
                                     information to multiple render targets at
                                     once so that we don't have to render the
                                     scene multiple times.
-[ ] Multiple Texture Support - We need to be able to feed multiple textures into
+[X] Multiple Texture Support - We need to be able to feed multiple textures into
                                one shader in order to do deferred rendering
                                (and other neat tricks).
 [ ] Post processing - To use our render targets to create a final lit scene, we

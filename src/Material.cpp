@@ -62,45 +62,54 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 	if (activeMat->fragmentShader)
 		activeMat->fragmentShader->getProfile().disable();
 
+	// If this last material had more active textures than this one,
+	// shut them down
+	if (toUse->textures.size() < activeMat->textures.size()) {
+		size_t s = activeMat->textures.size();
+		for (size_t c = toUse->textures.size(); c < s; ++c) {
+			glActiveTexture(GL_TEXTURE0 + c);
+			glDisable(GL_TEXTURE_2D);
+		}
+	}
+
 	activeMat = toUse;
 
 	// Set lighting options
-	if (toUse->lighting)
+	if (activeMat->lighting)
 		glEnable(GL_LIGHTING);
 	else
 		glDisable(GL_LIGHTING);
 
 	// Set fill mode
-	glPolygonMode(GL_FRONT_AND_BACK, toUse->wireframe ? GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, activeMat->wireframe ? GL_LINE : GL_FILL);
 
 	// Set color parameters
-	glColor3fv(toUse->color);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, toUse->ambient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, toUse->diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, toUse->specular);
+	glColor3fv(activeMat->color);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, activeMat->ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, activeMat->diffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, activeMat->specular);
 
-	// Activate this material's texture (if it has one)
-	if (toUse->texture) {
+	// Activate this material's textures (if it has any)
+	auto& textures = activeMat->textures;
+	for (size_t c = 0; c < textures.size(); ++c) {
+		glActiveTexture(GL_TEXTURE0 + c);
 		glEnable(GL_TEXTURE_2D);
-		toUse->texture->setAsActiveTexture();
-	}
-	else {
-		glDisable(GL_TEXTURE_2D);
+		textures[c]->activateTexture();
 	}
 
 	// Issue this material's callback (if it has one)
-	if (toUse->callback)
-		toUse->callback(toUse);
+	if (activeMat->callback)
+		activeMat->callback(activeMat);
 
 	// Activate this material's vertex shader (if it has one)
-	if (toUse->vertexShader) {
-		toUse->vertexShader->bind();
-		toUse->vertexShader->getProfile().enable();
+	if (activeMat->vertexShader) {
+		activeMat->vertexShader->bind();
+		activeMat->vertexShader->getProfile().enable();
 	}
 	// Activate this material's pixel shader (if it has one)
-	if (toUse->fragmentShader) {
-		toUse->fragmentShader->bind();
-		toUse->fragmentShader->getProfile().enable();
+	if (activeMat->fragmentShader) {
+		activeMat->fragmentShader->bind();
+		activeMat->fragmentShader->getProfile().enable();
 	}
 }
 

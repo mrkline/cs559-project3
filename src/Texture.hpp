@@ -34,8 +34,7 @@ public:
 	~Texture();
 
 	//! Used by the material system to activate this texture
-	//! \todo We'll have to change this when we support multitexturing
-	void setAsActiveTexture();
+	void activateTexture();
 
 	size_t getWidth() const { return width; }
 
