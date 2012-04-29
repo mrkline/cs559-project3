@@ -4,6 +4,7 @@
 #include "CgProfile.hpp"
 #include "CgProgram.hpp"
 #include "Texture.hpp"
+#include "GLErrors.hpp"
 
 using namespace std;
 
@@ -19,6 +20,9 @@ Material::Material()
 {
 	wireframe = false;
 	lighting = false;
+	depthTest = true;
+	writeToDepth = true;
+	depthFunc = GL_LESS;
 	color[0] = 1.0f;
 	color[1] = 1.0f;
 	color[2] = 1.0f;
@@ -79,6 +83,16 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 		glEnable(GL_LIGHTING);
 	else
 		glDisable(GL_LIGHTING);
+
+	glDepthFunc(activeMat->depthFunc);
+	throwGLExceptions(__FUNCTION__);
+
+	glDepthMask(activeMat->writeToDepth ? GL_TRUE : GL_FALSE);
+
+	if (activeMat->depthTest)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
 
 	// Set fill mode
 	glPolygonMode(GL_FRONT_AND_BACK, activeMat->wireframe ? GL_LINE : GL_FILL);
