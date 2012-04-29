@@ -81,7 +81,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="CgErrors.cpp" />
-    <ClCompile Include="Face.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLErrors.cpp" />
     <ClCompile Include="Light.cpp">
@@ -142,7 +141,6 @@
     <ClInclude Include="CgProgram.hpp" />
     <ClInclude Include="Cube.hpp" />
     <ClInclude Include="Exceptions.hpp" />
-    <ClInclude Include="Face.hpp" />
     <ClInclude Include="FrameBuffer.hpp" />
     <ClInclude Include="GLErrors.hpp" />
     <ClInclude Include="Light.hpp" />

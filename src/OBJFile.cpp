@@ -72,7 +72,6 @@ OBJFile::OBJFile(char* filename)
 				else if(key == "f")
 				{
 					// face definition
-					Face* face = new Face();
 					string buff;
 					getline(objfile, buff);
 					// 3ds max pads the end of each face with a space
@@ -84,6 +83,7 @@ OBJFile::OBJFile(char* filename)
 					int numverts = 3;
 
 					line >> verts[0] >> verts[1]>> verts[2];
+					// cruft - only accepting triangle meshes now
 					if(line.good())
 					{
 						line >> verts[3];
@@ -95,12 +95,12 @@ OBJFile::OBJFile(char* filename)
 						getline(token, v, '/');
 						getline(token, vt, '/');
 						token >> vn;
-						face->addVertex(model->getVertex(atoi(v.c_str())));
-						face->addTexCoord(model->getTexCoord(atoi(vt.c_str())));
-						face->addNormal(model->getNormal(atoi(vn.c_str())));
+						model->addTriangle(
+							atoi(v.c_str()), 
+							atoi(vn.c_str()),
+							atoi(vt.c_str())
+							);
 					}
-					model->addFace(*face);
-
 				}
 				else
 				{

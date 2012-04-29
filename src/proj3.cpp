@@ -192,10 +192,10 @@ void init()
 		groundNode->addRenderable(ground);
 		sm.getSceneNodes().push_back(groundNode);
 
-		OBJFile* objfile = new OBJFile("./resources/models/sphere2.obj");
+		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
 		auto ball = make_shared<Model>(*objfile->getModel());		
 		auto ballMat = make_shared<Material>();
-		ballMat->lighting = true;
+		ballMat->lighting = false;
 		ballMat->texture = make_shared<Texture>("./resources/textures/Awesome.png");
 		ball->setMaterial(ballMat);
 		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
