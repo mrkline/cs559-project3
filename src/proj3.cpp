@@ -39,9 +39,7 @@ static CgContext* cgContext;
 static CgProfile* cgVertexProfile;
 static CgProfile* cgFragmentProfile;
 
-static FrameBuffer* testBuffer;
-
-static SceneRenderer sr;
+static SceneRenderer* sr;
 static bool animate = false;
 static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
@@ -117,8 +115,8 @@ void init()
 			                            __FUNCTION__);
 		}
 
-		// Set up a frame buffer to do a test render to texture
-		testBuffer = new FrameBuffer(512, 512);
+		// Start up our scene renderer
+		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
 
 		// Start up Cg
 		cgContext = new CgContext;
@@ -133,10 +131,10 @@ void init()
 		// Create and place our cameras
 		freeCam = make_shared<Camera>();
 		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
-		sr.setActiveCamera(freeCam);
+		sr->setActiveCamera(freeCam);
 		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
-		sr.getSceneNodes().push_back(freeCamNode);
+		sr->getSceneNodes().push_back(freeCamNode);
 
 		topCam = make_shared<Camera>();
 		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
@@ -144,7 +142,7 @@ void init()
 		topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
 		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
-		sr.getSceneNodes().push_back(topCamNode);
+		sr->getSceneNodes().push_back(topCamNode);
 
 		// Create and place our light.
 		auto light = make_shared<Light>();
@@ -158,12 +156,12 @@ void init()
 		lightMat->color[2] = 0.0f;
 		auto sun = make_shared<Sphere>(lightMat);
 		lightNode->addRenderable(sun);
-		sr.getSceneNodes().push_back(lightNode);
+		sr->getSceneNodes().push_back(lightNode);
 
 		// Set up our sky box
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(make_shared<SkyBox>());
-		sr.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
+		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
 		// Set up our "ground"
 		auto groundNode = make_shared<SceneNode>();
@@ -189,7 +187,7 @@ void init()
 		};
 		auto ground = make_shared<Plane>(groundMat);
 		groundNode->addRenderable(ground);
-		sr.getSceneNodes().push_back(groundNode);
+		sr->getSceneNodes().push_back(groundNode);
 
 		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
 		auto ball = make_shared<Model>(*objfile->getModel());		
@@ -204,20 +202,7 @@ void init()
 		sceneryNode->getTransform().scale(
 		Vector3(widthScale, heightScale, widthScale));
 		sceneryNode->addRenderable(ball);
-		sr.getSceneNodes().push_back(sceneryNode);
-
-		Transform pnt;
-		pnt.rotateDegrees(Vector3(90.0f, 0.0f, 0.0f));
-		pnt.scale(Vector3(6.0f));
-		pnt.setTranslation(Vector3(0.0f, 10.0f, 5.0f));
-		auto planeNode = make_shared<SceneNode>(nullptr, pnt);
-		auto rttMat = make_shared<Material>();
-		auto rtt = make_shared<Texture>(nullptr, 3, 512, 512, GL_RGBA, GL_UNSIGNED_BYTE, false);
-		rttMat->textures.push_back(rtt);
-		testBuffer->attachTexture(rtt);
-		rttPlane = make_shared<Plane>(rttMat);
-		planeNode->addRenderable(rttPlane);
-		sr.getSceneNodes().push_back(planeNode);
+		sr->getSceneNodes().push_back(sceneryNode);
 	}
 	catch (const Exceptions::Exception&) {
 		MessageBox(GetActiveWindow(),
@@ -334,7 +319,7 @@ void init()
 void onDisplay()
 {
 	if (controls.radFree->isSelected()) {
-		sr.setActiveCamera(freeCam);
+		sr->setActiveCamera(freeCam);
 		// Rotate the camera
 		if (cameraMovement.rotation.up)
 			cameraPitch -= deltaTheta;
@@ -384,19 +369,14 @@ void onDisplay()
 		freeCam->setUpDirection(up);
 	}
 	else if (controls.radTop->isSelected()) {
-		sr.setActiveCamera(topCam);
+		sr->setActiveCamera(topCam);
 	}
 
 	// Enable depth testing and draw our scene
 	try {
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		rttPlane->setVisible(false);
-		testBuffer->setupRender();
-		sr.renderScene();
-		testBuffer->cleanupRender();
-		rttPlane->setVisible(true);
-		sr.renderScene();
+		sr->renderScene();
 		// Disable lighting and depth tests for rendering the GUI
 		setActiveMaterial(getDefaultMaterial());
 		glDisable(GL_DEPTH_TEST);

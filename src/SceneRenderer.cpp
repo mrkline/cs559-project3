@@ -6,10 +6,23 @@
 #include "SceneNode.hpp"
 #include "Material.hpp"
 #include "Camera.hpp"
+#include "Texture.hpp"
 
 using namespace std;
 
-void SceneRenderer::renderScene() const
+
+SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
+	: fb(screenWidth, screenHeight)
+{
+	screen = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
+			GL_RGBA, GL_UNSIGNED_BYTE, false);
+	fb.attachTexture(screen);
+
+	screenMat = make_shared<Material>();
+	screenMat->textures.push_back(screen);
+}
+
+void SceneRenderer::renderScene()
 {
 	// There's no point in drawing a scene if we don't have an active camera
 	if (!activeCamera)
@@ -54,6 +67,9 @@ void SceneRenderer::renderScene() const
 			q.push_back(it->get());
 	}
 
+	// Render to the screen texture
+	fb.setupRender();
+
 	// Draw our camera first
 	activeCamera->render();
 
@@ -86,4 +102,23 @@ void SceneRenderer::renderScene() const
 			glPopMatrix();
 		}
 	}
+
+	fb.cleanupRender();
+
+	// Draw our rendered texture on a quad
+	setActiveMaterial(screenMat);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-1.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-1.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(1.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 0.0f);
+	glEnd();
 }
