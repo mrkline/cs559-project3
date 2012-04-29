@@ -219,7 +219,7 @@ void init()
 		planeNode->addRenderable(rttPlane);
 		sm.getSceneNodes().push_back(planeNode);
 	}
-	catch (const Exceptions::Exception& ex) {
+	catch (const Exceptions::Exception&) {
 		MessageBox(GetActiveWindow(),
 		           "This computer does not support graphics features necessary"
 		           " for this demo.", "Insufficient graphics hardware",
