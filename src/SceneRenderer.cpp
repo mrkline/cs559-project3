@@ -115,6 +115,7 @@ void SceneRenderer::renderScene()
 	fb.cleanupRender();
 
 	// Draw our rendered texture on a quad
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	setActiveMaterial(screenMat);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

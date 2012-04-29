@@ -393,7 +393,6 @@ void onDisplay()
 	// Enable depth testing and draw our scene
 	try {
 		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		sr->renderScene();
 		// Disable lighting and depth tests for rendering the GUI
 		setActiveMaterial(getDefaultMaterial());
