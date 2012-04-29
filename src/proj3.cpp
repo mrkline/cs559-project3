@@ -190,7 +190,7 @@ void init()
 		sr->getSceneNodes().push_back(groundNode);
 
 		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
-		auto ball = make_shared<Model>(*objfile->getModel());		
+		auto ball = make_shared<Model>(*objfile->getModel());
 		auto ballMat = make_shared<Material>();
 		ballMat->lighting = false;
 		ballMat->textures.push_back(make_shared<Texture>("./resources/textures/Awesome.png"));
@@ -200,7 +200,7 @@ void init()
 		float widthScale = 1.0f;
 		float heightScale = 1.0f;
 		sceneryNode->getTransform().scale(
-		Vector3(widthScale, heightScale, widthScale));
+		    Vector3(widthScale, heightScale, widthScale));
 		sceneryNode->addRenderable(ball);
 		sr->getSceneNodes().push_back(sceneryNode);
 	}

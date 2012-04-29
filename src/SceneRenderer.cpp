@@ -15,7 +15,7 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	: fb(screenWidth, screenHeight)
 {
 	screen = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
-			GL_RGBA, GL_UNSIGNED_BYTE, false);
+	                              GL_RGBA, GL_UNSIGNED_BYTE, false);
 	fb.attachTexture(screen);
 
 	screenMat = make_shared<Material>();
@@ -82,7 +82,7 @@ void SceneRenderer::renderScene()
 		if ((*it)->isVisible()) {
 			glPushMatrix();
 			glMultMatrixf((*it)->getOwner().lock()->
-						  getAbsoluteTransform().getArray());
+			              getAbsoluteTransform().getArray());
 			(*it)->render();
 			glPopMatrix();
 		}
@@ -97,7 +97,7 @@ void SceneRenderer::renderScene()
 		if ((*it)->isVisible()) {
 			glPushMatrix();
 			glMultMatrixf((*it)->getOwner().lock()->
-						  getAbsoluteTransform().getArray());
+			              getAbsoluteTransform().getArray());
 			(*it)->render();
 			glPopMatrix();
 		}
