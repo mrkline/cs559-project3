@@ -156,7 +156,6 @@ void init()
 		lightMat->color[0] = 1.0f;
 		lightMat->color[1] = 1.0f;
 		lightMat->color[2] = 0.0f;
-		lightMat->depthTest = false;
 		lightMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
 				"./resources/shaders/DeferredDefault.cg",
 				*cgVertexProfile, "VS_Main");

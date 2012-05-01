@@ -29,7 +29,6 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 
 	screenMat = make_shared<Material>();
 	screenMat->textures.push_back(unlit);
-	screenMat->depthTest = false;
 }
 
 void SceneRenderer::renderScene()
