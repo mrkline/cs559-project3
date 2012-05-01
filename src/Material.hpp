@@ -14,6 +14,8 @@ struct Material
 	bool wireframe; //!< True to render the object in wireframe
 	bool lighting; //!< If false, the object will just be colored based on color
 	bool depthTest; //!< If false, the object is not drawn using the z-buffer
+	bool writeToDepth; //!< If false, the object is not written to the z-buffer
+	GLenum depthFunc; //!< Depth function
 	float color[4]; //!< Color of the object
 	float ambient[4]; //!< Ambient light coefficients
 	float diffuse[4]; //!< Diffuse light coefficients
