@@ -28,7 +28,7 @@ struct FragmentShaderOutput {
 FragmentShaderOutput FS_Main(VertexShaderOutput vsOut)
 {
 	FragmentShaderOutput OUT;
-	OUT.unlit = float4(1.0f, 1.0f, 0.0f, 1.0f);//vsOut.color;
+	OUT.unlit = vsOut.color;
 	OUT.normAndDepth.rgb = vsOut.normal;
 	// Calculate depth later
 	OUT.normAndDepth.a = 1.0f;
