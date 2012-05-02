@@ -112,10 +112,6 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 		textures[c]->activateTexture();
 	}
 
-	// Issue this material's callback (if it has one)
-	if (activeMat->callback)
-		activeMat->callback(activeMat);
-
 	// Activate this material's vertex shader (if it has one)
 	if (activeMat->vertexShader) {
 		activeMat->vertexShader->bind();
@@ -126,6 +122,10 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 		activeMat->fragmentShader->bind();
 		activeMat->fragmentShader->getProfile().enable();
 	}
+
+	// Issue this material's callback (if it has one)
+	if (activeMat->callback)
+		activeMat->callback(activeMat);
 }
 
 void setShadowMaterialMode(bool drawingShadows)
