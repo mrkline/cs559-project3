@@ -146,6 +146,23 @@ void init()
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
 
+		auto defaultDeferredVertex = make_shared<CgProgram>(*cgContext, false,
+				"./resources/shaders/DeferredDefault.cg",
+				*cgVertexProfile, "VS_Main");
+		auto defaultDeferredFrag = make_shared<CgProgram>(*cgContext, false,
+				"./resources/shaders/DeferredDefault.cg",
+				*cgFragmentProfile, "FS_Main");
+		auto defaultDeferredCallback = [](const shared_ptr<Material>& mat) {
+			auto modelViewProj =
+				mat->vertexShader->getNamedParameter("modelViewProj");
+			modelViewProj.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			auto modelViewIT =
+				mat->vertexShader->getNamedParameter("modelViewIT");
+			modelViewIT.setStateMatrix(CG_GL_MODELVIEW_MATRIX,
+					CG_GL_MATRIX_INVERSE_TRANSPOSE);
+		};
+
 		// Create and place our light.
 		auto light = make_shared<Light>();
 		auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
@@ -156,22 +173,9 @@ void init()
 		lightMat->color[0] = 1.0f;
 		lightMat->color[1] = 1.0f;
 		lightMat->color[2] = 0.0f;
-		lightMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
-				"./resources/shaders/DeferredDefault.cg",
-				*cgVertexProfile, "VS_Main");
-		lightMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-				"./resources/shaders/DeferredDefault.cg",
-				*cgFragmentProfile, "FS_Main");
-		lightMat->callback = [](const shared_ptr<Material>& mat) {
-			auto modelViewProj =
-				mat->vertexShader->getNamedParameter("modelViewProj");
-			modelViewProj.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
-
-			auto modelViewIT =
-				mat->vertexShader->getNamedParameter("modelViewIT");
-			modelViewIT.setStateMatrix(CG_GL_MODELVIEW_MATRIX,
-					CG_GL_MATRIX_INVERSE_TRANSPOSE);
-		};
+		lightMat->vertexShader = defaultDeferredVertex;
+		lightMat->fragmentShader = defaultDeferredFrag;
+		lightMat->callback = defaultDeferredCallback;
 		auto sun = make_shared<Sphere>(lightMat);
 		lightNode->addRenderable(sun);
 		sr->getSceneNodes().push_back(lightNode);
@@ -192,17 +196,9 @@ void init()
 		groundMat->textures.push_back(
 		    make_shared<Texture>("./resources/textures/Matrix.png"));
 		// Load the ground's pixel shader
-		groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-		                            "./resources/shaders/TestMultitextureFrag.cg",
-		                            *cgFragmentProfile, "main");
-		// Use a lambda function to set the ground's material callback
-		groundMat->callback = [](const shared_ptr<Material>& mat) {
-			// Retrieve then set t for both the vertex and fragment shader
-			float t = (float)(clock() % (CLOCKS_PER_SEC * 5)) / (float)(CLOCKS_PER_SEC * 5)
-			          * Math::kPi * 2.0f;
-			auto tFrag = mat->fragmentShader->getNamedParameter("t");
-			tFrag.set1f(t);
-		};
+		groundMat->vertexShader = defaultDeferredVertex;
+		groundMat->fragmentShader = defaultDeferredFrag;
+		groundMat->callback = defaultDeferredCallback;
 		auto ground = make_shared<Plane>(groundMat);
 		groundNode->addRenderable(ground);
 		sr->getSceneNodes().push_back(groundNode);
@@ -212,6 +208,9 @@ void init()
 		auto ballMat = make_shared<Material>();
 		ballMat->lighting = false;
 		ballMat->textures.push_back(make_shared<Texture>("./resources/textures/Awesome.png"));
+		ballMat->vertexShader = defaultDeferredVertex;
+		ballMat->fragmentShader = defaultDeferredFrag;
+		ballMat->callback = defaultDeferredCallback;
 		ball->setMaterial(ballMat);
 		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
 		                       nullptr, Vector3(5.0f, 2.5f, 5.0f))));

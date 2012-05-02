@@ -28,7 +28,7 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	fb.setNumRenderTargets(2); //!< \todo Set to 3
 
 	screenMat = make_shared<Material>();
-	screenMat->textures.push_back(unlit);
+	screenMat->textures.push_back(normAndDepth);
 }
 
 void SceneRenderer::renderScene()
