@@ -221,7 +221,7 @@ void init()
 		sceneryNode->addRenderable(ball);
 		sr->getSceneNodes().push_back(sceneryNode);
 	}
-	catch (const Exceptions::Exception& ex) {
+	catch (const Exceptions::Exception&) {
 		MessageBox(GetActiveWindow(),
 			(string("Initialization error: ") + ex.message).c_str(),
 			"Initialization Error",
