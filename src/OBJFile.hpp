@@ -16,7 +16,7 @@ using namespace std;
 class OBJFile
 {
 public:
-	OBJFile(char* filename);
+	OBJFile(const char* filename);
 	Model* getModel(){return model;};
 	~OBJFile(void);
 

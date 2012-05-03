@@ -6,6 +6,7 @@
 #include <map>
 
 //! Represents a 2D texture loaded into OpenGL
+
 class Texture
 {
 public:

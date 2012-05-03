@@ -1,6 +1,7 @@
 #include "StdAfx.hpp"
 #include "OBJFile.hpp"
 #include <sstream>
+#include <vector>
 
 // for now, assumes a pretty valid obj file and only one object definition
 // in the file. obviously this could use refining.
@@ -8,7 +9,7 @@
 // TODO: texture coords, material library, material to use, face definition
 // add face struct or class?
 
-OBJFile::OBJFile(char* filename)
+OBJFile::OBJFile(const char* filename)
 {
 	if(filename != nullptr)
 	{
@@ -20,6 +21,7 @@ OBJFile::OBJFile(char* filename)
 		}
 		else
 		{
+			vector<int> faces;
 			model = new Model();
 			string key, temp;
 			float tmpx, tmpy, tmpz, tmpu, tmpv, tmpw;
@@ -95,11 +97,9 @@ OBJFile::OBJFile(char* filename)
 						getline(token, v, '/');
 						getline(token, vt, '/');
 						token >> vn;
-						model->addTriangle(
-							atoi(v.c_str()), 
-							atoi(vn.c_str()),
-							atoi(vt.c_str())
-							);
+						faces.push_back(atoi(v.c_str())); 
+						faces.push_back(atoi(vn.c_str()));
+						faces.push_back(atoi(vt.c_str()));
 					}
 				}
 				else
@@ -108,7 +108,11 @@ OBJFile::OBJFile(char* filename)
 					continue;
 				}
 			}
-			
+			// note multiple increment...
+			for(auto i = faces.begin(); i != faces.end(); i+=3)
+			{
+				model->addTriangle(*i, *(i+1), *(i+2));
+			}
 			objfile.close();
 		}
 	}
