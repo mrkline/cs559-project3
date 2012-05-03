@@ -7,6 +7,7 @@
 #include "Material.hpp"
 #include "Camera.hpp"
 #include "Texture.hpp"
+#include "Vector3.hpp"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 
 	screenMat = make_shared<Material>();
 	screenMat->textures.push_back(normAndDepth);
+	screenMat->depthTest = false;
 }
 
 void SceneRenderer::renderScene()
@@ -116,19 +118,29 @@ void SceneRenderer::renderScene()
 
 	// Draw our rendered texture on a quad
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Draw at the back of the frustum (so we can use the vertices for depth)
+	Transform invView;
+	glGetFloatv(GL_MODELVIEW_MATRIX, invView.getArray());
+	invView.setToInverse();
+	Vector3 ul(-1.0f, 1.0f, 0.99f);
+	Vector3 ll(-1.0f, -1.0f, 0.99f);
+	Vector3 lr(1.0f, -1.0f, 0.99f);
+	Vector3 ur(1.0f, 1.0f, 0.99f);
+	invView.transformPoint(ul);
+	invView.transformPoint(ll);
+	invView.transformPoint(lr);
+	invView.transformPoint(ur);
 	setActiveMaterial(screenMat);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-1.0f, 1.0f, 0.0f);
+	glVertex3f(ul.X, ul.Y, ul.Z);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 0.0f);
+	glVertex3f(ll.X, ll.Y, ll.Z);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(1.0f, -1.0f, 0.0f);
+	glVertex3f(lr.X, lr.Y, lr.Z);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(ur.X, ur.Y, ur.Z);
 	glEnd();
 }
