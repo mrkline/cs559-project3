@@ -25,8 +25,7 @@
 #include "Model.hpp"
 
 // Cg support
-#include "CgContext.hpp"
-#include "CgProfile.hpp"
+#include "CgSingleton.hpp"
 #include "CgProgram.hpp"
 
 using namespace std;
@@ -119,11 +118,10 @@ void init()
 		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
 
 		// Start up Cg
-		cgContext = new CgContext;
-		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
-		printf("Cg vertex profile: %s\n", cgVertexProfile->getName());
-		cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
-		printf("Cg fragment profile: %s\n", cgFragmentProfile->getName());
+		auto& cgs = CgSingleton::getSingleton();
+		auto& cgContext = cgs.getContext();
+		auto& cgVertProfile = cgs.getVertexProfile();
+		auto& cgFragProfile = cgs.getFragmentProfile();
 
 		glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 		// Avoid stupid problems with OGL and RGB formats
@@ -146,12 +144,12 @@ void init()
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
 
-		auto defaultDeferredVertex = make_shared<CgProgram>(*cgContext, false,
+		auto defaultDeferredVertex = make_shared<CgProgram>(cgContext, false,
 				"./resources/shaders/DeferredDefault.cg",
-				*cgVertexProfile, "VS_Main");
-		auto defaultDeferredFrag = make_shared<CgProgram>(*cgContext, false,
+				cgVertProfile, "VS_Main");
+		auto defaultDeferredFrag = make_shared<CgProgram>(cgContext, false,
 				"./resources/shaders/DeferredDefault.cg",
-				*cgFragmentProfile, "FS_Main");
+				cgFragProfile, "FS_Main");
 		auto defaultDeferredCallback = [](const shared_ptr<Material>& mat) {
 			auto modelViewProj =
 				mat->vertexShader->getNamedParameter("modelViewProj");
@@ -182,9 +180,9 @@ void init()
 
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
-		auto skyboxShader = make_shared<CgProgram>(*cgContext, false,
+		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
 				"./resources/shaders/DeferredSkybox.cg",
-				*cgFragmentProfile, "main");
+				cgFragProfile, "main");
 		for (int face = 0; face < 6; ++face)
 			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
 				skyboxShader;
