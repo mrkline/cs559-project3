@@ -181,8 +181,16 @@ void init()
 		sr->getSceneNodes().push_back(lightNode);
 
 		// Set up our sky box
+		auto skybox = make_shared<SkyBox>();
+		auto skyboxShader = make_shared<CgProgram>(*cgContext, false,
+				"./resources/shaders/DeferredSkybox.cg",
+				*cgFragmentProfile, "main");
+		for (int face = 0; face < 6; ++face)
+			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
+				skyboxShader;
+
 		auto skyboxNode = make_shared<SceneNode>();
-		skyboxNode->addRenderable(make_shared<SkyBox>());
+		skyboxNode->addRenderable(skybox);
 		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
 		// Set up our "ground"
