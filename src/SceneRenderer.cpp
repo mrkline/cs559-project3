@@ -17,13 +17,13 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	: fb(screenWidth, screenHeight)
 {
 	unlit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
-	                              GL_RGBA, GL_UNSIGNED_BYTE, false);
+	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
 
 	normAndDepth = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
-			GL_RGBA, GL_UNSIGNED_BYTE, false);
+	                                    GL_RGBA, GL_UNSIGNED_BYTE, false);
 
 	lit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
-			GL_RGBA, GL_UNSIGNED_BYTE, false);
+	                           GL_RGBA, GL_UNSIGNED_BYTE, false);
 	fb.attachTexture(unlit, 0);
 	fb.attachTexture(normAndDepth, 1);
 	fb.attachTexture(lit, 2);
@@ -32,11 +32,11 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	auto& cgContext = CgSingleton::getSingleton().getContext();
 	auto& fragProfile = CgSingleton::getSingleton().getFragmentProfile();
 	stripAlphaShader = make_shared<CgProgram>(cgContext, false,
-			"./resources/shaders/StripAlpha.cg",
-			fragProfile, "main");
+	                   "./resources/shaders/StripAlpha.cg",
+	                   fragProfile, "main");
 	alphaOnlyShader = make_shared<CgProgram>(cgContext, false,
-			"./resources/shaders/AlphaOnly.cg",
-			fragProfile, "main");
+	                  "./resources/shaders/AlphaOnly.cg",
+	                  fragProfile, "main");
 
 	screenMat = make_shared<Material>();
 	screenMat->textures.push_back(normAndDepth);

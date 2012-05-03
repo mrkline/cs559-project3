@@ -97,7 +97,6 @@ void init()
 {
 	// If any of this fails, we don't have sufficient hardware
 	try {
-
 		// Start GLEW and check for needed extensions
 		if (glewInit() != GLEW_OK) {
 			throw Exceptions::Exception("GLEW failed to initialize",
@@ -132,7 +131,8 @@ void init()
 		freeCam = make_shared<Camera>();
 		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
 		sr->setActiveCamera(freeCam);
-		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
+		freeCamNode = make_shared<SceneNode>(nullptr,
+		                                     Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
 		sr->getSceneNodes().push_back(freeCamNode);
 
@@ -145,25 +145,26 @@ void init()
 		sr->getSceneNodes().push_back(topCamNode);
 
 		auto defaultDeferredVertex = make_shared<CgProgram>(cgContext, false,
-				"./resources/shaders/DeferredDefault.cg",
-				cgVertProfile, "VS_Main");
+		                             "./resources/shaders/DeferredDefault.cg",
+		                             cgVertProfile, "VS_Main");
 		auto defaultDeferredFrag = make_shared<CgProgram>(cgContext, false,
-				"./resources/shaders/DeferredDefault.cg",
-				cgFragProfile, "FS_Main");
+		                           "./resources/shaders/DeferredDefault.cg",
+		                           cgFragProfile, "FS_Main");
 		auto defaultDeferredCallback = [](const shared_ptr<Material>& mat) {
 			auto modelViewProj =
-				mat->vertexShader->getNamedParameter("modelViewProj");
+			    mat->vertexShader->getNamedParameter("modelViewProj");
 			modelViewProj.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
 
 			auto modelViewIT =
-				mat->vertexShader->getNamedParameter("modelViewIT");
+			    mat->vertexShader->getNamedParameter("modelViewIT");
 			modelViewIT.setStateMatrix(CG_GL_MODELVIEW_MATRIX,
-					CG_GL_MATRIX_INVERSE_TRANSPOSE);
+			                           CG_GL_MATRIX_INVERSE_TRANSPOSE);
 		};
 
 		// Create and place our light.
 		auto light = make_shared<Light>();
-		auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
+		auto lightNode = make_shared<SceneNode>(nullptr,
+		                                        Vector3(10.0f, 10.0f, -10.0f));
 		lightNode->addRenderable(light);
 		// Give the light a yellow sphere (sun?)
 		auto lightMat =  make_shared<Material>();
@@ -181,11 +182,11 @@ void init()
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
 		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
-				"./resources/shaders/DeferredSkybox.cg",
-				cgFragProfile, "main");
+		                    "./resources/shaders/DeferredSkybox.cg",
+		                    cgFragProfile, "main");
 		for (int face = 0; face < 6; ++face)
 			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
-				skyboxShader;
+			    skyboxShader;
 
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(skybox);
@@ -213,7 +214,8 @@ void init()
 		auto ball = make_shared<Model>(*objfile->getModel());
 		auto ballMat = make_shared<Material>();
 		ballMat->lighting = false;
-		ballMat->textures.push_back(make_shared<Texture>("./resources/textures/Awesome.png"));
+		ballMat->textures.push_back(
+		    make_shared<Texture>("./resources/textures/Awesome.png"));
 		ballMat->vertexShader = defaultDeferredVertex;
 		ballMat->fragmentShader = defaultDeferredFrag;
 		ballMat->callback = defaultDeferredCallback;
@@ -229,8 +231,8 @@ void init()
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
-			(string("Initialization error: ") + ex.message).c_str(),
-			"Initialization Error",
+		           (string("Initialization error: ") + ex.message).c_str(),
+		           "Initialization Error",
 		           MB_OK | MB_ICONERROR);
 		exit(1);
 	}
