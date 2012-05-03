@@ -13,6 +13,14 @@ class Texture;
 class SceneRenderer
 {
 public:
+	enum DisplayMode {
+		DM_UNLIT, //!< Display unlit and emissive light
+		DM_NORMALS, //!< Display view-space normals
+		DM_DEPTH, //!< Display normalized depth
+		DM_LIT, //!< Lit color
+		DM_SPECULAR //!< Specular coefficient
+	};
+
 	SceneRenderer(size_t screenWidth, size_t screenHeight);
 
 	std::list<std::shared_ptr<SceneNode>>& getSceneNodes() { return sceneNodes; }
@@ -22,6 +30,8 @@ public:
 	void renderScene();
 
 	void setActiveCamera(std::shared_ptr<Camera>& cam) { activeCamera = cam; }
+
+	void setDisplayMode(DisplayMode dm);
 
 private:
 	FrameBuffer fb;

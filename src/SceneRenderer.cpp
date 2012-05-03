@@ -144,3 +144,27 @@ void SceneRenderer::renderScene()
 	glVertex3f(ur.X, ur.Y, ur.Z);
 	glEnd();
 }
+
+
+void SceneRenderer::setDisplayMode(DisplayMode dm)
+{
+	switch (dm) {
+	case DM_UNLIT:
+		screenMat->textures[0] = unlit;
+		break;
+
+	case DM_NORMALS:
+		screenMat->textures[0] = normAndDepth;
+		break;
+
+	case DM_DEPTH:
+		screenMat->textures[0] = normAndDepth;
+		break;
+
+	case DM_LIT:
+		break;
+
+	case DM_SPECULAR:
+		break;
+	}
+}

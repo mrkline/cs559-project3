@@ -504,6 +504,26 @@ void onKeyboardDown(unsigned char key, int x, int y)
 	case 'q':
 		cameraMovement.movement.up = true;
 		break;
+
+	case '1':
+		sr->setDisplayMode(SceneRenderer::DM_UNLIT);
+		break;
+
+	case '2':
+		sr->setDisplayMode(SceneRenderer::DM_NORMALS);
+		break;
+
+	case '3':
+		sr->setDisplayMode(SceneRenderer::DM_DEPTH);
+		break;
+
+	case '4':
+		sr->setDisplayMode(SceneRenderer::DM_LIT);
+		break;
+
+	case '5':
+		sr->setDisplayMode(SceneRenderer::DM_SPECULAR);
+		break;
 	}
 }
 
