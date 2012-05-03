@@ -8,9 +8,10 @@
 #include "Camera.hpp"
 #include "Texture.hpp"
 #include "Vector3.hpp"
+#include "CgSingleton.hpp"
+#include "CgProgram.hpp"
 
 using namespace std;
-
 
 SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	: fb(screenWidth, screenHeight)
@@ -28,8 +29,18 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	fb.attachTexture(lit, 2);
 	fb.setNumRenderTargets(2); //!< \todo Set to 3
 
+	auto& cgContext = CgSingleton::getSingleton().getContext();
+	auto& fragProfile = CgSingleton::getSingleton().getFragmentProfile();
+	stripAlphaShader = make_shared<CgProgram>(cgContext, false,
+			"./resources/shaders/StripAlpha.cg",
+			fragProfile, "main");
+	alphaOnlyShader = make_shared<CgProgram>(cgContext, false,
+			"./resources/shaders/AlphaOnly.cg",
+			fragProfile, "main");
+
 	screenMat = make_shared<Material>();
 	screenMat->textures.push_back(normAndDepth);
+	screenMat->fragmentShader = stripAlphaShader;
 	screenMat->depthTest = false;
 }
 
@@ -151,14 +162,17 @@ void SceneRenderer::setDisplayMode(DisplayMode dm)
 	switch (dm) {
 	case DM_UNLIT:
 		screenMat->textures[0] = unlit;
+		screenMat->fragmentShader = stripAlphaShader;
 		break;
 
 	case DM_NORMALS:
 		screenMat->textures[0] = normAndDepth;
+		screenMat->fragmentShader = stripAlphaShader;
 		break;
 
 	case DM_DEPTH:
 		screenMat->textures[0] = normAndDepth;
+		screenMat->fragmentShader = alphaOnlyShader;
 		break;
 
 	case DM_LIT:

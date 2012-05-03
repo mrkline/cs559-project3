@@ -34,9 +34,9 @@ static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
 
 // We can't initialize these here since OpenGL needs to be initialized first
-static CgContext* cgContext;
-static CgProfile* cgVertexProfile;
-static CgProfile* cgFragmentProfile;
+CgContext* cgContext;
+CgProfile* cgVertexProfile;
+CgProfile* cgFragmentProfile;
 
 static SceneRenderer* sr;
 static bool animate = false;
@@ -114,14 +114,14 @@ void init()
 			                            __FUNCTION__);
 		}
 
-		// Start up our scene renderer
-		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
-
 		// Start up Cg
 		auto& cgs = CgSingleton::getSingleton();
 		auto& cgContext = cgs.getContext();
 		auto& cgVertProfile = cgs.getVertexProfile();
 		auto& cgFragProfile = cgs.getFragmentProfile();
+
+		// Start up our scene renderer
+		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
 
 		glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 		// Avoid stupid problems with OGL and RGB formats
