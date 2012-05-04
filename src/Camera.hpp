@@ -35,6 +35,10 @@ public:
 	void setPerspectiveProjection(float fovY, float aspect,
 	                              float zNear, float zFar);
 
+	float getNear() const { return near; }
+
+	float getFar() const { return far; }
+
 	//! Gets the view transform from the previous frame
 	const Transform& getViewTransform() const { return view; }
 
@@ -43,6 +47,8 @@ public:
 private:
 	void updateView(); //!< Updates the view transform
 
+	float near;
+	float far;
 	Vector3 target;
 	Vector3 up;
 	Transform projection;

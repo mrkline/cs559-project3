@@ -150,15 +150,22 @@ void init()
 		auto defaultDeferredFrag = make_shared<CgProgram>(cgContext, false,
 		                           "./resources/shaders/DeferredDefault.cg",
 		                           cgFragProfile, "FS_Main");
-		auto defaultDeferredCallback = [](const shared_ptr<Material>& mat) {
-			auto modelViewProj =
-			    mat->vertexShader->getNamedParameter("modelViewProj");
-			modelViewProj.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+		auto defaultDeferredCallback = [&](const shared_ptr<Material>& mat) {
 
-			auto modelViewIT =
-			    mat->vertexShader->getNamedParameter("modelViewIT");
-			modelViewIT.setStateMatrix(CG_GL_MODELVIEW_MATRIX,
-			                           CG_GL_MATRIX_INVERSE_TRANSPOSE);
+			mat->vertexShader->getNamedParameter("modelViewProj").
+			setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelView").
+			setStateMatrix(CG_GL_MODELVIEW_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelViewIT").setStateMatrix(
+			    CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE_TRANSPOSE);
+
+			auto& cam = sr->getActiveCamera();
+			mat->fragmentShader->getNamedParameter("zNear").set1f(
+			    cam->getNear());
+			mat->fragmentShader->getNamedParameter("zFar").set1f(
+			    cam->getFar());
 		};
 
 		// Create and place our light.
@@ -243,10 +250,6 @@ void init()
 
 	// Set up shading model
 	glShadeModel(GL_SMOOTH);
-
-	// Enable transparent materials
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	try {
 		// Set up CEGUI

@@ -30,6 +30,8 @@ public:
 
 	void renderScene();
 
+	const std::shared_ptr<Camera>& getActiveCamera() { return activeCamera; }
+
 	void setActiveCamera(std::shared_ptr<Camera>& cam) { activeCamera = cam; }
 
 	void setDisplayMode(DisplayMode dm);

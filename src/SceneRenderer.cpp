@@ -42,6 +42,8 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	screenMat->textures.push_back(normAndDepth);
 	screenMat->fragmentShader = stripAlphaShader;
 	screenMat->depthTest = false;
+
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void SceneRenderer::renderScene()
