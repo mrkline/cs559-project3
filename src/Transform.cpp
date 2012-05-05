@@ -470,9 +470,11 @@ void Transform::transformPoint(Vector3& point) const
 	vector[2] = point.X * matrix[2] + point.Y * matrix[6]
 	            + point.Z * matrix[10] + matrix[14];
 
-	point.X = vector[0];
-	point.Y = vector[1];
-	point.Z = vector[2];
+	float w = matrix[3] + matrix[7] + matrix[11] + matrix[15];
+
+	point.X = vector[0] / w;
+	point.Y = vector[1] / w;
+	point.Z = vector[2] / w;
 }
 
 Transform Transform::operator*(const Transform& m2) const

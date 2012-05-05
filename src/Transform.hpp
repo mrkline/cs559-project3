@@ -271,7 +271,7 @@ public:
 	//! Scales a point using this transform's scale
 	void scalePoint(Vector3& pointOut) const;
 
-	//! Transforms a point using this transform
+	//! Transforms a point using this transform. Assumes w is 1.
 	void transformPoint(Vector3& pointOut) const;
 
 	/*!
