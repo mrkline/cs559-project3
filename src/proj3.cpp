@@ -175,7 +175,6 @@ void init()
 		lightNode->addRenderable(light);
 		// Give the light a yellow sphere (sun?)
 		auto lightMat =  make_shared<Material>();
-		lightMat->lighting = false;
 		lightMat->unlit[0] = 1.0f;
 		lightMat->unlit[1] = 1.0f;
 		lightMat->unlit[2] = 0.0f;
@@ -201,9 +200,7 @@ void init()
 
 		// Set up our "ground"
 		auto groundNode = make_shared<SceneNode>();
-		groundNode->getTransform().scale(Vector3(15.0f));
 		auto groundMat = make_shared<Material>();
-		groundMat->lighting = false;
 		// Load the ground's texture
 		groundMat->textures.push_back(
 		    make_shared<Texture>("./resources/textures/Awesome.png"));
@@ -213,28 +210,11 @@ void init()
 		groundMat->vertexShader = defaultDeferredVertex;
 		groundMat->fragmentShader = defaultDeferredFrag;
 		groundMat->callback = defaultDeferredCallback;
-		auto ground = make_shared<Plane>(groundMat);
+		OBJFile objfile("./resources/models/test_tile.obj");
+		auto ground = shared_ptr<Model>(objfile.getModel());
+		ground->setMaterial(groundMat);
 		groundNode->addRenderable(ground);
 		sr->getSceneNodes().push_back(groundNode);
-
-		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
-		auto ball = make_shared<Model>(*objfile->getModel());
-		auto ballMat = make_shared<Material>();
-		ballMat->lighting = false;
-		ballMat->textures.push_back(
-		    make_shared<Texture>("./resources/textures/Awesome.png"));
-		ballMat->vertexShader = defaultDeferredVertex;
-		ballMat->fragmentShader = defaultDeferredFrag;
-		ballMat->callback = defaultDeferredCallback;
-		ball->setMaterial(ballMat);
-		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
-		                       nullptr, Vector3(5.0f, 2.5f, 5.0f))));
-		float widthScale = 1.0f;
-		float heightScale = 1.0f;
-		sceneryNode->getTransform().scale(
-		    Vector3(widthScale, heightScale, widthScale));
-		sceneryNode->addRenderable(ball);
-		sr->getSceneNodes().push_back(sceneryNode);
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
