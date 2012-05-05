@@ -14,11 +14,13 @@ SkyBox::SkyBox()
 {
 	if (!sky) {
 		sky = make_shared<Material>();
+		sky->writeToDepth = false;
 		sky->unlit[0] = 0.7f;
 		sky->unlit[1] = 0.7f;
 		sky->unlit[2] = 1.0f;
 
 		ground = make_shared<Material>();
+		sky->writeToDepth = false;
 		ground->unlit[0] = 0.0f;
 		ground->unlit[1] = 0.3f;
 		ground->unlit[2] = 0.0f;
