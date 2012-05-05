@@ -176,9 +176,9 @@ void init()
 		// Give the light a yellow sphere (sun?)
 		auto lightMat =  make_shared<Material>();
 		lightMat->lighting = false;
-		lightMat->color[0] = 1.0f;
-		lightMat->color[1] = 1.0f;
-		lightMat->color[2] = 0.0f;
+		lightMat->unlit[0] = 1.0f;
+		lightMat->unlit[1] = 1.0f;
+		lightMat->unlit[2] = 0.0f;
 		lightMat->vertexShader = defaultDeferredVertex;
 		lightMat->fragmentShader = defaultDeferredFrag;
 		lightMat->callback = defaultDeferredCallback;

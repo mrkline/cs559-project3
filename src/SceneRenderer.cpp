@@ -27,7 +27,7 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	fb.attachTexture(unlit, 0);
 	fb.attachTexture(normAndDepth, 1);
 	fb.attachTexture(lit, 2);
-	fb.setNumRenderTargets(2); //!< \todo Set to 3
+	fb.setNumRenderTargets(3);
 
 	auto& cgContext = CgSingleton::getSingleton().getContext();
 	auto& fragProfile = CgSingleton::getSingleton().getFragmentProfile();
@@ -178,9 +178,13 @@ void SceneRenderer::setDisplayMode(DisplayMode dm)
 		break;
 
 	case DM_LIT:
+		screenMat->textures[0] = lit;
+		screenMat->fragmentShader = stripAlphaShader;
 		break;
 
 	case DM_SPECULAR:
+		screenMat->textures[0] = lit;
+		screenMat->fragmentShader = alphaOnlyShader;
 		break;
 	}
 }

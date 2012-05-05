@@ -14,14 +14,12 @@ Tree::Tree()
 	if (trunkMat) {
 		// Initialize the materials
 		trunkMat = make_shared<Material>();
-		trunkMat->lighting = true;
 		trunkMat->diffuse[0] = 0.542f;
 		trunkMat->diffuse[1] = 0.271f;
 		trunkMat->diffuse[2] = 0.075f;
 
 
 		branchesMat = make_shared<Material>();
-		branchesMat->lighting = true;
 		branchesMat->diffuse[0] = 0.0f;
 		branchesMat->diffuse[1] = 0.9f;
 		branchesMat->diffuse[2] = 0.0f;
