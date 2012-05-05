@@ -40,8 +40,14 @@ MAPFile::MAPFile(char* filename)
 					// model index and file
 					matfile >> temp >> temp; // throw away index
 					string path = MODELPATH + temp;
+					SYSTEMTIME st;
+					GetSystemTime(&st);
+					cout << "------------------------------" << endl;
+					cout << "loading model: " << path << endl;
 					OBJFile* objfile = new OBJFile(path.c_str());
 					models.push_back(make_shared<Model>(*objfile->getModel()));
+					cout << "done loading: " << path << endl;
+					cout << "------------------------------" << endl;
 				}
 				else if(key == "tile")
 				{
@@ -51,6 +57,8 @@ MAPFile::MAPFile(char* filename)
 					getline(matfile, buff);
 					stringstream line(buff);
 					line >>  tmpx >> tmpy >> tmpz >> tmpsize >> tmprot >> tmpmdl;
+					cout << "------------------------------" << endl;
+					cout << "loading tile at x,z: " << tmpx << "," << tmpz << endl;
 					while(line.good())
 					{
 						line >> tmptext;
@@ -58,7 +66,7 @@ MAPFile::MAPFile(char* filename)
 					}
 					// make the material
 					auto mat = make_shared<Material>();
-					// copy the model
+					// get a reference to the model
 					auto tile = make_shared<Model>(*models[tmpmdl]);
 					// add the texture(s) to the material
 					for(auto i = tmptextures.begin(); i != tmptextures.end(); i++)
@@ -69,8 +77,7 @@ MAPFile::MAPFile(char* filename)
 					// set the material on the model
 					tile->setMaterial(mat);
 					// create the scene node, with the transform
-					auto tilenode = make_shared<SceneNode>(*(new SceneNode(
-						nullptr, Vector3(tmpx, tmpy, tmpz))));
+					auto tilenode = make_shared<SceneNode>(nullptr, Vector3(tmpx, tmpy, tmpz));
 					tilenode->getTransform().rotateDegrees(Vector3(0, (float)tmprot, 0));
 					// add the model to the scene node
 					tilenode->addRenderable(tile);
@@ -82,6 +89,8 @@ MAPFile::MAPFile(char* filename)
 					{
 						cout << "error loading a node: " << e.what() << endl;
 					}
+					cout << "done loading tile" << endl;
+					cout << "------------------------------" << endl;
 				}
 				else
 				{

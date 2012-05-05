@@ -81,7 +81,7 @@ static float cameraYaw = 0.0f;
 static float cameraPitch = Math::kPi / 6.0f;
 
 //! Delta camera movment per frame, in radians
-static const float deltaMovement = 0.1f;
+static const float deltaMovement = 0.3f;
 //! Delta camera angule per frame, in radians
 static const float deltaTheta = Math::kPi * 2.0f  / 240.0f;
 
@@ -182,68 +182,8 @@ void init()
 		skyboxNode->addRenderable(make_shared<SkyBox>());
 		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
-		//// Set up our "ground"
-		//auto groundNode = make_shared<SceneNode>();
-		//groundNode->getTransform().scale(Vector3(15.0f));
-		//auto groundMat = make_shared<Material>();
-		//groundMat->lighting = false;
-		//// Load the ground's texture
-		//groundMat->textures.push_back(
-		//    make_shared<Texture>("./resources/textures/Awesome.png"));
-		//groundMat->textures.push_back(
-		//    make_shared<Texture>("./resources/textures/Matrix.png"));
-		//// Load the ground's pixel shader
-		//groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-		//                            "./resources/shaders/TestMultitextureFrag.cg",
-		//                            *cgFragmentProfile, "main");
-		//// Use a lambda function to set the ground's material callback
-		//groundMat->callback = [](const shared_ptr<Material>& mat) {
-		//	// Retrieve then set t for both the vertex and fragment shader
-		//	float t = (float)(clock() % (CLOCKS_PER_SEC * 5)) / (float)(CLOCKS_PER_SEC * 5)
-		//	          * Math::kPi * 2.0f;
-		//	auto tFrag = mat->fragmentShader->getNamedParameter("t");
-		//	tFrag.set1f(t);
-		//};
-		//auto ground = make_shared<Plane>(groundMat);
-		//groundNode->addRenderable(ground);
-		//sr->getSceneNodes().push_back(groundNode);
-
-		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
-		OBJFile* objfile2 = new OBJFile("./resources/models/sphere3.obj");
-		OBJFile* objfile3 = new OBJFile("./resources/models/sphere3.obj");
-		auto ball = make_shared<Model>(*objfile->getModel());
-		auto ball2 = make_shared<Model>(*objfile->getModel());
-		auto ball3 = make_shared<Model>(*objfile->getModel());
-		auto ballMat = make_shared<Material>();
-		ballMat->lighting = false;
-		ballMat->textures.push_back(make_shared<Texture>("./resources/textures/Awesome.png"));
-		ball->setMaterial(ballMat);
-		ball2->setMaterial(ballMat);
-		ball3->setMaterial(ballMat);
-
-		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
-		                       nullptr, Vector3(0.0f, 0.0f, 0.0f))));
-		auto sceneryNode2 = make_shared<SceneNode>(*(new SceneNode(
-		                       nullptr, Vector3(10.0f, 10.0f, 10.0f))));
-		auto sceneryNode3 = make_shared<SceneNode>(*(new SceneNode(
-		                       nullptr, Vector3(0.0f, 5.0f, 0.0f))));
-		float widthScale = 1.0f;
-		float heightScale = 1.0f;
-		sceneryNode->getTransform().scale(
-		    Vector3(widthScale, heightScale, widthScale));
-		sceneryNode2->getTransform().scale(
-		    Vector3(widthScale, heightScale, widthScale));
-		sceneryNode3->getTransform().scale(
-		    Vector3(widthScale, heightScale, widthScale));
-		sceneryNode->addRenderable(ball);
-		sceneryNode2->addRenderable(ball2);
-		sceneryNode3->addRenderable(ball3);
-		sr->getSceneNodes().push_back(sceneryNode);
-		sr->getSceneNodes().push_back(sceneryNode2);
-		sr->getSceneNodes().push_back(sceneryNode3);
-
-		///<MHS> experimental
-		
+		// load the map file that will import all the building and road models
+		// and textures. Add those to the SceneRenderer.
 		MAPFile* mapfile = new MAPFile("./resources/mooncolony_map.txt");
 		std::vector<shared_ptr<SceneNode>>* nodes =  mapfile->getNodes();
 		if(nodes != nullptr)
@@ -253,8 +193,6 @@ void init()
 				sr->getSceneNodes().push_back(*i);
 			}
 		}
-				
-		/// <MHS> end experimental
 
 	}
 	catch (const Exceptions::Exception& ex) {
