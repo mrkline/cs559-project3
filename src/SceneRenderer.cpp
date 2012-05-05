@@ -10,11 +10,12 @@
 #include "Vector3.hpp"
 #include "CgSingleton.hpp"
 #include "CgProgram.hpp"
+#include "DirectionalLight.hpp"
 
 using namespace std;
 
 SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
-	: fb(screenWidth, screenHeight)
+	: mrtFB(screenWidth, screenHeight), compFB(screenWidth, screenHeight)
 {
 	unlit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
@@ -24,10 +25,17 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 
 	lit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                           GL_RGBA, GL_UNSIGNED_BYTE, false);
-	fb.attachTexture(unlit, 0);
-	fb.attachTexture(normAndDepth, 1);
-	fb.attachTexture(lit, 2);
-	fb.setNumRenderTargets(3);
+
+	mrtFB.attachTexture(unlit, 0);
+	mrtFB.attachTexture(normAndDepth, 1);
+	mrtFB.attachTexture(lit, 2);
+	mrtFB.setNumRenderTargets(3);
+
+	comp0 = make_shared<Texture>(nullptr, 3, screenWidth, screenHeight,
+	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
+
+	comp1 = make_shared<Texture>(nullptr, 3, screenWidth, screenHeight,
+	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
 
 	auto& cgContext = CgSingleton::getSingleton().getContext();
 	auto& fragProfile = CgSingleton::getSingleton().getFragmentProfile();
@@ -37,13 +45,37 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	alphaOnlyShader = make_shared<CgProgram>(cgContext, false,
 	                  "./resources/shaders/AlphaOnly.cg",
 	                  fragProfile, "main");
+	directionalLightShader = make_shared<CgProgram>(cgContext, false,
+			"./resources/shaders/DirectionalLight.cg",
+			fragProfile, "main");
 
-	screenMat = make_shared<Material>();
-	screenMat->textures.push_back(normAndDepth);
-	screenMat->fragmentShader = stripAlphaShader;
-	screenMat->depthTest = false;
+	singleTexMat = make_shared<Material>();
+	singleTexMat->textures.push_back(normAndDepth);
+	singleTexMat->fragmentShader = stripAlphaShader;
+	singleTexMat->depthTest = false;
+
+	lightingMat = make_shared<Material>();
+	lightingMat->textures.resize(3);
+	lightingMat->textures[1] = normAndDepth;
+	lightingMat->textures[2] = lit;
+	lightingMat->depthTest = false;
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+//! Utility function to save from some verbosity below
+static inline void drawQuad()
+{
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-1.0f, 1.0f, 0.99f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-1.0f, -1.0f, 0.99f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(1.0f, -1.0f, 0.99f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(1.0f, 1.0f, 0.99f);
+	glEnd();
 }
 
 void SceneRenderer::renderScene()
@@ -70,7 +102,7 @@ void SceneRenderer::renderScene()
 		curr->updateAbsoluteTransform();
 		const auto& renderables = curr->getRenderables();
 		for (auto it = renderables.begin(); it != renderables.end(); ++it) {
-			switch ((*it)->getType()) {
+			switch ((*it)->getRenderableType()) {
 			case Renderable::RT_LIGHT:
 				lights.push_back(it->get());
 				break;
@@ -92,14 +124,10 @@ void SceneRenderer::renderScene()
 	}
 
 	// Render to the screen texture
-	fb.setupRender();
+	mrtFB.setupRender();
 
 	// Draw our camera first
 	activeCamera->render();
-
-	// Draw all lights next
-	for (auto it = lights.begin(); it != lights.end(); ++it)
-		if ((*it)->isVisible()) (*it)->render();
 
 	// Draw all background objects
 	for (auto it = bg.begin(); it != bg.end(); ++it) {
@@ -127,64 +155,104 @@ void SceneRenderer::renderScene()
 		}
 	}
 
-	fb.cleanupRender();
+	mrtFB.cleanupRender();
 
 	// Draw our rendered texture on a quad
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Draw at the back of the frustum (so we can use the vertices for depth)
-	Transform invView;
-	glGetFloatv(GL_MODELVIEW_MATRIX, invView.getArray());
-	invView.setToInverse();
-	Vector3 ul(-1.0f, 1.0f, 0.99f);
-	Vector3 ll(-1.0f, -1.0f, 0.99f);
-	Vector3 lr(1.0f, -1.0f, 0.99f);
-	Vector3 ur(1.0f, 1.0f, 0.99f);
-	invView.transformPoint(ul);
-	invView.transformPoint(ll);
-	invView.transformPoint(lr);
-	invView.transformPoint(ur);
-	setActiveMaterial(screenMat);
+
+	Transform modelViewIT;
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelViewIT.getArray());
+	modelViewIT.setToInverse();
+	modelViewIT.setToTranspose();
+
+	// Set matrices to identities to simplify drawing screen-wide quads
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(ul.X, ul.Y, ul.Z);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(ll.X, ll.Y, ll.Z);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(lr.X, lr.Y, lr.Z);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(ur.X, ur.Y, ur.Z);
-	glEnd();
-}
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-
-void SceneRenderer::setDisplayMode(DisplayMode dm)
-{
 	switch (dm) {
 	case DM_UNLIT:
-		screenMat->textures[0] = unlit;
-		screenMat->fragmentShader = stripAlphaShader;
+		singleTexMat->textures[0] = unlit;
+		singleTexMat->fragmentShader = stripAlphaShader;
+		setActiveMaterial(singleTexMat);
+		drawQuad();
 		break;
 
 	case DM_NORMALS:
-		screenMat->textures[0] = normAndDepth;
-		screenMat->fragmentShader = stripAlphaShader;
+		singleTexMat->textures[0] = normAndDepth;
+		singleTexMat->fragmentShader = stripAlphaShader;
+		setActiveMaterial(singleTexMat);
+		drawQuad();
 		break;
 
 	case DM_DEPTH:
-		screenMat->textures[0] = normAndDepth;
-		screenMat->fragmentShader = alphaOnlyShader;
+		singleTexMat->textures[0] = normAndDepth;
+		singleTexMat->fragmentShader = alphaOnlyShader;
+		setActiveMaterial(singleTexMat);
+		drawQuad();
 		break;
 
 	case DM_LIT:
-		screenMat->textures[0] = lit;
-		screenMat->fragmentShader = stripAlphaShader;
+		singleTexMat->textures[0] = lit;
+		singleTexMat->fragmentShader = stripAlphaShader;
+		setActiveMaterial(singleTexMat);
+		drawQuad();
 		break;
 
-	case DM_SPECULAR:
-		screenMat->textures[0] = lit;
-		screenMat->fragmentShader = alphaOnlyShader;
+	case DM_FINAL:
+		// Step one of the deferred process: copy the unlit colors to comp0
+		singleTexMat->textures[0] = unlit;
+		singleTexMat->fragmentShader = stripAlphaShader;
+		setActiveMaterial(singleTexMat);
+		compFB.attachTexture(comp0);
+		compFB.setupRender();
+		drawQuad();
+		compFB.cleanupRender();
+
+		// Sort the lights
+		list<DirectionalLight*> dirLights;
+		//! \todo Put lists of other light types here
+
+		for (auto it = lights.begin(); it != lights.end(); ++it) {
+			switch (static_cast<Light*>(*it)->getLightType()) {
+			case Light::LT_DIRECTIONAL:
+				dirLights.push_back(static_cast<DirectionalLight*>(*it));
+				break;
+			}
+		}
+		// Done sorting lights
+
+		auto src = comp0;
+		auto dest = comp1;
+		// Apply directional lights
+		lightingMat->fragmentShader = directionalLightShader;
+		for (auto it = dirLights.begin(); it != dirLights.end(); ++it) {
+			// Set up the lighting material
+			lightingMat->textures[0] = src;
+			setActiveMaterial(lightingMat);
+			// Set shader parameters
+			directionalLightShader->getNamedParameter("color").
+				set3fv((*it)->color);
+			// Convert the light direction to view space
+			Vector3 lightDirection = (*it)->direction; 
+			lightDirection.normalize(); //!< \todo: unneeded?
+			modelViewIT.transformPoint(lightDirection);
+			directionalLightShader->getNamedParameter("lightDirection").
+				setVector3(lightDirection);
+			// Render to dest
+			compFB.attachTexture(dest);
+			compFB.setupRender();
+			drawQuad();
+			compFB.cleanupRender();
+			// Flip src and dest
+			swap(src, dest);
+		}
+
+		singleTexMat->textures[0] = src;
+		singleTexMat->fragmentShader = stripAlphaShader;
+		setActiveMaterial(singleTexMat);
+		drawQuad();
 		break;
 	}
 }

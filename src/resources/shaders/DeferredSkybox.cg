@@ -4,6 +4,7 @@
 struct FragmentShaderOutput {
 	float4 unlit : COLOR0;
 	float4 normAndDepth : COLOR1;
+    float4 diffuse: COLOR2;
 };
 
 FragmentShaderOutput main(float4 c : COLOR)
@@ -11,5 +12,6 @@ FragmentShaderOutput main(float4 c : COLOR)
 	FragmentShaderOutput OUT;
 	OUT.unlit = c;
 	OUT.normAndDepth = float4(0, 0, 0, 0);
+    OUT.diffuse = float4(0, 0, 0, 0);
 	return OUT;
 }

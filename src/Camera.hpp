@@ -17,7 +17,7 @@ public:
 	Camera(const Vector3& targetPosition = Vector3(),
 	       const Vector3& upDirection = Vector3(0.0f, 1.0f, 0.0f));
 
-	RenderableType getType() { return RT_CAMERA; }
+	RenderableType getRenderableType() const { return RT_CAMERA; }
 
 	void render();
 

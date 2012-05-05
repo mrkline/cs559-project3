@@ -21,11 +21,9 @@ Material::Material()
 	unlit[0] = 0.0f;
 	unlit[1] = 0.0f;
 	unlit[2] = 0.0f;
-	unlit[3] = 1.0f;
-	diffuse[0] = 1.0f;
-	diffuse[1] = 1.0f;
-	diffuse[2] = 1.0f;
-	diffuse[3] = 1.0f;
+	diffuse[0] = 0.0f;
+	diffuse[1] = 0.0f;
+	diffuse[2] = 0.0f;
 	shininess = 1.0f;
 }
 

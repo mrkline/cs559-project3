@@ -15,7 +15,7 @@
 // renderables
 #include "Camera.hpp"
 #include "Cube.hpp"
-#include "Light.hpp"
+#include "DirectionalLight.hpp"
 #include "Plane.hpp"
 #include "SkyBox.hpp"
 #include "Sphere.hpp"
@@ -161,6 +161,12 @@ void init()
 			mat->vertexShader->getNamedParameter("modelViewIT").setStateMatrix(
 			    CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE_TRANSPOSE);
 
+			mat->fragmentShader->getNamedParameter("diffuse").set3fv(
+			    mat->diffuse);
+
+			mat->fragmentShader->getNamedParameter("shininess").set1f(
+			    mat->shininess);
+
 			auto& cam = sr->getActiveCamera();
 			mat->fragmentShader->getNamedParameter("zNear").set1f(
 			    cam->getNear());
@@ -169,7 +175,7 @@ void init()
 		};
 
 		// Create and place our light.
-		auto light = make_shared<Light>();
+		auto light = make_shared<DirectionalLight>();
 		auto lightNode = make_shared<SceneNode>(nullptr,
 		                                        Vector3(10.0f, 10.0f, -10.0f));
 		lightNode->addRenderable(light);
@@ -206,7 +212,9 @@ void init()
 		    make_shared<Texture>("./resources/textures/Awesome.png"));
 		groundMat->textures.push_back(
 		    make_shared<Texture>("./resources/textures/Matrix.png"));
-		// Load the ground's pixel shader
+		groundMat->diffuse[0] = 0.4f;
+		groundMat->diffuse[1] = 1.0f;
+		groundMat->diffuse[2] = 0.4f;
 		groundMat->vertexShader = defaultDeferredVertex;
 		groundMat->fragmentShader = defaultDeferredFrag;
 		groundMat->callback = defaultDeferredCallback;
@@ -223,10 +231,6 @@ void init()
 		           MB_OK | MB_ICONERROR);
 		exit(1);
 	}
-
-	// Enable our first (and only) light
-	//! \todo Support more lights later
-	glEnable(GL_LIGHT0);
 
 	// Set up shading model
 	glShadeModel(GL_SMOOTH);
@@ -505,7 +509,7 @@ void onKeyboardDown(unsigned char key, int x, int y)
 		break;
 
 	case '5':
-		sr->setDisplayMode(SceneRenderer::DM_SPECULAR);
+		sr->setDisplayMode(SceneRenderer::DM_FINAL);
 		break;
 	}
 }

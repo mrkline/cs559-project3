@@ -1,0 +1,29 @@
+// Lights the entire screen using a directional light
+float4 main(float2 uv : TEXCOORD,
+            sampler2D baseTex, // The base image to add to
+            sampler2D normAndDepthTex, // The normal and depth 
+            sampler2D litTex, // Diffuse and specular coefficients
+            uniform float3 lightDirection, // Light direction, in view space
+            uniform float3 color) // light color
+            : COLOR
+{
+    float4 base = tex2D(baseTex, uv);
+    float4 nd = tex2D(normAndDepthTex, uv);
+    float4 l = tex2D(litTex, uv);
+    
+    // Unpack our normals
+    float3 normal;
+    normal.r = nd.r * 2.0f - 1.0f;
+    normal.g = nd.g * 2.0f - 1.0f;
+    normal.b = nd.b * 2.0f - 1.0f;
+    float3 halfAngle = normalize(float3(0, 0, 1.0f) + lightDirection);
+    float4 coefficients = lit(dot(normal, lightDirection),
+                              dot(normal, halfAngle), l.a);
+
+    float4 ret = base;
+    ret.rgb += coefficients.y * l.rgb;
+    ret.rgb += coefficients.z * color;
+    // Coefficient test:
+    //ret.rgb += coefficients.rgb;
+    return ret;
+}

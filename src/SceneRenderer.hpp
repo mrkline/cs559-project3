@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "FrameBuffer.hpp"
+#include "Vector3.hpp"
 
 class Camera;
 struct Material;
@@ -19,7 +20,7 @@ public:
 		DM_NORMALS, //!< Display view-space normals
 		DM_DEPTH, //!< Display normalized depth
 		DM_LIT, //!< Lit color
-		DM_SPECULAR //!< Specular coefficient
+		DM_FINAL //!< The final, lit scene
 	};
 
 	SceneRenderer(size_t screenWidth, size_t screenHeight);
@@ -34,11 +35,15 @@ public:
 
 	void setActiveCamera(std::shared_ptr<Camera>& cam) { activeCamera = cam; }
 
-	void setDisplayMode(DisplayMode dm);
+	void setDisplayMode(DisplayMode mode) { dm = mode; }
 
 private:
 	//! The frame buffer used to render to multiple target textures
-	FrameBuffer fb;
+	FrameBuffer mrtFB;
+
+	//! The frame buffer used to render to a single texture to build the final
+	//! image
+	FrameBuffer compFB;
 
 	//! This texture contains unlit and emissive color data
 	std::shared_ptr<Texture> unlit;
@@ -49,8 +54,16 @@ private:
 	//! This texture contains light colors and specular coefficients
 	std::shared_ptr<Texture> lit;
 
-	//! Material used for displaying textures on fullscreen quads
-	std::shared_ptr<Material> screenMat;
+	// These two textures are used to build the output image
+	std::shared_ptr<Texture> comp0;
+	std::shared_ptr<Texture> comp1;
+
+	//! Material used for displaying intermediates on the screen or doing
+	//! single-texture operations
+	std::shared_ptr<Material> singleTexMat;
+
+	//! Material used for adding a light to the scene
+	std::shared_ptr<Material> lightingMat;
 
 	//! A shader used to strip the alpha channel from a texture in order
 	//! to display only its RGB components
@@ -59,9 +72,15 @@ private:
 	//! A shader used to show the alpha channel fo a texture
 	std::shared_ptr<CgProgram> alphaOnlyShader;
 
+	//! A shader used for screen-wide directional lights
+	std::shared_ptr<CgProgram> directionalLightShader;
+
 	//! The list of scene nodes in the scene
 	std::list<std::shared_ptr<SceneNode>> sceneNodes;
 
 	//! The camera we're currently rendering from
 	std::shared_ptr<Camera> activeCamera;
+
+	//! Display mode
+	DisplayMode dm;
 };

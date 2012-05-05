@@ -78,6 +78,13 @@ public:
 		*this = temp;
 	}
 
+	void setToTranspose()
+	{
+		Transform temp;
+		getTransposed(temp);
+		*this = temp;
+	}
+
 	/*!
 	\brief Sets a transform ot the transpose of this one, if possible
 	\param out The transform to set to the transpose

@@ -15,8 +15,8 @@ struct Material
 	bool depthTest; //!< If false, the object is not drawn using the z-buffer
 	bool writeToDepth; //!< If false, the object is not written to the z-buffer
 	GLenum depthFunc; //!< Depth function
-	float unlit[4]; //!< Unlit color of the object (diffuse, and emissive)
-	float diffuse[4]; //!< Diffuse light coefficients
+	float unlit[3]; //!< Unlit color of the object (diffuse, and emissive)
+	float diffuse[3]; //!< Diffuse light coefficients
 	float shininess; //!< Specular coefficient
 	//! Texture(s) of the object
 	std::vector<std::shared_ptr<Texture>> textures;
