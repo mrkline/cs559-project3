@@ -3,23 +3,32 @@
 #include "Animator.hpp"
 #include "Model.hpp"
 #include "Vector3.hpp"
+#include "RoadMap.hpp"
+#include "RoadMapNode.hpp"
+#include "SceneNode.hpp"
 
-class Car: Animator, Renderable
+class Car: public Renderable
 {
 private:
 	std::shared_ptr<Model> model;
-	Vector3 location;
-	Vector3 destination;	// need to check if past destination and deal with it
-	float rotation;
-	const static int dx = 1; // distance to go each tick
+	shared_ptr<RoadMapNode> origin, destination;
+	float speed;
 
 public:
-	Car(const char* filename);
+	Car(shared_ptr<Model> model, float speed);
 	void render();
-	void animate(float dt);
-	void setdirection(Vector3 dir);
-	void setlocation(Vector3 loc);
-	void setrotation(float rot);
+	float getSpeed(){return this->speed;};
+	void setSpeed(float speed){this->speed = speed;}; 
+	Vector3 getLocation();
+	shared_ptr<RoadMapNode> getDestination(){return this->destination;};
+	shared_ptr<RoadMapNode> getOrigin(){return this->origin;};
+	void setLocation(Vector3 newLoc);
+	void setDestination(shared_ptr<RoadMapNode> newDest){this->destination = newDest;};
+	void setOrigin(shared_ptr<RoadMapNode> newOrig){this->origin = newOrig;};
+	// adjusts the rotation based on the current location and the destination
+	void updateRotation();
+	weak_ptr<Model> getModel(){return weak_ptr<Model>(model);};
 	~Car(void);
+	
 };
 

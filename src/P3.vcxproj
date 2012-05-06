@@ -84,6 +84,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Car.cpp" />
+    <ClCompile Include="CarAnimator.cpp" />
     <ClCompile Include="CgErrors.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLErrors.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Arrow.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Car.hpp" />
+    <ClInclude Include="CarAnimator.hpp" />
     <ClInclude Include="CEGUIStyleManager.hpp" />
     <ClInclude Include="CgContext.hpp" />
     <ClInclude Include="CgErrors.hpp" />

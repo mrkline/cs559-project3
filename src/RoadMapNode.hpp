@@ -13,9 +13,10 @@ private:
 
 public:
 	RoadMapNode(Vector2 location){this->location = location;};
+	Vector2 getLocation(){return this->location;};
 	void addConnection(shared_ptr<RoadMapNode> conn);
-	shared_ptr<RoadMapNode> getConnection(unsigned int idx);
-	int getNumConnections();
+	shared_ptr<RoadMapNode> getConnection(size_t idx);
+	size_t getNumConnections();
 	~RoadMapNode(void);
 };
 

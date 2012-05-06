@@ -29,6 +29,7 @@
 
 // Animated things
 #include "RoadMap.hpp"
+#include "CarAnimator.hpp"
 
 // Cg support
 #include "CgContext.hpp"
@@ -205,19 +206,31 @@ void init()
 		}
 
 		//TODO - add cars here
-		//	parse road layout from MAPFile
-		//	create caranimator
-		//	instantiate cars at random locations
-		//	add scene nodes to scene renderer
-		//	add cars to car animator
-		//	add caranimator to animatormanagaer
+		//	Xparse road layout from MAPFile
+		//	instantiate cars at random, valid locations
+		//		requires models, textures;
+		//		create a vector of models and textures and randomly select those
+		//	Xadd scene nodes to scene renderer
+		//	Xadd cars to car animator
+		//	Xadd caranimator to animatormanagaer
 		/*int numrandomcars = 1;
 		for(int i = 0; i < numrandomcars; i++)
 		{
 
 		}*/
-		RoadMap* roadmap = new RoadMap("./resources/Moonroads.txt");
+		cout << "--------------------------------------" << endl;
+		cout << "parsing roadmap" << endl;
+		auto roadmap = make_shared<RoadMap>("./resources/Moonroads.txt");
 		cout << "done with roadmap" << endl;
+		cout << "--------------------------------------" << endl;
+
+		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
+		OBJFile* carmodel = new OBJFile("./resources/models/sphere3.obj");
+        caranimator->createCar(make_shared<Model>(*carmodel->getModel()),
+			make_shared<Texture>("./resources/textures/Awesome.png"));
+
+
+		am->addanimator(caranimator);
 
 	}
 	catch (const Exceptions::Exception& ex) {
@@ -387,11 +400,13 @@ void onDisplay()
 	else if (controls.radTop->isSelected()) {
 		sr->setActiveCamera(topCam);
 	}
+	
+	// update any Animators
+	am->animate();
 
 	// Enable depth testing and draw our scene
 	try {
 		glEnable(GL_DEPTH_TEST);
-		am->animate();
 		sr->renderScene();
 		// Disable lighting and depth tests for rendering the GUI
 		setActiveMaterial(getDefaultMaterial());

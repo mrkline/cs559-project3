@@ -10,8 +10,9 @@ private:
 	shared_ptr<vector<shared_ptr<RoadMapNode>>> nodes;
 
 public:
-	RoadMap(char* filename);
-	
+	RoadMap(const char* filename);
+	size_t getSize(){return this->nodes->size();};
+	shared_ptr<RoadMapNode> getNodeAt(size_t loc);
 	~RoadMap(void);
 };
 

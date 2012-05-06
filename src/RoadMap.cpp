@@ -5,7 +5,7 @@
 #include "Vector2.hpp"
 
 
-RoadMap::RoadMap(char* filename)
+RoadMap::RoadMap(const char* filename)
 {
 	if(filename != nullptr)
 	{
@@ -67,6 +67,13 @@ RoadMap::RoadMap(char* filename)
 	}
 }
 
+shared_ptr<RoadMapNode> RoadMap::getNodeAt(size_t loc)
+{
+	if(loc < nodes->size())
+		return (*nodes)[loc];
+	else
+		return nullptr;
+}
 
 RoadMap::~RoadMap(void)
 {
