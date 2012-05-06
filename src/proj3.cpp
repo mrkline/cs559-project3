@@ -11,6 +11,8 @@
 #include "SceneNode.hpp"
 #include "Texture.hpp"
 #include "FrameBuffer.hpp"
+#include "AnimatorManager.hpp"
+#include "Animator.hpp"
 
 // renderables
 #include "Camera.hpp"
@@ -24,6 +26,9 @@
 #include "OBJFile.hpp"
 #include "Model.hpp"
 #include "MAPFile.hpp"
+
+// Animated things
+#include "RoadMap.hpp"
 
 // Cg support
 #include "CgContext.hpp"
@@ -41,6 +46,8 @@ static CgProfile* cgVertexProfile;
 static CgProfile* cgFragmentProfile;
 
 static SceneRenderer* sr;
+static AnimatorManager* am;
+
 static bool animate = false;
 static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
@@ -119,6 +126,9 @@ void init()
 		// Start up our scene renderer
 		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
 
+		// and animator manager
+		am = new AnimatorManager();
+
 		// Start up Cg
 		cgContext = new CgContext;
 		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
@@ -193,6 +203,21 @@ void init()
 				sr->getSceneNodes().push_back(*i);
 			}
 		}
+
+		//TODO - add cars here
+		//	parse road layout from MAPFile
+		//	create caranimator
+		//	instantiate cars at random locations
+		//	add scene nodes to scene renderer
+		//	add cars to car animator
+		//	add caranimator to animatormanagaer
+		/*int numrandomcars = 1;
+		for(int i = 0; i < numrandomcars; i++)
+		{
+
+		}*/
+		RoadMap* roadmap = new RoadMap("./resources/Moonroads.txt");
+		cout << "done with roadmap" << endl;
 
 	}
 	catch (const Exceptions::Exception& ex) {
@@ -366,6 +391,7 @@ void onDisplay()
 	// Enable depth testing and draw our scene
 	try {
 		glEnable(GL_DEPTH_TEST);
+		am->animate();
 		sr->renderScene();
 		// Disable lighting and depth tests for rendering the GUI
 		setActiveMaterial(getDefaultMaterial());

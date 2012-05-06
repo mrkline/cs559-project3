@@ -40,8 +40,6 @@ MAPFile::MAPFile(char* filename)
 					// model index and file
 					matfile >> temp >> temp; // throw away index
 					string path = MODELPATH + temp;
-					SYSTEMTIME st;
-					GetSystemTime(&st);
 					cout << "------------------------------" << endl;
 					cout << "loading model: " << path << endl;
 					OBJFile* objfile = new OBJFile(path.c_str());

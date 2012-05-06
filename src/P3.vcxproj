@@ -74,6 +74,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatorManager.cpp" />
     <ClCompile Include="Arrow.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -82,6 +83,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Car.cpp" />
     <ClCompile Include="CgErrors.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLErrors.cpp" />
@@ -105,6 +107,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RoadMap.cpp" />
+    <ClCompile Include="RoadMapNode.cpp" />
     <ClCompile Include="SceneRenderer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -134,8 +138,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="AnimatorManager.hpp" />
     <ClInclude Include="Arrow.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Car.hpp" />
     <ClInclude Include="CEGUIStyleManager.hpp" />
     <ClInclude Include="CgContext.hpp" />
     <ClInclude Include="CgErrors.hpp" />
@@ -156,6 +163,8 @@
     <ClInclude Include="OBJFile.hpp" />
     <ClInclude Include="Plane.hpp" />
     <ClInclude Include="Renderable.hpp" />
+    <ClInclude Include="RoadMap.hpp" />
+    <ClInclude Include="RoadMapNode.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="SceneNode.hpp" />
     <ClInclude Include="SkyBox.hpp" />
