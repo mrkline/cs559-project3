@@ -16,9 +16,9 @@ float4 main(float2 uv : TEXCOORD,
     normal.r = nd.r * 2.0f - 1.0f;
     normal.g = nd.g * 2.0f - 1.0f;
     normal.b = nd.b * 2.0f - 1.0f;
-    float3 halfAngle = normalize(float3(0, 0, 1.0f) + lightDirection);
-    float4 coefficients = lit(dot(normal, lightDirection),
-                              dot(normal, halfAngle), l.a);
+    float3 halfAngle = normalize(float3(0, 0, 1.0f) - lightDirection);
+    float4 coefficients = lit(dot(normal, -lightDirection),
+                              dot(normal, halfAngle), 100);
 
     float4 ret = base;
     ret.rgb += coefficients.y * l.rgb;
