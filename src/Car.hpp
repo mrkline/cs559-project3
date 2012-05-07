@@ -23,8 +23,8 @@ public:
 	shared_ptr<RoadMapNode> getDestination(){return this->destination;};
 	shared_ptr<RoadMapNode> getOrigin(){return this->origin;};
 	void setLocation(Vector3 newLoc);
-	void setDestination(shared_ptr<RoadMapNode> newDest){this->destination = newDest;};
-	void setOrigin(shared_ptr<RoadMapNode> newOrig){this->origin = newOrig;};
+	void setDestination(shared_ptr<RoadMapNode> newDest);
+	void setOrigin(shared_ptr<RoadMapNode> newOrig);
 	// adjusts the rotation based on the current location and the destination
 	void updateRotation();
 	weak_ptr<Model> getModel(){return weak_ptr<Model>(model);};

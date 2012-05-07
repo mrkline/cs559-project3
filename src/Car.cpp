@@ -24,6 +24,17 @@ Vector3 Car::getLocation()
 	}
 }
 
+void Car::setDestination(shared_ptr<RoadMapNode> newDest)
+{
+	destination = newDest;
+}
+
+void Car::setOrigin(shared_ptr<RoadMapNode> newOrig)
+{
+	origin = newOrig;
+	printf("something");
+}
+
 void Car::setLocation(Vector3 newLoc)
 {
 	if(auto ptr = this->owner.lock())

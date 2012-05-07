@@ -226,8 +226,12 @@ void init()
 
 		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
 		OBJFile* carmodel = new OBJFile("./resources/models/sphere3.obj");
-        caranimator->createCar(make_shared<Model>(*carmodel->getModel()),
-			make_shared<Texture>("./resources/textures/Awesome.png"));
+        auto numcars = 1;
+		for(int i = 0; i < numcars; i++)
+		{
+			caranimator->createCar(make_shared<Model>(*carmodel->getModel()),
+				make_shared<Texture>("./resources/textures/Awesome.png"));
+		}
 
 
 		am->addanimator(caranimator);
