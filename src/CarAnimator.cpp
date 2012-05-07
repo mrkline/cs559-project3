@@ -73,7 +73,7 @@ pair<shared_ptr<RoadMapNode>, shared_ptr<RoadMapNode>>
 //! since the last time animate was called.
 void CarAnimator::animate(double dt)
 {
-	const int PROXTOLER = 1;	// how close the destination the car should
+	const float PROXTOLER = 1;	// how close the destination the car should
 									// be before picking a new destination
 	srand((unsigned int)time(NULL));
 
@@ -84,20 +84,19 @@ void CarAnimator::animate(double dt)
 	// loop through all the cars
 	for(auto iter = cars.begin(); iter != cars.end(); iter++)
 	{
-		auto car = **iter;	// ha! auto, car, yeah, it's late...
+		auto car = iter->get();	// ha! auto, car, yeah, it's late...
 
-		//debug
 		bool changeddest = false;
-		auto originaldest = car.getDestination();
-		auto originalorig = car.getOrigin();
+		auto originaldest = car->getDestination();
+		auto originalorig = car->getOrigin();
 
 		// get info about this car
-		auto speed = car.getSpeed();
-		auto curloc = car.getLocation();
+		auto speed = car->getSpeed();
+		auto curloc = car->getLocation();
 		/*printf("----------------------------------------------\n");
 		printf("car loc on entry: %g %g %g\n", curloc.X, curloc.Y, curloc.Z);*/
-		auto dest = Vector3(car.getDestination()->getLocation().X,
-			curloc.Y, car.getDestination()->getLocation().Y);
+		auto destLoc = car->getDestination()->getLocation();
+		auto dest = Vector3(destLoc.X, curloc.Y, destLoc.Y);
 		//printf("car dest on entry: %g %g %g\n", dest.X, dest.Y, dest.Z);
 		// check if we are within tolerance of the destination point and should
 		// update destinations
@@ -106,22 +105,22 @@ void CarAnimator::animate(double dt)
 			// we're at the destination, so move the destination to the origin
 			// and randomly pick one of the (new) origin's connections as the
 			// destination
-			car.setOrigin(car.getDestination());
-			auto idx = rand() % car.getOrigin()->getNumConnections();
-			car.setDestination(car.getOrigin()->getConnection(idx));
+			car->setOrigin(car->getDestination());
+			auto idx = rand() % car->getOrigin()->getNumConnections();
+			car->setDestination(car->getOrigin()->getConnection(idx));
+			destLoc = car->getDestination()->getLocation();
 			// update dest for the next step
-			dest = Vector3(car.getDestination()->getLocation().X,
-				curloc.Y, car.getDestination()->getLocation().Y);
-			
-			
+			dest = Vector3(destLoc.X, curloc.Y, destLoc.Y);
+
+
 			//debug
 			changeddest = true;
 		}
 		// move the car some distance towards the destination
-		double totaldistance = speed / 1000 * dt; // yada yada, windows 49day bug
+		double totaldistance = speed / 1000.0 * dt; // yada yada, windows 49day bug
 		totaldistance = min(speed, (float)totaldistance); // clamp the distance
 		auto movevector = dest - curloc;
-		
+
 		auto mvleng = movevector.getLength();
 		totaldistance = 0.1f;
 		auto delta = movevector / mvleng * (float)totaldistance;
@@ -129,22 +128,22 @@ void CarAnimator::animate(double dt)
 		// temp debug
 		/*if(movevector.X > 0)
 			delta = Vector3(.5, 0, 0);
-		else if(movevector.X < 0) 
+		else if(movevector.X < 0)
 			delta = Vector3(-.5, 0, 0);
-		else if(movevector.Z > 0) 
+		else if(movevector.Z > 0)
 			delta = Vector3(0, 0, .5);
-		else if(movevector.Z < 0) 
+		else if(movevector.Z < 0)
 			delta = Vector3(0, 0, -.5);
 		else
 			delta = Vector3(0, 0, 0);
 		*/
 		// end temp debug
 
-		car.setLocation(curloc + delta);			
-		
+		car->setLocation(curloc + delta);
+
 		// tell the car to fix its rotation
-		car.updateRotation();
-		
+		car->updateRotation();
+
 		/*dest = Vector3(car.getDestination()->getLocation().X,
 				curloc.Y, car.getDestination()->getLocation().Y);
 		printf("car loc on exit: %g %g %g\n", car.getLocation().X, car.getLocation().Y, car.getLocation().Z);
