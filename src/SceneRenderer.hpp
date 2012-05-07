@@ -73,7 +73,8 @@ private:
 	std::shared_ptr<CgProgram> alphaOnlyShader;
 
 	//! A shader used for screen-wide directional lights
-	std::shared_ptr<CgProgram> directionalLightShader;
+	std::shared_ptr<CgProgram> directionalLightVert;
+	std::shared_ptr<CgProgram> directionalLightFrag;
 
 	//! The list of scene nodes in the scene
 	std::list<std::shared_ptr<SceneNode>> sceneNodes;

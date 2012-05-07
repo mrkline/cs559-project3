@@ -39,15 +39,19 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 
 	auto& cgContext = CgSingleton::getSingleton().getContext();
 	auto& fragProfile = CgSingleton::getSingleton().getFragmentProfile();
+	auto& vertProfile = CgSingleton::getSingleton().getVertexProfile();
 	stripAlphaShader = make_shared<CgProgram>(cgContext, false,
 	                   "./resources/shaders/StripAlpha.cg",
 	                   fragProfile, "main");
 	alphaOnlyShader = make_shared<CgProgram>(cgContext, false,
 	                  "./resources/shaders/AlphaOnly.cg",
 	                  fragProfile, "main");
-	directionalLightShader = make_shared<CgProgram>(cgContext, false,
+	directionalLightVert = make_shared<CgProgram>(cgContext, false,
 			"./resources/shaders/DirectionalLight.cg",
-			fragProfile, "main");
+			vertProfile, "VS_Main");
+	directionalLightFrag = make_shared<CgProgram>(cgContext, false,
+			"./resources/shaders/DirectionalLight.cg",
+			fragProfile, "FS_Main");
 
 	singleTexMat = make_shared<Material>();
 	singleTexMat->textures.push_back(normAndDepth);
@@ -166,6 +170,10 @@ void SceneRenderer::renderScene()
 	modelViewIT.setToInverse();
 	modelViewIT.setToTranspose();
 
+	Transform invProjection;
+	glGetFloatv(GL_PROJECTION_MATRIX, invProjection.getArray());
+	invProjection.setToInverse();
+
 	// Set matrices to identities to simplify drawing screen-wide quads
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -227,19 +235,26 @@ void SceneRenderer::renderScene()
 		auto src = comp0;
 		auto dest = comp1;
 		// Apply directional lights
-		lightingMat->fragmentShader = directionalLightShader;
+		lightingMat->vertexShader = directionalLightVert;
+		lightingMat->fragmentShader = directionalLightFrag;
 		for (auto it = dirLights.begin(); it != dirLights.end(); ++it) {
 			// Set up the lighting material
 			lightingMat->textures[0] = src;
 			setActiveMaterial(lightingMat);
 			// Set shader parameters
-			directionalLightShader->getNamedParameter("color").
+			directionalLightVert->getNamedParameter("invProj").
+				setTransform(invProjection);
+			directionalLightFrag->getNamedParameter("near").
+				set1f(activeCamera->getNear());
+			directionalLightFrag->getNamedParameter("far").
+				set1f(activeCamera->getFar());
+			directionalLightFrag->getNamedParameter("color").
 				set3fv((*it)->color);
 			// Convert the light direction to view space
 			Vector3 lightDirection = (*it)->direction; 
 			lightDirection.normalize(); //!< \todo: unneeded?
 			modelViewIT.transformPoint(lightDirection);
-			directionalLightShader->getNamedParameter("lightDirection").
+			directionalLightFrag->getNamedParameter("lightDirection").
 				setVector3(lightDirection);
 			// Render to dest
 			compFB.attachTexture(dest);
