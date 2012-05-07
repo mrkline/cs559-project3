@@ -177,8 +177,8 @@ void init()
 		// Create and place our light.
 		auto light = make_shared<DirectionalLight>();
 		auto lightNode = make_shared<SceneNode>(nullptr,
-		                                        Vector3(10.0f, 10.0f, -10.0f));
-		light->direction = -lightNode->getTransform().getTranslation();
+		                                        Vector3(0.0f, 10.0f, 0.0f));
+		//light->direction = -lightNode->getTransform().getTranslation();
 		light->direction.normalize();
 		lightNode->addRenderable(light);
 		// Give the light a yellow sphere (sun?)

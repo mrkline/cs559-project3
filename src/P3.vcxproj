@@ -136,6 +136,7 @@
     <ClInclude Include="CgProfile.hpp" />
     <ClInclude Include="CgProgram.hpp" />
     <ClInclude Include="Cube.hpp" />
+    <ClInclude Include="DirectionalLight.hpp" />
     <ClInclude Include="Exceptions.hpp" />
     <ClInclude Include="FrameBuffer.hpp" />
     <ClInclude Include="GLErrors.hpp" />
