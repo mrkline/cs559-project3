@@ -164,10 +164,8 @@ void SceneRenderer::renderScene()
 	// Draw our rendered texture on a quad
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Transform modelViewIT;
-	glGetFloatv(GL_MODELVIEW_MATRIX, modelViewIT.getArray());
-	modelViewIT.setToInverse();
-	modelViewIT.setToTranspose();
+	Transform modelView;
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelView.getArray());
 
 	Transform invProjection;
 	glGetFloatv(GL_PROJECTION_MATRIX, invProjection.getArray());
@@ -252,7 +250,7 @@ void SceneRenderer::renderScene()
 			// Convert the light direction to view space
 			Vector3 lightDirection = (*it)->direction; 
 			lightDirection.normalize(); //!< \todo: unneeded?
-			modelViewIT.transformPoint(lightDirection);
+			modelView.rotatePoint(lightDirection);
 			directionalLightFrag->getNamedParameter("lightDirection").
 				setVector3(lightDirection);
 			// Render to dest

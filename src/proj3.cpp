@@ -76,7 +76,7 @@ static struct {
 //! Current yaw of the camera, in radians
 static float cameraYaw = 0.0f;
 //! Current pitch of the camera, in radians
-static float cameraPitch = Math::kPi / 6.0f;
+static float cameraPitch = Math::kPi / 4.0f;
 
 //! Delta camera movment per frame, in radians
 static const float deltaMovement = 0.1f;
