@@ -166,7 +166,7 @@ void SceneRenderer::renderScene()
 
 	Transform modelViewIT;
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelViewIT.getArray());
-	modelViewIT.setTranslation(Vector3());
+	//modelViewIT.setTranslation(Vector3());
 	modelViewIT.setToInverse();
 	modelViewIT.setToTranspose();
 

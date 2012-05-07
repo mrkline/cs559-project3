@@ -28,6 +28,8 @@ float4 FS_Main(VertexData vd,
             uniform float3 color) // light color
             : COLOR
 {
+    return float4(lightDirection.x / 2.0 + 0.5, lightDirection.y / 2.0 + 0.5,
+        lightDirection.z / 2.0 + 0.5, 1);
     float4 base = tex2D(baseTex, vd.uv);
     float4 nd = tex2D(normAndDepthTex, vd.uv);
     float4 l = tex2D(litTex, vd.uv);
@@ -36,7 +38,6 @@ float4 FS_Main(VertexData vd,
     float3 eye = vd.back * (near + nd.a * (far - near)) / far;
     eye *= -1;
     eye = normalize(eye);
-    //return float4(eye, 1);
     
     // Unpack our normals
     float3 normal;
