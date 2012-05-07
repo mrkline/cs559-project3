@@ -144,7 +144,7 @@ void init()
 
 		// Create and place our cameras
 		freeCam = make_shared<Camera>();
-		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
+		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 500.0f);
 		sr->setActiveCamera(freeCam);
 		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
