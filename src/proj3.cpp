@@ -203,10 +203,8 @@ void init()
 		// and textures. Add those to the SceneRenderer.
 		MAPFile* mapfile = new MAPFile("./resources/mooncolony_map.txt");
 		std::vector<shared_ptr<SceneNode>>* nodes =  mapfile->getNodes();
-		if(nodes != nullptr)
-		{
-			for(auto i = nodes->begin(); i != nodes->end(); i++)
-			{
+		if (nodes != nullptr) {
+			for (auto i = nodes->begin(); i != nodes->end(); i++) {
 				sr->getSceneNodes().push_back(*i);
 			}
 		}
@@ -232,11 +230,11 @@ void init()
 
 		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
 		OBJFile carObj("./resources/models/sphere3.obj");
-        auto numcars = 1;
-		for(int i = 0; i < numcars; i++)
-		{
-			caranimator->createCar(carObj.getModel(),
-				make_shared<Texture>("./resources/textures/Awesome.png"));
+		auto numcars = 1;
+		for (int i = 0; i < numcars; i++) {
+			caranimator->createCar(
+			    carObj.getModel(),
+			    make_shared<Texture>("./resources/textures/Awesome.png"));
 		}
 
 
@@ -401,7 +399,7 @@ void onDisplay()
 	else if (controls.radTop->isSelected()) {
 		sr->setActiveCamera(topCam);
 	}
-	
+
 	// update any Animators
 	am->animate();
 

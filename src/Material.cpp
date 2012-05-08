@@ -30,6 +30,11 @@ Material::Material()
 
 void Material::setShaderSet(const shared_ptr<ShaderSet>& set)
 {
+	if (!set) {
+		throw Exceptions::ArgumentNullException("Invalid shader set",
+		                                        __FUNCTION__);
+	}
+
 	vertexShader = set->vertexShader;
 	fragmentShader = set->fragmentShader;
 	callback = set->callback;

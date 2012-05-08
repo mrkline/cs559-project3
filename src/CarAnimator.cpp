@@ -1,7 +1,7 @@
 #include "StdAfx.hpp"
 #include "CarAnimator.hpp"
-#include <time.h>	// for srand
 
+#include <ctime>	// for srand
 
 #include "CgSingleton.hpp"
 
