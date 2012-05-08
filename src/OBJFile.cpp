@@ -22,7 +22,7 @@ OBJFile::OBJFile(const char* filename)
 		else
 		{
 			vector<int> faces;
-			model = new Model();
+			model = make_shared<Model>();
 			string key, temp;
 			float tmpx, tmpy, tmpz, tmpu, tmpv, tmpw;
 			while(!objfile.eof() && objfile >> key)
@@ -116,9 +116,4 @@ OBJFile::OBJFile(const char* filename)
 			objfile.close();
 		}
 	}
-}
-
-OBJFile::~OBJFile(void)
-{
-
 }

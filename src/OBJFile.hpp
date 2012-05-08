@@ -5,6 +5,8 @@
 #include "Vector3.hpp"
 #include "Model.hpp"
 
+#include <memory>
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -17,10 +19,9 @@ class OBJFile
 {
 public:
 	OBJFile(const char* filename);
-	Model* getModel(){return model;};
-	~OBJFile(void);
+	const std::shared_ptr<Model> getModel() { return model; }
 
 private:
-	Model* model;
+	std::shared_ptr<Model> model;
 };
 
