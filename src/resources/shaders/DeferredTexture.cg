@@ -1,0 +1,49 @@
+// This file is the default material for deferred shading.
+
+
+struct VertexShaderOutput {
+    float4 position : POSITION;
+    float2 uv : TEXCOORD0;
+    float3 normal : TEXCOORD1;
+    float depth : TEXCOORD2;
+    float4 unlit : COLOR;
+};
+
+VertexShaderOutput VS_Main(float4 local : POSITION,
+                        float4 normal : NORMAL,
+                        float4 unlit : COLOR,
+                        float2 uv : TEXCOORD,
+                        uniform float4x4 modelViewProj,
+                        uniform float4x4 modelView,
+                        uniform float4x4 modelViewIT)
+{
+    VertexShaderOutput OUT;
+    OUT.position = mul(modelViewProj, local);
+    OUT.uv = uv;
+    OUT.normal= mul(modelViewIT, normal).xyz;
+    OUT.depth = -mul(modelView, local).z;
+    OUT.unlit = unlit;
+    return OUT;
+}
+
+struct FragmentShaderOutput {
+    float4 unlit : COLOR0;
+    float4 normAndDepth : COLOR1;
+    float4 diffuse : COLOR2;
+};
+
+FragmentShaderOutput FS_Main(VertexShaderOutput vsOut,
+                             sampler2D tex,
+                             uniform float3 diffuse,
+                             uniform float shininess,
+                             uniform float zNear,
+                             uniform float zFar)
+{
+    FragmentShaderOutput OUT;
+    OUT.unlit = vsOut.unlit;
+    OUT.normAndDepth.rgb = (vsOut.normal + 1.0f) / 2.0f;
+    OUT.normAndDepth.a = 1.0f - (vsOut.depth - zNear) / zFar;
+    OUT.diffuse.rgb = tex2D(tex, vsOut.uv).rgb;
+    OUT.diffuse.a = shininess;
+    return OUT;
+}

@@ -13,6 +13,7 @@
 #include "FrameBuffer.hpp"
 #include "AnimatorManager.hpp"
 #include "Animator.hpp"
+#include "ShaderSet.hpp"
 
 // renderables
 #include "Camera.hpp"
@@ -151,14 +152,17 @@ void init()
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
 
-		auto defaultDeferredVertex = make_shared<CgProgram>(cgContext, false,
-		                             "./resources/shaders/DeferredDefault.cg",
-		                             cgVertProfile, "VS_Main");
-		auto defaultDeferredFrag = make_shared<CgProgram>(cgContext, false,
-		                           "./resources/shaders/DeferredDefault.cg",
+		// Set up commonly used texture sets
+		auto deferredTextureSet = make_shared<ShaderSet>();
+		deferredTextureSet->vertexShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredTexture.cg",
+		                           cgVertProfile, "VS_Main");
+		deferredTextureSet->fragmentShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredTexture.cg",
 		                           cgFragProfile, "FS_Main");
-		auto defaultDeferredCallback = [&](const shared_ptr<Material>& mat) {
-
+		deferredTextureSet->callback = [&](const shared_ptr<Material>& mat) {
 			mat->vertexShader->getNamedParameter("modelViewProj").
 			setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
 
@@ -180,6 +184,7 @@ void init()
 			mat->fragmentShader->getNamedParameter("zFar").set1f(
 			    cam->getFar());
 		};
+		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();

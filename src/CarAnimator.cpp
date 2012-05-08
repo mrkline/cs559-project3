@@ -3,6 +3,8 @@
 #include <time.h>	// for srand
 
 
+#include "CgSingleton.hpp"
+
 CarAnimator::CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr)
 {
 	this->map = map;
@@ -19,6 +21,8 @@ void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
 	// create the material and set properties
 	auto mat = make_shared<Material>();
     mat->textures.push_back(texture);
+	mat->setShaderSet(
+			CgSingleton::getSingleton().shaderSetMap["deferredTexture"]);
 	model->setMaterial(mat);
 
 	// get a roadmapnode to set location and destination
@@ -28,8 +32,7 @@ void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
 	tmp->setDestination(mappoints.second);
 	auto loc = mappoints.first->getLocation();
 	// add the scenenode
-	auto sn = make_shared<SceneNode>(*(new SceneNode(
-		nullptr, Vector3(loc.X, CARHEIGHT, loc.Y))));
+	auto sn = make_shared<SceneNode>(nullptr, Vector3(loc.X, CARHEIGHT, loc.Y));
     sn->addRenderable(tmp);
 	sr->getSceneNodes().push_back(sn);
 
