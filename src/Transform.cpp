@@ -229,6 +229,9 @@ void Transform::getRotationRadians(Vector3& vecOut) const
 	if (Z < 0.0)
 		Z += 2 * Math::kPi;
 
+	vecOut.X = X;
+	vecOut.Y = Y;
+	vecOut.Z = Z;
 }
 
 void Transform::getRotatedAxes(Vector3& x, Vector3& y, Vector3& z)
