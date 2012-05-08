@@ -52,16 +52,36 @@ void Car::updateRotation()
 {
 	if(auto& ptr = this->owner.lock())
 	{
-		// compute which way the car should be facing
+		// get hold of the current transform and the 2D map location and destination
 		auto& currXfrm = ptr->getTransform();
 		Vector2 currloc = Vector2(currXfrm.getTranslation().X, currXfrm.getTranslation().Z);
 		Vector2 dest = this->getDestination()->getLocation();
+		// figure out which way we should be facing
 		Vector2 toface = dest - currloc;
+		float rotate = 0.0f;
 		toface.normalize();
-		auto desiredangle = Vector3(0, acos(Vector2::dotProduct(Vector2(0,1), toface)), 0);
-		auto currentangle = currXfrm.getRotationRadians();
-		auto rotangle = desiredangle - currentangle;
-		currXfrm.rotateRadians(rotangle);
+		float desiredangle = 0.0f;
+		
+		// hacky - set the rotation angle explictly to avoid wobbling because of
+		// small changes in the rotation angle
+		if(toface.X >= 0.95f && toface.X <= 1.05f)
+			rotate = -90.0f;
+		else if(toface.X <= -0.95f && toface.X >= -1.05f)
+			rotate = 90.0f;
+		else if(toface.X <= .05f && toface.X >= -0.05f)
+		{
+			if(toface.Y >= 0.95f && toface.Y <= 1.05f)
+				rotate = 180.0f;
+			else if(toface.Y <= -0.95f && toface.Y >= -1.05f)
+				rotate = 0.0f;
+		}
+
+		// save off the current translation, reset the matrix (to clean any current
+		// rotation), put the xlat back, and rotate the matrix properly
+		auto xlat = currXfrm.getTranslation();
+		currXfrm.setToIdentity();
+		currXfrm.setTranslation(xlat);
+		currXfrm.rotateDegrees(Vector3(0, rotate, 0));
 	}
 }
 

@@ -16,7 +16,7 @@ CarAnimator::CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr)
 void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
 {
 	const float CARHEIGHT = 5.0f;	// keep the cars off the ground just a tad
-	const float CARSPEED = 1.0f;	// default speed in units per second
+	const float CARSPEED = 10.0f;	// default speed in units per second
 	
 	auto tmp = make_shared<Car>(model, CARSPEED);
 	
@@ -108,6 +108,9 @@ void CarAnimator::animate(double dt)
 			destLoc = car->getDestination()->getLocation();
 			// update dest for the next step
 			dest = Vector3(destLoc.X, curloc.Y, destLoc.Y);
+			// update the rotation before moving, otherwise there can
+			// be a backward-looking step
+			car->updateRotation();
 		}
 		// move the car some distance towards the destination
 		double totaldistance = speed / 1000.0 * dt; // yada yada, windows 49day bug
@@ -115,9 +118,10 @@ void CarAnimator::animate(double dt)
 		auto movevector = dest - curloc;
 
 		auto mvleng = movevector.getLength();
-		totaldistance = 0.1f;
+		
 		auto delta = movevector / mvleng * (float)totaldistance;
 		
+		// actually move the car
 		car->setLocation(curloc + delta);
 
 		// tell the car to fix its rotation

@@ -210,19 +210,6 @@ void init()
 		for (auto i = nodes.begin(); i != nodes.end(); ++i)
 			sr->getSceneNodes().push_back(*i);
 
-		//TODO - add cars here
-		//	Xparse road layout from MAPFile
-		//	instantiate cars at random, valid locations
-		//		requires models, textures;
-		//		create a vector of models and textures and randomly select those
-		//	Xadd scene nodes to scene renderer
-		//	Xadd cars to car animator
-		//	Xadd caranimator to animatormanagaer
-		/*int numrandomcars = 1;
-		for(int i = 0; i < numrandomcars; i++)
-		{
-
-		}*/
 		cout << "--------------------------------------" << endl;
 		cout << "parsing roadmap" << endl;
 		auto roadmap = make_shared<RoadMap>("./resources/Moonroads.txt");
@@ -231,7 +218,7 @@ void init()
 
 		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
 		OBJFile carObj("./resources/models/sphere3.obj");
-		auto numcars = 1;
+		auto numcars = 10;
 		for (int i = 0; i < numcars; i++) {
 			caranimator->createCar(
 			    carObj.getModel(),
