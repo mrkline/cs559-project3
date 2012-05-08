@@ -237,7 +237,7 @@ void init()
 		am->addanimator(caranimator);
 
 	}
-	catch (const Exceptions::Exception& ex) {
+	catch (const Exceptions::Exception&) {
 		MessageBox(GetActiveWindow(),
 			(string("Initialization error: ") + ex.message).c_str(),
 			"Initialization Error",

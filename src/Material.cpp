@@ -23,7 +23,6 @@ Material::Material()
 	depthTest = true;
 	writeToDepth = true;
 	depthFunc = GL_LESS;
-
 	color[0] = 1.0f;
 	color[1] = 1.0f;
 	color[2] = 1.0f;
