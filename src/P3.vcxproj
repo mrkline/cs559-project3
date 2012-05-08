@@ -86,6 +86,7 @@
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="CarAnimator.cpp" />
     <ClCompile Include="CgErrors.cpp" />
+    <ClCompile Include="CgSingleton.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLErrors.cpp" />
     <ClCompile Include="MAPFile.cpp" />

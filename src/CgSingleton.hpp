@@ -10,27 +10,22 @@ class CgSingleton
 public:
 	static CgSingleton& getSingleton()
 	{
-		static CgSingleton instance;
-		return instance;
+		// Use a pointer to circumvent RAII - there's no need to tear
+		// this down as the program exits - just let the program exit
+		static CgSingleton* instance = new CgSingleton;
+		return *instance;
 	}
 
-	CgContext& getContext() { return *context; }
+	CgContext& getContext() { return context; }
 
-	CgProfile& getVertexProfile() { return *vp; }
+	CgProfile& getVertexProfile() { return vp; }
 
-	CgProfile& getFragmentProfile() { return *fp; }
+	CgProfile& getFragmentProfile() { return fp; }
 
 private:
-	CgSingleton()
-	{
-		context = new CgContext;
-		vp = new CgProfile(*context, CG_GL_VERTEX);
-		printf("Cg vertex profile: %s\n", vp->getName());
-		fp = new CgProfile(*context, CG_GL_FRAGMENT);
-		printf("Cg fragment profile: %s\n", fp->getName());
-	}
+	CgSingleton();
 
-	CgContext* context;
-	CgProfile* vp;
-	CgProfile* fp;
+	CgContext context;
+	CgProfile vp;
+	CgProfile  fp;
 };
