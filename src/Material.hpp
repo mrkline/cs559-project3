@@ -1,12 +1,12 @@
 #pragma once
 
-#include <vector>
 #include <functional>
 #include <memory>
+#include <vector>
 
-class Texture;
 class CgProgram;
 class Renderable;
+class Texture;
 struct ShaderSet;
 
 //! A material is attached to renderables and holds rendering options

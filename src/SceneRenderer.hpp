@@ -7,10 +7,10 @@
 #include "Vector3.hpp"
 
 class Camera;
-struct Material;
 class SceneNode;
 class Texture;
 class CgProgram;
+struct Material;
 
 class SceneRenderer
 {

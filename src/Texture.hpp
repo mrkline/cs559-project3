@@ -1,9 +1,7 @@
 #pragma once
 
-#include <GL/gl.h>
-
-#include <string>
 #include <map>
+#include <string>
 
 //! Represents a 2D texture loaded into OpenGL
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CgContext.hpp"
-#include "CgProfile.hpp"
 #include "CgNamedParameter.hpp"
+#include "CgProfile.hpp"
 
 //! An RAII wrapper around CGprogram, the handle for Cg shader programs
 class CgProgram

@@ -1,20 +1,21 @@
 #pragma once
-#include "Material.hpp"
-#include "Vector3.hpp"
-#include "Model.hpp"
-#include "Texture.hpp"
-#include "OBJFile.hpp"
-#include "SceneNode.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 
+#include "Material.hpp"
+#include "Model.hpp"
+#include "OBJFile.hpp"
+#include "SceneNode.hpp"
+#include "Texture.hpp"
+#include "Vector3.hpp"
+
 using namespace std;
 
-const string TEXTUREPATH = "./resources/textures/";
-const string MODELPATH = "./resources/models/";
+static const string TEXTUREPATH = "./resources/textures/";
+static const string MODELPATH = "./resources/models/";
 
 //! Parses a MAPFile, which is a whitespace delimited list of textures and
 //! models, as well as tiles, which are made up of the other two. Tiles have

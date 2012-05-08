@@ -1,12 +1,13 @@
 #pragma once
 
+#include <vector>
+
 #include "Animator.hpp"
 #include "Car.hpp"
+#include "Model.hpp"
 #include "RoadMap.hpp"
 #include "RoadMapNode.hpp"
 #include "SceneRenderer.hpp"
-#include "Model.hpp"
-#include <vector>
 
 //! Holds on to the cars in a scene and knows how to animate them them by
 //! moving the scene nodes around.

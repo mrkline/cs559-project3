@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CgErrors.hpp"
 #include "CgContext.hpp"
+#include "CgErrors.hpp"
 
 //! A wrapper around Cg profiles for easy initialization
 class CgProfile

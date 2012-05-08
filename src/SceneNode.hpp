@@ -1,8 +1,8 @@
 #pragma once
 
 #include <list>
-#include <string>
 #include <memory>
+#include <string>
 
 #include "NamedClass.hpp"
 #include "Transform.hpp"

@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "Renderable.hpp"
 #include "Material.hpp"
+#include "Renderable.hpp"
 
 //! Renders a plane of radius 1 along the XZ plane
 class Plane : public Renderable

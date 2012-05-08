@@ -74,7 +74,3 @@ shared_ptr<RoadMapNode> RoadMap::getNodeAt(size_t loc)
 	else
 		return nullptr;
 }
-
-RoadMap::~RoadMap(void)
-{
-}

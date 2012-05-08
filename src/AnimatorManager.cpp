@@ -1,7 +1,6 @@
 #include "StdAfx.hpp"
 #include "AnimatorManager.hpp"
 
-
 AnimatorManager::AnimatorManager(void)
 {
 	timelast = 0;
@@ -21,8 +20,4 @@ void AnimatorManager::animate()
 			(*i)->animate(dt);
 		}
 	}	
-}
-
-AnimatorManager::~AnimatorManager(void)
-{
 }
