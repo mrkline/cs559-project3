@@ -28,7 +28,6 @@ float4 FS_Main(VertexData vd,
             uniform float3 color) // light color
             : COLOR
 {
-    return float4(lightDirection, 1);
     float4 base = tex2D(baseTex, vd.uv);
     float4 nd = tex2D(normAndDepthTex, vd.uv);
     float4 l = tex2D(litTex, vd.uv);
