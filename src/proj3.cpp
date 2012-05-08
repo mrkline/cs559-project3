@@ -197,13 +197,10 @@ void init()
 
 		// load the map file that will import all the building and road models
 		// and textures. Add those to the SceneRenderer.
-		MAPFile* mapfile = new MAPFile("./resources/mooncolony_map.txt");
-		std::vector<shared_ptr<SceneNode>>* nodes =  mapfile->getNodes();
-		if (nodes != nullptr) {
-			for (auto i = nodes->begin(); i != nodes->end(); i++) {
-				sr->getSceneNodes().push_back(*i);
-			}
-		}
+		MAPFile mapfile("./resources/mooncolony_map.txt");
+		auto& nodes =  mapfile.getNodes();
+		for (auto i = nodes.begin(); i != nodes.end(); ++i)
+			sr->getSceneNodes().push_back(*i);
 
 		//TODO - add cars here
 		//	Xparse road layout from MAPFile

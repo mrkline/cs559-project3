@@ -28,11 +28,9 @@ public:
 	MAPFile(char* filename);
 	
 	//! return the collection of SceneNodes
-	vector<shared_ptr<SceneNode>>* getNodes(){return nodes;};
+	vector<shared_ptr<SceneNode>>& getNodes() { return nodes; }
 	
-	~MAPFile(void);
-
 private:
-	vector<shared_ptr<SceneNode>>* nodes;
+	vector<shared_ptr<SceneNode>> nodes;
 };
 
