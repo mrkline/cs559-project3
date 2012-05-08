@@ -50,22 +50,18 @@ void Car::setLocation(Vector3 newLoc)
 
 void Car::updateRotation()
 {
-	if(auto ptr = this->owner.lock())
+	if(auto& ptr = this->owner.lock())
 	{
 		// compute which way the car should be facing
-		Vector2 north = Vector2(0,1);
-		Vector3 currloc3 = ptr->getTransform().getTranslation();
-		Vector2 currloc = Vector2(currloc3.X, currloc3.Z);
+		auto& currXfrm = ptr->getTransform();
+		Vector2 currloc = Vector2(currXfrm.getTranslation().X, currXfrm.getTranslation().Z);
 		Vector2 dest = this->getDestination()->getLocation();
-		Vector2 face = dest - currloc;
-		face.normalize();
-		float angle = acos(Vector2::dotProduct(north, face));
-		Vector3 rotation = Vector3(0, angle, 0);	
-	
-		// get the current rotation, undo it, and set the new rotation
-		auto rot = ptr->getTransform().getRotationDegrees();
-		ptr->getTransform().rotateDegrees(Vector3(-rot.X, -rot.Y, -rot.Z));
-		ptr->getTransform().rotateDegrees(rotation);
+		Vector2 toface = dest - currloc;
+		toface.normalize();
+		auto desiredangle = Vector3(0, acos(Vector2::dotProduct(Vector2(0,1), toface)), 0);
+		auto currentangle = currXfrm.getRotationRadians();
+		auto rotangle = desiredangle - currentangle;
+		currXfrm.rotateRadians(rotangle);
 	}
 }
 
