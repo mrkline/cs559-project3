@@ -133,7 +133,7 @@ void init()
 
 		// Create and place our cameras
 		freeCam = make_shared<Camera>();
-		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 500.0f);
+		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
 		sr->setActiveCamera(freeCam);
 		freeCamNode = make_shared<SceneNode>(nullptr,
 		                                     Vector3(0.0f, 6.0f, -10.0f));
@@ -147,6 +147,14 @@ void init()
 		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
+
+		// Create a directional light
+		auto dirLight = make_shared<DirectionalLight>();
+		dirLight->direction = Vector3(1.0f, -1.0f, 1.0f);
+		dirLight->direction.normalize();
+		auto lightSceneNode = make_shared<SceneNode>();
+		lightSceneNode->addRenderable(dirLight);
+		sr->getSceneNodes().push_back(lightSceneNode);
 
 		// Set up commonly used texture sets
 		auto deferredTextureSet = make_shared<ShaderSet>();
