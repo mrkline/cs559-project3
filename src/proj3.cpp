@@ -177,8 +177,8 @@ void init()
 		// Create and place our light.
 		auto light = make_shared<DirectionalLight>();
 		auto lightNode = make_shared<SceneNode>(nullptr,
-		                                        Vector3(0.0f, 10.0f, 0.0f));
-		//light->direction = -lightNode->getTransform().getTranslation();
+		                                        Vector3(10.0f, 10.0f, 10.0f));
+		light->direction = -lightNode->getTransform().getTranslation();
 		light->direction.normalize();
 		lightNode->addRenderable(light);
 		// Give the light a yellow sphere (sun?)
@@ -191,6 +191,21 @@ void init()
 		lightMat->callback = defaultDeferredCallback;
 		auto sun = make_shared<Sphere>(lightMat);
 		lightNode->addRenderable(sun);
+		sr->getSceneNodes().push_back(lightNode);
+
+		// Create and place our light.
+		light = make_shared<DirectionalLight>();
+		lightNode = make_shared<SceneNode>(nullptr,
+		                                   Vector3(-10.0f, 10.0f, 0.0f));
+		light->direction = -lightNode->getTransform().getTranslation();
+		light->direction.normalize();
+		lightNode->addRenderable(light);
+		// Give the light a yellow sphere (sun?)
+		lightMat->vertexShader = defaultDeferredVertex;
+		lightMat->fragmentShader = defaultDeferredFrag;
+		lightMat->callback = defaultDeferredCallback;
+		auto sun2 = make_shared<Sphere>(lightMat);
+		lightNode->addRenderable(sun2);
 		sr->getSceneNodes().push_back(lightNode);
 
 		// Set up our sky box
