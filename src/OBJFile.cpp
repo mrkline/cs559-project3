@@ -1,13 +1,20 @@
 #include "StdAfx.hpp"
 #include "OBJFile.hpp"
+
+#include <iostream>
 #include <sstream>
 #include <vector>
+
+#include "Model.hpp"
+#include "Vector3.hpp"
 
 // for now, assumes a pretty valid obj file and only one object definition
 // in the file. obviously this could use refining.
 
 // TODO: texture coords, material library, material to use, face definition
 // add face struct or class?
+
+using namespace std;
 
 OBJFile::OBJFile(const char* filename)
 {

@@ -1,18 +1,8 @@
 #pragma once
 
-#include <map>
-#include "Material.hpp"
-#include "Vector3.hpp"
-#include "Model.hpp"
-
 #include <memory>
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-
-using namespace std;
+class Model;
 
 //! A class for parsing .obj files
 class OBJFile
