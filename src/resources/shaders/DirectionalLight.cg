@@ -52,6 +52,6 @@ float4 FS_Main(VertexData vd,
     // Diffuse
     ret.rgb += coefficients.y * l.rgb;
     // Specular
-    //ret.rgb += coefficients.z * color * l.rgb;
+    ret.rgb += coefficients.z * color * l.rgb;
     return saturate(ret);
 }
