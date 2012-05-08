@@ -130,10 +130,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Tree.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.hpp" />
@@ -162,7 +158,6 @@
     <ClInclude Include="MTLFile.hpp" />
     <ClInclude Include="NamedClass.hpp" />
     <ClInclude Include="OBJFile.hpp" />
-    <ClInclude Include="Plane.hpp" />
     <ClInclude Include="Renderable.hpp" />
     <ClInclude Include="RoadMap.hpp" />
     <ClInclude Include="RoadMapNode.hpp" />
@@ -175,7 +170,6 @@
     <ClInclude Include="Teapot.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
-    <ClInclude Include="Tree.hpp" />
     <ClInclude Include="Vector2.hpp" />
     <ClInclude Include="Vector3.hpp" />
   </ItemGroup>

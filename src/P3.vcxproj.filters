@@ -36,9 +36,6 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -116,9 +113,6 @@
     <ClInclude Include="NamedClass.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plane.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,9 +126,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Transform.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vector2.hpp">

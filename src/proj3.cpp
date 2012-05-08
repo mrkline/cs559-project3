@@ -19,11 +19,9 @@
 #include "Camera.hpp"
 #include "Cube.hpp"
 #include "DirectionalLight.hpp"
-#include "Plane.hpp"
 #include "SkyBox.hpp"
 #include "Sphere.hpp"
 #include "Teapot.hpp"
-#include "Tree.hpp"
 #include "OBJFile.hpp"
 #include "Model.hpp"
 #include "MAPFile.hpp"
@@ -49,8 +47,6 @@ static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
 static shared_ptr<Camera> topCam;
 static shared_ptr<SceneNode> topCamNode;
-static shared_ptr<Plane> rttPlane;
-
 static struct {
 	CEGUI::Checkbox* chkEnableGUI;
 	CEGUI::Window* lblCam;
