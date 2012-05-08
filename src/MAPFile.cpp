@@ -1,6 +1,8 @@
 #include "StdAfx.hpp"
 #include "MAPFile.hpp"
 
+#include "CgSingleton.hpp"
+#include "ShaderSet.hpp"
 
 MAPFile::MAPFile(char* filename)
 {
@@ -64,6 +66,8 @@ MAPFile::MAPFile(char* filename)
 					}
 					// make the material
 					auto mat = make_shared<Material>();
+					mat->setShaderSet(CgSingleton::getSingleton().
+							shaderSetMap["deferredTexture"]);
 					// get a reference to the model
 					auto tile = make_shared<Model>(*models[tmpmdl]);
 					// add the texture(s) to the material
