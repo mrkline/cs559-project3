@@ -215,5 +215,8 @@
     <ClInclude Include="CgSingleton.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderSet.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

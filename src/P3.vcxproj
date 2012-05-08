@@ -168,6 +168,7 @@
     <ClInclude Include="RoadMapNode.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="SceneNode.hpp" />
+    <ClInclude Include="ShaderSet.hpp" />
     <ClInclude Include="SkyBox.hpp" />
     <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="StdAfx.hpp" />

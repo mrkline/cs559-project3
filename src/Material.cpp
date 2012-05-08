@@ -5,6 +5,7 @@
 #include "CgProgram.hpp"
 #include "Texture.hpp"
 #include "GLErrors.hpp"
+#include "ShaderSet.hpp"
 
 using namespace std;
 
@@ -25,6 +26,13 @@ Material::Material()
 	diffuse[1] = 0.0f;
 	diffuse[2] = 0.0f;
 	shininess = 1.0f;
+}
+
+void Material::setShaderSet(const shared_ptr<ShaderSet>& set)
+{
+	vertexShader = set->vertexShader;
+	fragmentShader = set->fragmentShader;
+	callback = set->callback;
 }
 
 const shared_ptr<Material>& getDefaultMaterial()

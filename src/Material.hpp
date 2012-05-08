@@ -7,6 +7,7 @@
 class Texture;
 class CgProgram;
 class Renderable;
+struct ShaderSet;
 
 //! A material is attached to renderables and holds rendering options
 struct Material
@@ -28,6 +29,10 @@ struct Material
 
 	// The constructor initializes the material to default values
 	Material();
+
+	// A quick method for setting a vertex and fragment shader
+	// and their callback
+	void setShaderSet(const std::shared_ptr<ShaderSet>& set);
 };
 
 //! Gets a pointer to the default material
