@@ -1,35 +1,35 @@
 #pragma once
 
-#include "Animator.hpp"
-#include "Model.hpp"
+#include <memory>
+
 #include "Renderable.hpp"
-#include "RoadMap.hpp"
-#include "RoadMapNode.hpp"
-#include "SceneNode.hpp"
 #include "Vector3.hpp"
+
+class Model;
+class RoadMapNode;
 
 class Car: public Renderable
 {
-private:
-	std::shared_ptr<Model> model;
-	shared_ptr<RoadMapNode> origin, destination;
-	float speed;
-
 public:
-	Car(shared_ptr<Model> model, float speed);
+	Car(const std::shared_ptr<Model>& model, float speed);
 	void render();
-	float getSpeed(){return this->speed;};
-	void setSpeed(float speed){this->speed = speed;}; 
-	Vector3 getLocation();
-	shared_ptr<RoadMapNode> getDestination(){return this->destination;};
-	shared_ptr<RoadMapNode> getOrigin(){return this->origin;};
+	float getSpeed() const { return speed; }
+	void setSpeed(float speed) { this->speed = speed; }
+	Vector3 getLocation() const;
+	const std::shared_ptr<RoadMapNode>& getDestination() const
+		{ return destination; }
+	const std::shared_ptr<RoadMapNode>& getOrigin() const { return origin; }
 	void setLocation(Vector3 newLoc);
-	void setDestination(shared_ptr<RoadMapNode> newDest);
-	void setOrigin(shared_ptr<RoadMapNode> newOrig);
+	void setDestination(const std::shared_ptr<RoadMapNode>& newDest);
+	void setOrigin(const std::shared_ptr<RoadMapNode>& newOrig);
 	// adjusts the rotation based on the current location and the destination
 	void updateRotation();
-	weak_ptr<Model> getModel(){return weak_ptr<Model>(model);};
+	std::weak_ptr<Model> getModel() { return std::weak_ptr<Model>(model); }
 	~Car(void);
 	
+private:
+	std::shared_ptr<Model> model;
+	std::shared_ptr<RoadMapNode> origin, destination;
+	float speed;
 };
 

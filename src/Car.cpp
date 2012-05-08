@@ -1,7 +1,13 @@
 #include "StdAfx.hpp"
 #include "Car.hpp"
 
-Car::Car(shared_ptr<Model> model, float speed)
+#include "Animator.hpp"
+#include "Model.hpp"
+#include "RoadMap.hpp"
+#include "RoadMapNode.hpp"
+#include "SceneNode.hpp"
+
+Car::Car(const shared_ptr<Model>& model, float speed)
 {
 	this->model = model;
 	this->speed = speed;
@@ -12,7 +18,7 @@ void Car::render()
 	model->render();
 }
 
-Vector3 Car::getLocation()
+Vector3 Car::getLocation() const
 {
 	if(auto ptr = this->owner.lock())
 	{
@@ -24,15 +30,14 @@ Vector3 Car::getLocation()
 	}
 }
 
-void Car::setDestination(shared_ptr<RoadMapNode> newDest)
+void Car::setDestination(const shared_ptr<RoadMapNode>& newDest)
 {
 	destination = newDest;
 }
 
-void Car::setOrigin(shared_ptr<RoadMapNode> newOrig)
+void Car::setOrigin(const shared_ptr<RoadMapNode>& newOrig)
 {
 	origin = newOrig;
-	printf("something");
 }
 
 void Car::setLocation(Vector3 newLoc)

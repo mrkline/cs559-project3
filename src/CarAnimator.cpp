@@ -4,6 +4,7 @@
 #include <ctime>	// for srand
 
 #include "CgSingleton.hpp"
+#include "SceneNode.hpp"
 
 CarAnimator::CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr)
 {
