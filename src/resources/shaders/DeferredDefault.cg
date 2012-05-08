@@ -2,35 +2,44 @@
 
 
 struct VertexShaderOutput {
-	float4 position : POSITION;
-	float3 normal : TEXCOORD0;
-	float4 color : COLOR;
+    float4 position : POSITION;
+    float3 normal : TEXCOORD0;
+    float depth : TEXCOORD1;
+    float4 unlit : COLOR;
 };
 
 VertexShaderOutput VS_Main(float4 local : POSITION,
                         float4 normal : NORMAL,
-                        float4 color : COLOR,
+                        float4 unlit : COLOR,
                         uniform float4x4 modelViewProj,
-						uniform float4x4 modelViewIT)
+                        uniform float4x4 modelView,
+                        uniform float4x4 modelViewIT)
 {
-	VertexShaderOutput OUT;
-	OUT.position = mul(modelViewProj, local);
-	OUT.normal= mul(modelViewIT, normal).xyz;
-	OUT.color = color;
-	return OUT;
+    VertexShaderOutput OUT;
+    OUT.position = mul(modelViewProj, local);
+    OUT.normal= mul(modelViewIT, normal).xyz;
+    OUT.depth = -mul(modelView, local).z;
+    OUT.unlit = unlit;
+    return OUT;
 }
 
 struct FragmentShaderOutput {
-	float4 unlit : COLOR0;
-	float4 normAndDepth : COLOR1;
+    float4 unlit : COLOR0;
+    float4 normAndDepth : COLOR1;
+    float4 diffuse : COLOR2;
 };
 
-FragmentShaderOutput FS_Main(VertexShaderOutput vsOut)
+FragmentShaderOutput FS_Main(VertexShaderOutput vsOut,
+                             uniform float3 diffuse,
+                             uniform float shininess,
+                             uniform float zNear,
+                             uniform float zFar)
 {
-	FragmentShaderOutput OUT;
-	OUT.unlit = float4(1.0f, 1.0f, 0.0f, 1.0f);//vsOut.color;
-	OUT.normAndDepth.rgb = vsOut.normal;
-	// Calculate depth later
-	OUT.normAndDepth.a = 1.0f;
-	return OUT;
+    FragmentShaderOutput OUT;
+    OUT.unlit = vsOut.unlit;
+    OUT.normAndDepth.rgb = (vsOut.normal + 1.0f) / 2.0f;
+    OUT.normAndDepth.a = 1.0f - (vsOut.depth - zNear) / zFar;
+    OUT.diffuse.rgb = diffuse;
+    OUT.diffuse.a = shininess;
+    return OUT;
 }

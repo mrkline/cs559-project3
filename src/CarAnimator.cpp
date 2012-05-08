@@ -18,7 +18,6 @@ void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
 	
 	// create the material and set properties
 	auto mat = make_shared<Material>();
-    mat->lighting = false;
     mat->textures.push_back(texture);
 	model->setMaterial(mat);
 

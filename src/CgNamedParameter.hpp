@@ -71,7 +71,7 @@ public:
 		throwCgExceptions(__FUNCTION__);
 	}
 
-	//! Sets this parameter to a given array of 2 floats
+	//! Sets this parameter to a given array of 3 floats
 	void set3f(float x, float y, float z)
 	{
 		cgGLSetParameter3f(param, x, y, z);

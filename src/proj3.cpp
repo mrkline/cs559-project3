@@ -17,7 +17,7 @@
 // renderables
 #include "Camera.hpp"
 #include "Cube.hpp"
-#include "Light.hpp"
+#include "DirectionalLight.hpp"
 #include "Plane.hpp"
 #include "SkyBox.hpp"
 #include "Sphere.hpp"
@@ -32,19 +32,13 @@
 #include "CarAnimator.hpp"
 
 // Cg support
-#include "CgContext.hpp"
-#include "CgProfile.hpp"
+#include "CgSingleton.hpp"
 #include "CgProgram.hpp"
 
 using namespace std;
 
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
-
-// We can't initialize these here since OpenGL needs to be initialized first
-static CgContext* cgContext;
-static CgProfile* cgVertexProfile;
-static CgProfile* cgFragmentProfile;
 
 static SceneRenderer* sr;
 static AnimatorManager* am;
@@ -86,7 +80,7 @@ static struct {
 //! Current yaw of the camera, in radians
 static float cameraYaw = 0.0f;
 //! Current pitch of the camera, in radians
-static float cameraPitch = Math::kPi / 6.0f;
+static float cameraPitch = Math::kPi / 4.0f;
 
 //! Delta camera movment per frame, in radians
 static const float deltaMovement = 0.3f;
@@ -107,7 +101,6 @@ void init()
 {
 	// If any of this fails, we don't have sufficient hardware
 	try {
-
 		// Start GLEW and check for needed extensions
 		if (glewInit() != GLEW_OK) {
 			throw Exceptions::Exception("GLEW failed to initialize",
@@ -124,18 +117,17 @@ void init()
 			                            __FUNCTION__);
 		}
 
+		// Start up Cg
+		auto& cgs = CgSingleton::getSingleton();
+		auto& cgContext = cgs.getContext();
+		auto& cgVertProfile = cgs.getVertexProfile();
+		auto& cgFragProfile = cgs.getFragmentProfile();
+
 		// Start up our scene renderer
 		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
 
 		// and animator manager
 		am = new AnimatorManager();
-
-		// Start up Cg
-		cgContext = new CgContext;
-		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
-		printf("Cg vertex profile: %s\n", cgVertexProfile->getName());
-		cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
-		printf("Cg fragment profile: %s\n", cgFragmentProfile->getName());
 
 		glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 		// Avoid stupid problems with OGL and RGB formats
@@ -146,7 +138,8 @@ void init()
 		freeCam = make_shared<Camera>();
 		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 500.0f);
 		sr->setActiveCamera(freeCam);
-		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
+		freeCamNode = make_shared<SceneNode>(nullptr,
+		                                     Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
 		sr->getSceneNodes().push_back(freeCamNode);
 
@@ -158,39 +151,47 @@ void init()
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
 
-		// Create and place our light.
-		auto light = make_shared<Light>();
-		auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
-		lightNode->addRenderable(light);
-		// Give the light a yellow sphere (sun?)
-		auto lightMat =  make_shared<Material>();
-		lightMat->lighting = false;
-		lightMat->color[0] = 1.0f;
-		lightMat->color[1] = 1.0f;
-		lightMat->color[2] = 0.0f;
-		lightMat->vertexShader = make_shared<CgProgram>(*cgContext, false,
-				"./resources/shaders/DeferredDefault.cg",
-				*cgVertexProfile, "VS_Main");
-		lightMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-				"./resources/shaders/DeferredDefault.cg",
-				*cgFragmentProfile, "FS_Main");
-		lightMat->callback = [](const shared_ptr<Material>& mat) {
-			auto modelViewProj =
-				mat->vertexShader->getNamedParameter("modelViewProj");
-			modelViewProj.setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+		auto defaultDeferredVertex = make_shared<CgProgram>(cgContext, false,
+		                             "./resources/shaders/DeferredDefault.cg",
+		                             cgVertProfile, "VS_Main");
+		auto defaultDeferredFrag = make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredDefault.cg",
+		                           cgFragProfile, "FS_Main");
+		auto defaultDeferredCallback = [&](const shared_ptr<Material>& mat) {
 
-			auto modelViewIT =
-				mat->vertexShader->getNamedParameter("modelViewIT");
-			modelViewIT.setStateMatrix(CG_GL_MODELVIEW_MATRIX,
-					CG_GL_MATRIX_INVERSE_TRANSPOSE);
+			mat->vertexShader->getNamedParameter("modelViewProj").
+			setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelView").
+			setStateMatrix(CG_GL_MODELVIEW_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelViewIT").setStateMatrix(
+			    CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE_TRANSPOSE);
+
+			mat->fragmentShader->getNamedParameter("diffuse").set3fv(
+			    mat->diffuse);
+
+			mat->fragmentShader->getNamedParameter("shininess").set1f(
+			    mat->shininess);
+
+			auto& cam = sr->getActiveCamera();
+			mat->fragmentShader->getNamedParameter("zNear").set1f(
+			    cam->getNear());
+			mat->fragmentShader->getNamedParameter("zFar").set1f(
+			    cam->getFar());
 		};
-		auto sun = make_shared<Sphere>(lightMat);
-		lightNode->addRenderable(sun);
-		sr->getSceneNodes().push_back(lightNode);
 
 		// Set up our sky box
+		auto skybox = make_shared<SkyBox>();
+		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
+		                    "./resources/shaders/DeferredSkybox.cg",
+		                    cgFragProfile, "main");
+		for (int face = 0; face < 6; ++face)
+			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
+			    skyboxShader;
+
 		auto skyboxNode = make_shared<SceneNode>();
-		skyboxNode->addRenderable(make_shared<SkyBox>());
+		skyboxNode->addRenderable(skybox);
 		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
 		// load the map file that will import all the building and road models
@@ -235,26 +236,17 @@ void init()
 
 
 		am->addanimator(caranimator);
-
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
-			(string("Initialization error: ") + ex.message).c_str(),
-			"Initialization Error",
+		           (string("Initialization error: ") + ex.message).c_str(),
+		           "Initialization Error",
 		           MB_OK | MB_ICONERROR);
 		exit(1);
 	}
 
-	// Enable our first (and only) light
-	//! \todo Support more lights later
-	glEnable(GL_LIGHT0);
-
 	// Set up shading model
 	glShadeModel(GL_SMOOTH);
-
-	// Enable transparent materials
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	try {
 		// Set up CEGUI
@@ -514,6 +506,26 @@ void onKeyboardDown(unsigned char key, int x, int y)
 
 	case 'q':
 		cameraMovement.movement.up = true;
+		break;
+
+	case '1':
+		sr->setDisplayMode(SceneRenderer::DM_UNLIT);
+		break;
+
+	case '2':
+		sr->setDisplayMode(SceneRenderer::DM_NORMALS);
+		break;
+
+	case '3':
+		sr->setDisplayMode(SceneRenderer::DM_DEPTH);
+		break;
+
+	case '4':
+		sr->setDisplayMode(SceneRenderer::DM_LIT);
+		break;
+
+	case '5':
+		sr->setDisplayMode(SceneRenderer::DM_FINAL);
 		break;
 	}
 }

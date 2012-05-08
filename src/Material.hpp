@@ -12,14 +12,12 @@ class Renderable;
 struct Material
 {
 	bool wireframe; //!< True to render the object in wireframe
-	bool lighting; //!< If false, the object will just be colored based on color
 	bool depthTest; //!< If false, the object is not drawn using the z-buffer
 	bool writeToDepth; //!< If false, the object is not written to the z-buffer
 	GLenum depthFunc; //!< Depth function
-	float color[4]; //!< Color of the object
-	float ambient[4]; //!< Ambient light coefficients
-	float diffuse[4]; //!< Diffuse light coefficients
-	float specular[4]; //!< Specular light coefficients
+	float unlit[3]; //!< Unlit color of the object (diffuse, and emissive)
+	float diffuse[3]; //!< Diffuse light coefficients
+	float shininess; //!< Specular coefficient
 	//! Texture(s) of the object
 	std::vector<std::shared_ptr<Texture>> textures;
 	std::shared_ptr<CgProgram> vertexShader; //!< Shader to run on each vertex
@@ -40,6 +38,3 @@ const std::shared_ptr<Material>& getActiveMaterial();
 
 //! Sets the material with which OpenGL will render lines and polygons.
 void setActiveMaterial(const std::shared_ptr<Material>& mat);
-
-//! In shadow mode, material sets are ignored so that shadows aren't colored
-void setShadowMaterialMode(bool drawingShadows);
