@@ -29,6 +29,7 @@
 // Animated things
 #include "RoadMap.hpp"
 #include "CarAnimator.hpp"
+#include "CrateAnimator.hpp"
 
 // Cg support
 #include "CgSingleton.hpp"
@@ -225,8 +226,40 @@ void init()
 			    make_shared<Texture>("./resources/textures/Awesome.png"));
 		}
 
-
 		am->addanimator(caranimator);
+
+		auto crateanimator = make_shared<CrateAnimator>(sr);
+		OBJFile crateObj("./resources/models/sphere3.obj");
+		
+		// crate 1
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    make_shared<Texture>("./resources/textures/Awesome.png"),
+				Vector3(10, 2.0f, 10),
+				6.28f);
+
+		// crate 2
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    make_shared<Texture>("./resources/textures/Awesome.png"),
+				Vector3(10, 2.0f, -10),
+				12.56f);
+		
+		// crate 3
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    make_shared<Texture>("./resources/textures/Awesome.png"),
+				Vector3(-10, 2.0f, 10),
+				3.14f);
+
+		// crate 3
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    make_shared<Texture>("./resources/textures/Awesome.png"),
+				Vector3(-10, 2.0f, -10),
+				9.42f);
+
+		am->addanimator(crateanimator);
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),

@@ -113,7 +113,7 @@ void CarAnimator::animate(double dt)
 			car->updateRotation();
 		}
 		// move the car some distance towards the destination
-		double totaldistance = speed / 1000.0 * dt; // yada yada, windows 49day bug
+		double totaldistance = (speed / 1000.0) * dt; // yada yada, windows 49day bug
 		totaldistance = min(speed, (float)totaldistance); // clamp the distance
 		auto movevector = dest - curloc;
 

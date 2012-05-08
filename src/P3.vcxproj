@@ -87,6 +87,8 @@
     <ClCompile Include="CarAnimator.cpp" />
     <ClCompile Include="CgErrors.cpp" />
     <ClCompile Include="CgSingleton.cpp" />
+    <ClCompile Include="Crate.cpp" />
+    <ClCompile Include="CrateAnimator.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLErrors.cpp" />
     <ClCompile Include="MAPFile.cpp" />
@@ -145,6 +147,8 @@
     <ClInclude Include="CgProfile.hpp" />
     <ClInclude Include="CgProgram.hpp" />
     <ClInclude Include="CgSingleton.hpp" />
+    <ClInclude Include="Crate.hpp" />
+    <ClInclude Include="CrateAnimator.hpp" />
     <ClInclude Include="Cube.hpp" />
     <ClInclude Include="DirectionalLight.hpp" />
     <ClInclude Include="Exceptions.hpp" />

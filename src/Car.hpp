@@ -8,6 +8,8 @@
 class Model;
 class RoadMapNode;
 
+//! a vehicle that moves around a map, between it's constantly updating origin
+//! and destination.
 class Car: public Renderable
 {
 public:
