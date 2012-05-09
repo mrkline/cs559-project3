@@ -19,9 +19,9 @@ VertexData VS_Main(float2 uv : TEXCOORD,
 
 // Lights the entire screen using a directional light
 float4 FS_Main(VertexData vd,
-            sampler2D baseTex, // The base image to add to
-            sampler2D normAndDepthTex, // The normal and depth 
-            sampler2D litTex, // Diffuse and specular coefficients
+            sampler2D baseTex : register(s0), // The base image to add to
+            sampler2D normAndDepthTex : register(s1), // The normal and depth
+            sampler2D litTex : register(s2), // Diffuse and specular coefficients
             uniform float near, // Near clip value
             uniform float far, //Far clip value
             uniform float3 lightDirection, // Light direction, in view space
@@ -33,7 +33,12 @@ float4 FS_Main(VertexData vd,
     float4 l = tex2D(litTex, vd.uv);
 
     // Reconstruct position from depth and use it as the eye vector
-    float3 eye = vd.back * (near + nd.a * (far - near)) / far;
+	// todo: Figure out a way to lerp between near and far without adding near every time
+    float3 eye = -vd.back * (near + (1.0f - nd.a) * (far - near)) / far;
+
+	float t = 1.0f - (eye.z - near) / far;
+	return float4(t, t, t, 1);
+
     eye *= -1;
     eye = normalize(eye);
     
