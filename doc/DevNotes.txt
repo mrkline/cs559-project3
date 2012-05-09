@@ -5,14 +5,14 @@ Goal: Deferred Shading
                      Plus, they look awesome.
 [X] Render To Target (RTT) - Render to a texture instead of the screen buffer.
                              This is also a prerequisite to MRT.
-[ ] Multiple Render Targets (MRT) - Deferred shading requires that we write out
+[X] Multiple Render Targets (MRT) - Deferred shading requires that we write out
                                     information to multiple render targets at
                                     once so that we don't have to render the
                                     scene multiple times.
 [X] Multiple Texture Support - We need to be able to feed multiple textures into
                                one shader in order to do deferred rendering
                                (and other neat tricks).
-[ ] Post processing - To use our render targets to create a final lit scene, we
+[X] Post processing - To use our render targets to create a final lit scene, we
                       need to render a full-screen texture to the screen. This
                       is extremely simple after RTT is done.
 
