@@ -229,34 +229,34 @@ void init()
 		am->addanimator(caranimator);
 
 		auto crateanimator = make_shared<CrateAnimator>(sr);
-		OBJFile crateObj("./resources/models/sphere3.obj");
+		OBJFile crateObj("./resources/models/sat_pod.obj");
 		
 		// crate 1
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/Awesome.png"),
-				Vector3(10, 2.0f, 10),
+			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+				Vector3(10, 0, 10),
 				6.28f);
 
 		// crate 2
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/Awesome.png"),
-				Vector3(10, 2.0f, -10),
+			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+				Vector3(10, 0, -10),
 				12.56f);
 		
 		// crate 3
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/Awesome.png"),
-				Vector3(-10, 2.0f, 10),
+			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+				Vector3(-10, 0, 10),
 				3.14f);
 
-		// crate 3
+		// crate 4
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/Awesome.png"),
-				Vector3(-10, 2.0f, -10),
+			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+				Vector3(-10, 0, -10),
 				9.42f);
 
 		am->addanimator(crateanimator);

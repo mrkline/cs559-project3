@@ -22,7 +22,8 @@ void CrateAnimator::createCrate(shared_ptr<Model> model,shared_ptr<Texture> text
 	model->setMaterial(mat);
 
 	auto sn = make_shared<SceneNode>(nullptr, location);
-    sn->addRenderable(tmp);
+    sn->getTransform().scale(Vector3(0.4f, 0.4f, 0.4f));
+	sn->addRenderable(tmp);
 	sr->getSceneNodes().push_back(sn);
 	
 	// animator reference to crate

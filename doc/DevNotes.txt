@@ -28,7 +28,7 @@ Your town must have:
 [X]	Multiple objects moving at any time (besides the ones in the sample code if you use sample code)
 		10 happy fun balls, currently
 		
-[ ]	Multiple different types of behaviors (besides the ones in the sample code if you use sample code)
+[X]	Multiple different types of behaviors (besides the ones in the sample code if you use sample code)
 
 [X]	Multiple different types of buildings / scenery (besides the ones in the sample code if you use sample code)
 		all new buildings
