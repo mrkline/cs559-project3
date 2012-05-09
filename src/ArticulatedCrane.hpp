@@ -14,7 +14,7 @@ using namespace std;
 //! An articulated object that allows rotating the arm about the base,
 //! moving the load in and out along the arm, and raising and lowering
 //! the load.
-class ArticulatedCrane: public Renderable, public Animator
+class ArticulatedCrane: public Animator
 {
 private:
 	Vector3 basevector;
@@ -35,13 +35,11 @@ private:
 
 public:
 	ArticulatedCrane(SceneRenderer* sr, Vector3 location);
-	void render();
 	void animate(double dt);
 	void rotateArm();
 	void extendLoad();
 	void retractLoad();
 	void raiseLoad();
 	void lowerLoad();
-	~ArticulatedCrane(void);
 };
 

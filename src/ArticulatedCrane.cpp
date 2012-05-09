@@ -22,31 +22,21 @@ ArticulatedCrane::ArticulatedCrane(SceneRenderer* sr, Vector3 location)
 	armmodel->setMaterial(mat);
 	loadmodel->setMaterial(mat);
 	// create the base at the base location
-	basesn = make_shared<SceneNode>(nullptr, basevector);
+	basesn = make_shared<SceneNode>(basevector);
 	basesn->addRenderable(basemodel);
 	// create the arm with an offset from the base
 	armvector = Vector3(5.0f, 12.0f, 0.0f);
-	armsn = make_shared<SceneNode>(nullptr, armvector);
+	armsn = make_shared<SceneNode>(armvector);
+	armsn->setParent(basesn);
 	armsn->addRenderable(armmodel);
-	basesn->addChild(armsn);
 	// create the load with an offset from the base
 	//loadvector = Vector3(-3.0f, 9.5f, 0.0f);
 	loadvector = Vector3(1.0f, 1.0f, 1.0f);
-	loadsn = make_shared<SceneNode>(nullptr, loadvector);
+	loadsn = make_shared<SceneNode>(loadvector);
+	loadsn->setParent(basesn);
 	loadsn->addRenderable(loadmodel);
-	basesn->addChild(loadsn);
 	// add to the sr tree
 	sr->getSceneNodes().push_back(basesn);
-	sr->getSceneNodes().push_back(armsn);
-	sr->getSceneNodes().push_back(loadsn);
-
-}
-
-void ArticulatedCrane::render()
-{
-	basemodel->render();
-	armmodel->render();
-	loadmodel->render();
 }
 
 void ArticulatedCrane::animate(double dt)
@@ -60,22 +50,8 @@ void ArticulatedCrane::rotateArm()
 	while(armangle > 360)
 		armangle -= 360;
 	
-	Vector3 zerov = Vector3(basesn->getTransform().getTranslation());
-	/*auto armxlat = armsn->getTransform().getTranslation();
-	armsn->getTransform().setTranslation(-zerov);
-	armsn->getTransform().rotateDegrees(Vector3(0.0f, dtheta, 0.0f));
-	armsn->getTransform().setTranslation(armxlat);*/
-	
-	//auto loadxlat = loadsn->getTransform().getTranslation();
-	//loadsn->getTransform().setTranslation(basesn->getTransform().getTranslation());
-	//loadsn->getTransform().rotateDegrees(Vector3(0.0f, dtheta, 0.0f));
-	//loadsn->getTransform().setTranslation(loadxlat);
-
-	//auto loadxlat = loadsn->getTransform().getTranslation();
-	//loadsn->getTransform().setToIdentity();
-	
 	auto& xlat = loadsn->getTransform();
-	//xlat.translate(-loadvector);
+	xlat.translate(-loadvector);
 	xlat.rotateDegrees(Vector3(0, dtheta, 0));
 	xlat.translate(loadvector);
 }
@@ -98,9 +74,4 @@ void ArticulatedCrane::raiseLoad()
 void ArticulatedCrane::lowerLoad()
 {
 
-}
-
-
-ArticulatedCrane::~ArticulatedCrane(void)
-{
 }
