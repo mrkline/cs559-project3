@@ -420,6 +420,17 @@ void Transform::scale(const Vector3& scale)
 	*this *= s;
 }
 
+void Transform::translate(const Vector3& translation)
+{
+	Transform t;
+
+	t.matrix[12] = translation.X;
+	t.matrix[13] = translation.Y;
+	t.matrix[14] = translation.Z;
+
+	*this *= t;
+}
+
 void Transform::setFromArray(const float* transformMatrix)
 {
 	memcpy(matrix, transformMatrix, sizeof(float) * 16);

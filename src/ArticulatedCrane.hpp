@@ -17,6 +17,9 @@ using namespace std;
 class ArticulatedCrane: public Renderable, public Animator
 {
 private:
+	Vector3 basevector;
+	Vector3 armvector;
+	Vector3 loadvector;
 	float armangle;
 	float loaddistance;
 	float loadheight;
