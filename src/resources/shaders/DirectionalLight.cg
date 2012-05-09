@@ -36,10 +36,10 @@ float4 FS_Main(VertexData vd,
 	// todo: Figure out a way to lerp between near and far without adding near every time
     float3 eye = -vd.back * (near + (1.0f - nd.a) * (far - near)) / far;
 
-	float t = 1.0f - (eye.z - near) / far;
-	return float4(t, t, t, 1);
+	//float t = 1.0f - (eye.z - near) / far;
+	//return float4(t, t, t, 1);
 
-    eye *= -1;
+    //eye *= -1;
     eye = normalize(eye);
     
     // Unpack our normals
