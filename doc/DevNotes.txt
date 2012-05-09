@@ -29,7 +29,8 @@ Your town must have:
 		10 happy fun balls, currently
 		
 [X]	Multiple different types of behaviors (besides the ones in the sample code if you use sample code)
-
+		moving happy fun balls and rotating satellite dishes
+		
 [X]	Multiple different types of buildings / scenery (besides the ones in the sample code if you use sample code)
 		all new buildings
 		
@@ -54,4 +55,5 @@ Your town must have:
 [X]	You must be able to fly around the town to look at things.
 		done on day one
 
-[ ]	You must have "shortcuts" to go directly to places where particularly interesting things are.
+[X]	You must have "shortcuts" to go directly to places where particularly interesting things are.
+		bookmarks set for Top and the two unique models

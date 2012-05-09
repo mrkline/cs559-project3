@@ -31,6 +31,9 @@
 #include "CarAnimator.hpp"
 #include "CrateAnimator.hpp"
 
+// Articulated Objects
+#include "ArticulatedCrane.hpp"
+
 // Cg support
 #include "CgSingleton.hpp"
 #include "CgProgram.hpp"
@@ -48,11 +51,17 @@ static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
 static shared_ptr<Camera> topCam;
 static shared_ptr<SceneNode> topCamNode;
+static shared_ptr<Camera> landingCam;
+static shared_ptr<SceneNode> landingCamNode;
+static shared_ptr<Camera> powerCam;
+static shared_ptr<SceneNode> powerCamNode;
 static struct {
 	CEGUI::Checkbox* chkEnableGUI;
 	CEGUI::Window* lblCam;
 	CEGUI::RadioButton* radFree;
 	CEGUI::RadioButton* radTop;
+	CEGUI::RadioButton* radLanding;
+	CEGUI::RadioButton* radPower;
 } controls;
 
 //! Instead of being a simple enum, this struct is used to hold
@@ -142,12 +151,26 @@ void init()
 		sr->getSceneNodes().push_back(freeCamNode);
 
 		topCam = make_shared<Camera>();
-		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
+		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
 		topCam->setTarget(Vector3());
 		topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
-		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
+		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 180.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
+
+		landingCam = make_shared<Camera>();
+		landingCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 90.0f);
+		landingCam->setTarget(Vector3(90.0f, 0.0f, -90.0f));
+		landingCamNode = make_shared<SceneNode>(nullptr, Vector3(30.0f, 20.0f, -30.0f));
+		landingCamNode->addRenderable(landingCam);
+		sr->getSceneNodes().push_back(landingCamNode);
+
+		powerCam = make_shared<Camera>();
+		powerCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
+		powerCam->setTarget(Vector3());
+		powerCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -50.0f));
+		powerCamNode->addRenderable(powerCam);
+		sr->getSceneNodes().push_back(powerCamNode);
 
 		// Create a directional light
 		auto dirLight = make_shared<DirectionalLight>();
@@ -230,36 +253,44 @@ void init()
 
 		auto crateanimator = make_shared<CrateAnimator>(sr);
 		OBJFile crateObj("./resources/models/sat_pod.obj");
-		
+		auto cratetext = make_shared<Texture>("./resources/textures/sat_pod.jpg");
 		// crate 1
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+			    cratetext,
 				Vector3(10, 0, 10),
 				6.28f);
 
 		// crate 2
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+			    cratetext,
 				Vector3(10, 0, -10),
 				12.56f);
 		
 		// crate 3
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+			    cratetext,
 				Vector3(-10, 0, 10),
 				3.14f);
 
 		// crate 4
 		crateanimator->createCrate(
 			    crateObj.getModel(),
-			    make_shared<Texture>("./resources/textures/sat_pod.jpg"),
+			    cratetext,
 				Vector3(-10, 0, -10),
 				9.42f);
 
 		am->addanimator(crateanimator);
+
+		/// experimentation on articulated objects:
+		
+		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(8.0f, 0.0f, 8.0f));
+		am->addanimator(crane);
+
+		/// end experimentation on articulated objects
+
 	}
 	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
@@ -357,6 +388,28 @@ void init()
 		controls.radTop->setText("Top");
 		controls.radTop->setGroupID(0);
 		root->addChildWindow(controls.radTop);
+
+		controls.radLanding = static_cast<RadioButton*>(wmgr.createWindow(
+		                      radioName,
+		                      "SelectZoneRoot/Landing"));
+		controls.radLanding->setPosition(
+		    UVector2(UDim(0.8f, 0.0f), UDim(0.0f, 300.0f)));
+		controls.radLanding->setSize(
+		    UVector2(UDim(0.18f, 0.0f), UDim(0.0f, 20.0f)));
+		controls.radLanding->setText("Landing");
+		controls.radLanding->setGroupID(0);
+		root->addChildWindow(controls.radLanding);
+
+		controls.radPower = static_cast<RadioButton*>(wmgr.createWindow(
+		                      radioName,
+		                      "SelectZoneRoot/Power"));
+		controls.radPower->setPosition(
+		    UVector2(UDim(0.8f, 0.0f), UDim(0.0f, 340.0f)));
+		controls.radPower->setSize(
+		    UVector2(UDim(0.18f, 0.0f), UDim(0.0f, 20.0f)));
+		controls.radPower->setText("Power");
+		controls.radPower->setGroupID(0);
+		root->addChildWindow(controls.radPower);
 	}
 	catch (const CEGUI::Exception& ex) {
 		fprintf(stderr,
@@ -419,6 +472,12 @@ void onDisplay()
 	}
 	else if (controls.radTop->isSelected()) {
 		sr->setActiveCamera(topCam);
+	}
+	else if (controls.radLanding->isSelected()) {
+		sr->setActiveCamera(landingCam);
+	}
+	else if (controls.radPower->isSelected()) {
+		sr->setActiveCamera(powerCam);
 	}
 
 	// update any Animators

@@ -79,6 +79,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ArticulatedCrane.cpp" />
     <ClCompile Include="Camera.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -137,6 +138,7 @@
     <ClInclude Include="Animator.hpp" />
     <ClInclude Include="AnimatorManager.hpp" />
     <ClInclude Include="Arrow.hpp" />
+    <ClInclude Include="ArticulatedCrane.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Car.hpp" />
     <ClInclude Include="CarAnimator.hpp" />
