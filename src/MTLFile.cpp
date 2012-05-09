@@ -12,8 +12,3 @@ std::map<char*, Material> MTLFile::getMaterials()
 	
 	return toRtn;
 }
-
-
-MTLFile::~MTLFile(void)
-{
-}

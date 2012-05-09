@@ -1,6 +1,12 @@
 #include "StdAfx.hpp"
 #include "OBJFile.hpp"
+
+#include <iostream>
 #include <sstream>
+#include <vector>
+
+#include "Model.hpp"
+#include "Vector3.hpp"
 
 // for now, assumes a pretty valid obj file and only one object definition
 // in the file. obviously this could use refining.
@@ -8,7 +14,9 @@
 // TODO: texture coords, material library, material to use, face definition
 // add face struct or class?
 
-OBJFile::OBJFile(char* filename)
+using namespace std;
+
+OBJFile::OBJFile(const char* filename)
 {
 	if(filename != nullptr)
 	{
@@ -20,7 +28,8 @@ OBJFile::OBJFile(char* filename)
 		}
 		else
 		{
-			model = new Model();
+			vector<int> faces;
+			model = make_shared<Model>();
 			string key, temp;
 			float tmpx, tmpy, tmpz, tmpu, tmpv, tmpw;
 			while(!objfile.eof() && objfile >> key)
@@ -95,11 +104,9 @@ OBJFile::OBJFile(char* filename)
 						getline(token, v, '/');
 						getline(token, vt, '/');
 						token >> vn;
-						model->addTriangle(
-							atoi(v.c_str()), 
-							atoi(vn.c_str()),
-							atoi(vt.c_str())
-							);
+						faces.push_back(atoi(v.c_str())); 
+						faces.push_back(atoi(vn.c_str()));
+						faces.push_back(atoi(vt.c_str()));
 					}
 				}
 				else
@@ -108,13 +115,12 @@ OBJFile::OBJFile(char* filename)
 					continue;
 				}
 			}
-			
+			// note multiple increment...
+			for(auto i = faces.begin(); i != faces.end(); i+=3)
+			{
+				model->addTriangle(*i, *(i+1), *(i+2));
+			}
 			objfile.close();
 		}
 	}
-}
-
-OBJFile::~OBJFile(void)
-{
-
 }

@@ -1,10 +1,11 @@
 #pragma once
 
-#include <vector>
-#include "Material.hpp"
-#include "Vector3.hpp"
-#include "Renderable.hpp"
 #include <string>
+#include <vector>
+
+#include "Material.hpp"
+#include "Renderable.hpp"
+#include "Vector3.hpp"
 
 //! An object created from an OBJ file (likely exported from Blender) that 
 //	knows how to draw itself.

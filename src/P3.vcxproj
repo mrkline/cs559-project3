@@ -36,7 +36,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -72,21 +74,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatorManager.cpp" />
     <ClCompile Include="Arrow.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ArticulatedCrane.cpp" />
     <ClCompile Include="Camera.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Car.cpp" />
+    <ClCompile Include="CarAnimator.cpp" />
     <ClCompile Include="CgErrors.cpp" />
+    <ClCompile Include="CgSingleton.cpp" />
+    <ClCompile Include="Crate.cpp" />
+    <ClCompile Include="CrateAnimator.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GLErrors.cpp" />
-    <ClCompile Include="Light.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="MAPFile.cpp" />
     <ClCompile Include="Material.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -102,7 +108,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
+    <ClCompile Include="RoadMap.cpp" />
+    <ClCompile Include="RoadMapNode.cpp" />
+    <ClCompile Include="SceneRenderer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -125,42 +133,49 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Tree.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="AnimatorManager.hpp" />
     <ClInclude Include="Arrow.hpp" />
+    <ClInclude Include="ArticulatedCrane.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Car.hpp" />
+    <ClInclude Include="CarAnimator.hpp" />
     <ClInclude Include="CEGUIStyleManager.hpp" />
     <ClInclude Include="CgContext.hpp" />
     <ClInclude Include="CgErrors.hpp" />
     <ClInclude Include="CgNamedParameter.hpp" />
     <ClInclude Include="CgProfile.hpp" />
     <ClInclude Include="CgProgram.hpp" />
+    <ClInclude Include="CgSingleton.hpp" />
+    <ClInclude Include="Crate.hpp" />
+    <ClInclude Include="CrateAnimator.hpp" />
     <ClInclude Include="Cube.hpp" />
+    <ClInclude Include="DirectionalLight.hpp" />
     <ClInclude Include="Exceptions.hpp" />
     <ClInclude Include="FrameBuffer.hpp" />
     <ClInclude Include="GLErrors.hpp" />
     <ClInclude Include="Light.hpp" />
+    <ClInclude Include="MAPFile.hpp" />
     <ClInclude Include="Material.hpp" />
     <ClInclude Include="MKMath.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="MTLFile.hpp" />
     <ClInclude Include="NamedClass.hpp" />
     <ClInclude Include="OBJFile.hpp" />
-    <ClInclude Include="Plane.hpp" />
     <ClInclude Include="Renderable.hpp" />
-    <ClInclude Include="SceneManager.hpp" />
+    <ClInclude Include="RoadMap.hpp" />
+    <ClInclude Include="RoadMapNode.hpp" />
+    <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="SceneNode.hpp" />
+    <ClInclude Include="ShaderSet.hpp" />
     <ClInclude Include="SkyBox.hpp" />
     <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="StdAfx.hpp" />
     <ClInclude Include="Teapot.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
-    <ClInclude Include="Tree.hpp" />
     <ClInclude Include="Vector2.hpp" />
     <ClInclude Include="Vector3.hpp" />
   </ItemGroup>

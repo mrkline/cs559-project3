@@ -5,6 +5,7 @@
 #include "CgProgram.hpp"
 #include "Texture.hpp"
 #include "GLErrors.hpp"
+#include "ShaderSet.hpp"
 
 using namespace std;
 
@@ -12,33 +13,31 @@ static shared_ptr<Material> defaultMat = make_shared<Material>();
 
 static shared_ptr<Material> activeMat = getDefaultMaterial();
 
-static shared_ptr<Material> shadowMat;
-
-static bool shadowMode = false;
-
 Material::Material()
 {
 	wireframe = false;
-	lighting = false;
 	depthTest = true;
 	writeToDepth = true;
 	depthFunc = GL_LESS;
-	color[0] = 1.0f;
-	color[1] = 1.0f;
-	color[2] = 1.0f;
-	color[3] = 1.0f;
-	ambient[0] = 0.3f;
-	ambient[1] = 0.3f;
-	ambient[2] = 0.3f;
-	ambient[3] = 1.0f;
-	diffuse[0] = 1.0f;
-	diffuse[1] = 1.0f;
-	diffuse[2] = 1.0f;
-	diffuse[3] = 1.0f;
-	specular[0] = 0.0f;
-	specular[1] = 0.0f;
-	specular[2] = 0.0f;
-	specular[3] = 1.0f;
+	unlit[0] = 0.0f;
+	unlit[1] = 0.0f;
+	unlit[2] = 0.0f;
+	diffuse[0] = 0.0f;
+	diffuse[1] = 0.0f;
+	diffuse[2] = 0.0f;
+	shininess = 1.0f;
+}
+
+void Material::setShaderSet(const shared_ptr<ShaderSet>& set)
+{
+	if (!set) {
+		throw Exceptions::ArgumentNullException("Invalid shader set",
+		                                        __FUNCTION__);
+	}
+
+	vertexShader = set->vertexShader;
+	fragmentShader = set->fragmentShader;
+	callback = set->callback;
 }
 
 const shared_ptr<Material>& getDefaultMaterial()
@@ -53,10 +52,6 @@ const shared_ptr<Material>& getActiveMaterial()
 
 void setActiveMaterial(const shared_ptr<Material>& mat)
 {
-	// Ignore material change requests when rendering shadows
-	if (shadowMode)
-		return;
-
 	const shared_ptr<Material>& toUse =
 	    mat ? mat : getDefaultMaterial();
 
@@ -78,12 +73,6 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 
 	activeMat = toUse;
 
-	// Set lighting options
-	if (activeMat->lighting)
-		glEnable(GL_LIGHTING);
-	else
-		glDisable(GL_LIGHTING);
-
 	glDepthFunc(activeMat->depthFunc);
 	throwGLExceptions(__FUNCTION__);
 
@@ -98,10 +87,7 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 	glPolygonMode(GL_FRONT_AND_BACK, activeMat->wireframe ? GL_LINE : GL_FILL);
 
 	// Set color parameters
-	glColor3fv(activeMat->color);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, activeMat->ambient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, activeMat->diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, activeMat->specular);
+	glColor3fv(activeMat->unlit);
 
 	// Activate this material's textures (if it has any)
 	auto& textures = activeMat->textures;
@@ -125,19 +111,4 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 	// Issue this material's callback (if it has one)
 	if (activeMat->callback)
 		activeMat->callback(activeMat);
-}
-
-void setShadowMaterialMode(bool drawingShadows)
-{
-	if (!shadowMat) {
-		shadowMat = make_shared<Material>();
-		shadowMat->color[0] = 0.0f;
-		shadowMat->color[1] = 0.0f;
-		shadowMat->color[2] = 0.0f;
-		shadowMat->color[3] = 0.5f;
-	}
-
-	if (drawingShadows)
-		setActiveMaterial(shadowMat);
-	shadowMode = drawingShadows;
 }

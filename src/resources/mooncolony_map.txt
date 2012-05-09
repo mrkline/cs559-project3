@@ -1,0 +1,276 @@
+# map file: a csv of textures, models, and tiles made from the other two						
+# texture: index, filename						
+# mode: index, filename						
+texture	0	road_straight.jpg					
+texture	1	road_xroads.jpg					
+texture	2	road_t.jpg					
+texture	3	road_corner.jpg					
+texture	4	big_house_pod.jpg					
+texture	5	little_house_pod.jpg					
+texture	6	torus_colony.jpg					
+texture	7	geo_dome.jpg					
+texture	8	power_core.jpg					
+texture	9	landing_site.jpg					
+model	0	tile_10_plane.obj					
+model	1	big_house_pod_20.obj					
+model	2	small_house_pod_20.obj					
+model	3	torus_colony_20.obj					
+model	4	geo_dome_20.obj					
+model	5	power_core_50.obj					
+model	6	landing_site_40.obj					
+#  roads:							
+#  corners:							
+tile	-100	0	-100	10	180	0	3
+tile	-100	0	100	10	270	0	3
+tile	100	0	-100	10	90	0	3
+tile	100	0	100	10	0	0	3
+#  T intersections:							
+tile	-50	0	100	10	0	0	2
+tile	0	0	100	10	0	0	2
+tile	50	0	100	10	0	0	2
+tile	-100	0	-50	10	270	0	2
+tile	-100	0	0	10	270	0	2
+tile	-100	0	50	10	270	0	2
+tile	100	0	-50	10	90	0	2
+tile	100	0	0	10	90	0	2
+tile	100	0	50	10	90	0	2
+tile	-50	0	-100	10	180	0	2
+tile	0	0	-100	10	180	0	2
+tile	50	0	-100	10	180	0	2
+#  crossroads							
+tile	-50	0	50	10	0	0	1
+tile	0	0	50	10	0	0	1
+tile	50	0	50	10	0	0	1
+tile	-50	0	0	10	0	0	1
+tile	50	0	0	10	0	0	1
+tile	-50	0	-50	10	0	0	1
+tile	0	0	-50	10	0	0	1
+tile	50	0	-50	10	0	0	1
+#  straight roads rows							
+#  top row							
+tile	-90	0	100	10	90	0	0
+tile	-80	0	100	10	90	0	0
+tile	-70	0	100	10	90	0	0
+tile	-60	0	100	10	90	0	0
+tile	-40	0	100	10	90	0	0
+tile	-30	0	100	10	90	0	0
+tile	-20	0	100	10	90	0	0
+tile	-10	0	100	10	90	0	0
+tile	10	0	100	10	90	0	0
+tile	20	0	100	10	90	0	0
+tile	30	0	100	10	90	0	0
+tile	40	0	100	10	90	0	0
+tile	60	0	100	10	90	0	0
+tile	70	0	100	10	90	0	0
+tile	80	0	100	10	90	0	0
+tile	90	0	100	10	90	0	0
+#  second row							
+tile	-90	0	50	10	90	0	0
+tile	-80	0	50	10	90	0	0
+tile	-70	0	50	10	90	0	0
+tile	-60	0	50	10	90	0	0
+tile	-40	0	50	10	90	0	0
+tile	-30	0	50	10	90	0	0
+tile	-20	0	50	10	90	0	0
+tile	-10	0	50	10	90	0	0
+tile	10	0	50	10	90	0	0
+tile	20	0	50	10	90	0	0
+tile	30	0	50	10	90	0	0
+tile	40	0	50	10	90	0	0
+tile	60	0	50	10	90	0	0
+tile	70	0	50	10	90	0	0
+tile	80	0	50	10	90	0	0
+tile	90	0	50	10	90	0	0
+#  third row							
+tile	-90	0	0	10	90	0	0
+tile	-80	0	0	10	90	0	0
+tile	-70	0	0	10	90	0	0
+tile	-60	0	0	10	90	0	0
+tile	-40	0	0	10	90	0	0
+tile	-30	0	0	10	90	0	0
+tile	30	0	0	10	90	0	0
+tile	40	0	0	10	90	0	0
+tile	60	0	0	10	90	0	0
+tile	70	0	0	10	90	0	0
+tile	80	0	0	10	90	0	0
+tile	90	0	0	10	90	0	0
+#  fourth row							
+tile	-90	0	-50	10	90	0	0
+tile	-80	0	-50	10	90	0	0
+tile	-70	0	-50	10	90	0	0
+tile	-60	0	-50	10	90	0	0
+tile	-40	0	-50	10	90	0	0
+tile	-30	0	-50	10	90	0	0
+tile	-20	0	-50	10	90	0	0
+tile	-10	0	-50	10	90	0	0
+tile	10	0	-50	10	90	0	0
+tile	20	0	-50	10	90	0	0
+tile	30	0	-50	10	90	0	0
+tile	40	0	-50	10	90	0	0
+tile	60	0	-50	10	90	0	0
+tile	70	0	-50	10	90	0	0
+tile	80	0	-50	10	90	0	0
+tile	90	0	-50	10	90	0	0
+#  fifth row							
+tile	-90	0	-100	10	90	0	0
+tile	-80	0	-100	10	90	0	0
+tile	-70	0	-100	10	90	0	0
+tile	-60	0	-100	10	90	0	0
+tile	-40	0	-100	10	90	0	0
+tile	-30	0	-100	10	90	0	0
+tile	-20	0	-100	10	90	0	0
+tile	-10	0	-100	10	90	0	0
+tile	10	0	-100	10	90	0	0
+tile	20	0	-100	10	90	0	0
+tile	30	0	-100	10	90	0	0
+tile	40	0	-100	10	90	0	0
+tile	60	0	-100	10	90	0	0
+tile	70	0	-100	10	90	0	0
+tile	80	0	-100	10	90	0	0
+tile	90	0	-100	10	90	0	0
+#  straight roads columns							
+#  left							
+tile	-100	0	-90	10	0	0	0
+tile	-100	0	-80	10	0	0	0
+tile	-100	0	-70	10	0	0	0
+tile	-100	0	-60	10	0	0	0
+tile	-100	0	-40	10	0	0	0
+tile	-100	0	-30	10	0	0	0
+tile	-100	0	-20	10	0	0	0
+tile	-100	0	-10	10	0	0	0
+tile	-100	0	10	10	0	0	0
+tile	-100	0	20	10	0	0	0
+tile	-100	0	30	10	0	0	0
+tile	-100	0	40	10	0	0	0
+tile	-100	0	60	10	0	0	0
+tile	-100	0	70	10	0	0	0
+tile	-100	0	80	10	0	0	0
+tile	-100	0	90	10	0	0	0
+#  second column							
+tile	-50	0	-90	10	0	0	0
+tile	-50	0	-80	10	0	0	0
+tile	-50	0	-70	10	0	0	0
+tile	-50	0	-60	10	0	0	0
+tile	-50	0	-40	10	0	0	0
+tile	-50	0	-30	10	0	0	0
+tile	-50	0	-20	10	0	0	0
+tile	-50	0	-10	10	0	0	0
+tile	-50	0	10	10	0	0	0
+tile	-50	0	20	10	0	0	0
+tile	-50	0	30	10	0	0	0
+tile	-50	0	40	10	0	0	0
+tile	-50	0	60	10	0	0	0
+tile	-50	0	70	10	0	0	0
+tile	-50	0	80	10	0	0	0
+tile	-50	0	90	10	0	0	0
+#  center column							
+tile	0	0	-90	10	0	0	0
+tile	0	0	-80	10	0	0	0
+tile	0	0	-70	10	0	0	0
+tile	0	0	-60	10	0	0	0
+tile	0	0	-40	10	0	0	0
+tile	0	0	-30	10	0	0	0
+tile	0	0	30	10	0	0	0
+tile	0	0	40	10	0	0	0
+tile	0	0	60	10	0	0	0
+tile	0	0	70	10	0	0	0
+tile	0	0	80	10	0	0	0
+tile	0	0	90	10	0	0	0
+#  fourth column							
+tile	50	0	-90	10	0	0	0
+tile	50	0	-80	10	0	0	0
+tile	50	0	-70	10	0	0	0
+tile	50	0	-60	10	0	0	0
+tile	50	0	-40	10	0	0	0
+tile	50	0	-30	10	0	0	0
+tile	50	0	-20	10	0	0	0
+tile	50	0	-10	10	0	0	0
+tile	50	0	10	10	0	0	0
+tile	50	0	20	10	0	0	0
+tile	50	0	30	10	0	0	0
+tile	50	0	40	10	0	0	0
+tile	50	0	60	10	0	0	0
+tile	50	0	70	10	0	0	0
+tile	50	0	80	10	0	0	0
+tile	50	0	90	10	0	0	0
+#  right column							
+tile	100	0	-90	10	0	0	0
+tile	100	0	-80	10	0	0	0
+tile	100	0	-70	10	0	0	0
+tile	100	0	-60	10	0	0	0
+tile	100	0	-40	10	0	0	0
+tile	100	0	-30	10	0	0	0
+tile	100	0	-20	10	0	0	0
+tile	100	0	-10	10	0	0	0
+tile	100	0	10	10	0	0	0
+tile	100	0	20	10	0	0	0
+tile	100	0	30	10	0	0	0
+tile	100	0	40	10	0	0	0
+tile	100	0	60	10	0	0	0
+tile	100	0	70	10	0	0	0
+tile	100	0	80	10	0	0	0
+tile	100	0	90	10	0	0	0
+# power core							
+tile	0	0	0	50	0	5	8
+# landing site							
+tile	75	0	-75	40	0	6	9
+# big house pod							
+tile	-85	0	85	40	0	1	4
+tile	-35	0	85	40	0	1	4
+tile	15	0	85	40	0	1	4
+tile	65	0	85	40	0	1	4
+tile	-85	0	15	40	0	1	4
+tile	-35	0	15	40	0	1	4
+tile	35	0	15	40	0	1	4
+tile	85	0	15	40	0	1	4
+tile	-65	0	-35	40	0	1	4
+tile	-15	0	-35	40	0	1	4
+tile	35	0	-35	40	0	1	4
+tile	85	0	-35	40	0	1	4
+tile	-85	0	-85	40	0	1	4
+tile	-35	0	-85	40	0	1	4
+tile	15	0	-85	40	0	1	4
+# little house pod							
+tile	-65	0	85	40	0	2	5
+tile	-15	0	85	40	0	2	5
+tile	35	0	65	40	0	2	5
+tile	85	0	65	40	0	2	5
+tile	-65	0	15	40	0	2	5
+tile	-15	0	35	40	0	2	5
+tile	35	0	35	40	0	2	5
+tile	65	0	35	40	0	2	5
+tile	-65	0	-15	40	0	2	5
+tile	-35	0	-15	40	0	2	5
+tile	15	0	-35	40	0	2	5
+tile	65	0	-15	40	0	2	5
+tile	-85	0	-65	40	0	2	5
+tile	-15	0	-85	40	0	2	5
+tile	15	0	-65	40	0	2	5
+# torus colony							
+tile	-65	0	65	40	0	3	6
+tile	-15	0	65	40	0	3	6
+tile	15	0	65	40	0	3	6
+tile	85	0	85	40	0	3	6
+tile	-65	0	35	40	0	3	6
+tile	65	0	15	40	0	3	6
+tile	-85	0	-35	40	0	3	6
+tile	35	0	-15	40	0	3	6
+tile	85	0	-15	40	0	3	6
+tile	-65	0	-85	40	0	3	6
+tile	-35	0	-65	40	0	3	6
+tile	35	0	-85	40	0	3	6
+# geo dome							
+tile	-85	0	65	40	0	4	7
+tile	-35	0	65	40	0	4	7
+tile	35	0	85	40	0	4	7
+tile	65	0	65	40	0	4	7
+tile	-85	0	35	40	0	4	7
+tile	-35	0	35	40	0	4	7
+tile	15	0	35	40	0	4	7
+tile	85	0	35	40	0	4	7
+tile	-85	0	-15	40	0	4	7
+tile	-35	0	-35	40	0	4	7
+tile	65	0	-35	40	0	4	7
+tile	-65	0	-65	40	0	4	7
+tile	-15	0	-65	40	0	4	7
+tile	35	0	-65	40	0	4	7

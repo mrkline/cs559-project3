@@ -20,7 +20,7 @@ public:
 	Renderable() : visible(true) { }
 
 	//! Used by the SceneManager to properly render cameras and lights
-	virtual RenderableType getType() { return RT_NORMAL; }
+	virtual RenderableType getRenderableType() const { return RT_NORMAL; }
 
 	virtual void render() = 0;
 

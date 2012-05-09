@@ -7,26 +7,35 @@
 
 // Engine core
 #include "Material.hpp"
-#include "SceneManager.hpp"
+#include "SceneRenderer.hpp"
 #include "SceneNode.hpp"
 #include "Texture.hpp"
 #include "FrameBuffer.hpp"
+#include "AnimatorManager.hpp"
+#include "Animator.hpp"
+#include "ShaderSet.hpp"
 
 // renderables
 #include "Camera.hpp"
 #include "Cube.hpp"
-#include "Light.hpp"
-#include "Plane.hpp"
+#include "DirectionalLight.hpp"
 #include "SkyBox.hpp"
 #include "Sphere.hpp"
 #include "Teapot.hpp"
-#include "Tree.hpp"
 #include "OBJFile.hpp"
 #include "Model.hpp"
+#include "MAPFile.hpp"
+
+// Animated things
+#include "RoadMap.hpp"
+#include "CarAnimator.hpp"
+#include "CrateAnimator.hpp"
+
+// Articulated Objects
+#include "ArticulatedCrane.hpp"
 
 // Cg support
-#include "CgContext.hpp"
-#include "CgProfile.hpp"
+#include "CgSingleton.hpp"
 #include "CgProgram.hpp"
 
 using namespace std;
@@ -34,26 +43,25 @@ using namespace std;
 static const int kWindowWidth = 800;
 static const int kWindowHeight = 600;
 
-// We can't initialize these here since OpenGL needs to be initialized first
-static CgContext* cgContext;
-static CgProfile* cgVertexProfile;
-static CgProfile* cgFragmentProfile;
+static SceneRenderer* sr;
+static AnimatorManager* am;
 
-static FrameBuffer* testBuffer;
-
-static SceneManager sm;
 static bool animate = false;
 static shared_ptr<Camera> freeCam;
 static shared_ptr<SceneNode> freeCamNode;
 static shared_ptr<Camera> topCam;
 static shared_ptr<SceneNode> topCamNode;
-static shared_ptr<Plane> rttPlane;
-
+static shared_ptr<Camera> landingCam;
+static shared_ptr<SceneNode> landingCamNode;
+static shared_ptr<Camera> powerCam;
+static shared_ptr<SceneNode> powerCamNode;
 static struct {
 	CEGUI::Checkbox* chkEnableGUI;
 	CEGUI::Window* lblCam;
 	CEGUI::RadioButton* radFree;
 	CEGUI::RadioButton* radTop;
+	CEGUI::RadioButton* radLanding;
+	CEGUI::RadioButton* radPower;
 } controls;
 
 //! Instead of being a simple enum, this struct is used to hold
@@ -79,10 +87,10 @@ static struct {
 //! Current yaw of the camera, in radians
 static float cameraYaw = 0.0f;
 //! Current pitch of the camera, in radians
-static float cameraPitch = Math::kPi / 6.0f;
+static float cameraPitch = Math::kPi / 4.0f;
 
 //! Delta camera movment per frame, in radians
-static const float deltaMovement = 0.1f;
+static const float deltaMovement = 0.3f;
 //! Delta camera angule per frame, in radians
 static const float deltaTheta = Math::kPi * 2.0f  / 240.0f;
 
@@ -100,7 +108,6 @@ void init()
 {
 	// If any of this fails, we don't have sufficient hardware
 	try {
-
 		// Start GLEW and check for needed extensions
 		if (glewInit() != GLEW_OK) {
 			throw Exceptions::Exception("GLEW failed to initialize",
@@ -117,126 +124,183 @@ void init()
 			                            __FUNCTION__);
 		}
 
-		// Set up a frame buffer to do a test render to texture
-		testBuffer = new FrameBuffer(512, 512);
-
 		// Start up Cg
-		cgContext = new CgContext;
-		cgVertexProfile = new CgProfile(*cgContext, CG_GL_VERTEX);
-		cgFragmentProfile = new CgProfile(*cgContext, CG_GL_FRAGMENT);
+		auto& cgs = CgSingleton::getSingleton();
+		auto& cgContext = cgs.getContext();
+		auto& cgVertProfile = cgs.getVertexProfile();
+		auto& cgFragProfile = cgs.getFragmentProfile();
 
-		glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
+		// Start up our scene renderer
+		sr = new SceneRenderer(kWindowWidth, kWindowHeight);
+
+		// and animator manager
+		am = new AnimatorManager();
+
+		glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 		// Avoid stupid problems with OGL and RGB formats
 		// (since OGL tries to read textures to the nearest 4-byte boundary)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		// Create and place our cameras
 		freeCam = make_shared<Camera>();
-		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 50.0f);
-		sm.setActiveCamera(freeCam);
-		freeCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -10.0f));
+		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
+		sr->setActiveCamera(freeCam);
+		freeCamNode = make_shared<SceneNode>(Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
-		sm.getSceneNodes().push_back(freeCamNode);
+		sr->getSceneNodes().push_back(freeCamNode);
 
 		topCam = make_shared<Camera>();
-		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 30.0f);
+		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
 		topCam->setTarget(Vector3());
 		topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
-		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 20.0f, 0.0f));
+		topCamNode = make_shared<SceneNode>(Vector3(0.0, 180.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
-		sm.getSceneNodes().push_back(topCamNode);
+		sr->getSceneNodes().push_back(topCamNode);
 
-		// Create and place our light.
-		auto light = make_shared<Light>();
-		auto lightNode = make_shared<SceneNode>(nullptr, Vector3(10.0f, 10.0f, -10.0f));
-		lightNode->addRenderable(light);
-		// Give the light a yellow sphere (sun?)
-		auto lightMat =  make_shared<Material>();
-		lightMat->lighting = false;
-		lightMat->color[0] = 1.0f;
-		lightMat->color[1] = 1.0f;
-		lightMat->color[2] = 0.0f;
-		auto sun = make_shared<Sphere>(lightMat);
-		lightNode->addRenderable(sun);
-		sm.getSceneNodes().push_back(lightNode);
+		landingCam = make_shared<Camera>();
+		landingCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 90.0f);
+		landingCam->setTarget(Vector3(90.0f, 0.0f, -90.0f));
+		landingCamNode = make_shared<SceneNode>(Vector3(30.0f, 20.0f, -30.0f));
+		landingCamNode->addRenderable(landingCam);
+		sr->getSceneNodes().push_back(landingCamNode);
+
+		powerCam = make_shared<Camera>();
+		powerCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
+		powerCam->setTarget(Vector3());
+		powerCamNode = make_shared<SceneNode>(Vector3(0.0f, 6.0f, -50.0f));
+		powerCamNode->addRenderable(powerCam);
+		sr->getSceneNodes().push_back(powerCamNode);
+
+		// Create a directional light
+		auto dirLight = make_shared<DirectionalLight>();
+		dirLight->direction = Vector3(1.0f, -1.0f, 1.0f);
+		dirLight->direction.normalize();
+		auto lightSceneNode = make_shared<SceneNode>();
+		lightSceneNode->addRenderable(dirLight);
+		sr->getSceneNodes().push_back(lightSceneNode);
+
+		// Set up commonly used texture sets
+		auto deferredTextureSet = make_shared<ShaderSet>();
+		deferredTextureSet->vertexShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredTexture.cg",
+		                           cgVertProfile, "VS_Main");
+		deferredTextureSet->fragmentShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredTexture.cg",
+		                           cgFragProfile, "FS_Main");
+		deferredTextureSet->callback = [&](const shared_ptr<Material>& mat) {
+			mat->vertexShader->getNamedParameter("modelViewProj").
+			setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelView").
+			setStateMatrix(CG_GL_MODELVIEW_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelViewIT").setStateMatrix(
+			    CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE_TRANSPOSE);
+
+			mat->fragmentShader->getNamedParameter("diffuse").set3fv(
+			    mat->diffuse);
+
+			mat->fragmentShader->getNamedParameter("shininess").set1f(
+			    mat->shininess);
+
+			auto& cam = sr->getActiveCamera();
+			mat->fragmentShader->getNamedParameter("zNear").set1f(
+			    cam->getNear());
+			mat->fragmentShader->getNamedParameter("zFar").set1f(
+			    cam->getFar());
+		};
+		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
 		// Set up our sky box
+		auto skybox = make_shared<SkyBox>();
+		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
+		                    "./resources/shaders/DeferredSkybox.cg",
+		                    cgFragProfile, "main");
+		for (int face = 0; face < 6; ++face)
+			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
+			    skyboxShader;
+
 		auto skyboxNode = make_shared<SceneNode>();
-		skyboxNode->addRenderable(make_shared<SkyBox>());
-		sm.getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
+		skyboxNode->addRenderable(skybox);
+		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
-		// Set up our "ground"
-		auto groundNode = make_shared<SceneNode>();
-		groundNode->getTransform().scale(Vector3(15.0f));
-		auto groundMat = make_shared<Material>();
-		groundMat->lighting = false;
-		// Load the ground's texture
-		groundMat->textures.push_back(
-		    make_shared<Texture>("./resources/textures/Awesome.png"));
-		groundMat->textures.push_back(
-		    make_shared<Texture>("./resources/textures/Matrix.png"));
-		// Load the ground's pixel shader
-		groundMat->fragmentShader = make_shared<CgProgram>(*cgContext, false,
-		                            "./resources/shaders/TestMultitextureFrag.cg",
-		                            *cgFragmentProfile, "main");
-		// Use a lambda function to set the ground's material callback
-		groundMat->callback = [](const shared_ptr<Material>& mat) {
-			// Retrieve then set t for both the vertex and fragment shader
-			float t = (float)(clock() % (CLOCKS_PER_SEC * 5)) / (float)(CLOCKS_PER_SEC * 5)
-			          * Math::kPi * 2.0f;
-			auto tFrag = mat->fragmentShader->getNamedParameter("t");
-			tFrag.set1f(t);
-		};
-		auto ground = make_shared<Plane>(groundMat);
-		groundNode->addRenderable(ground);
-		sm.getSceneNodes().push_back(groundNode);
+		// load the map file that will import all the building and road models
+		// and textures. Add those to the SceneRenderer.
+		MAPFile mapfile("./resources/mooncolony_map.txt");
+		auto& nodes =  mapfile.getNodes();
+		for (auto i = nodes.begin(); i != nodes.end(); ++i)
+			sr->getSceneNodes().push_back(*i);
 
-		OBJFile* objfile = new OBJFile("./resources/models/sphere3.obj");
-		auto ball = make_shared<Model>(*objfile->getModel());		
-		auto ballMat = make_shared<Material>();
-		ballMat->lighting = false;
-		ballMat->textures.push_back(make_shared<Texture>("./resources/textures/Awesome.png"));
-		ball->setMaterial(ballMat);
-		auto sceneryNode = make_shared<SceneNode>(*(new SceneNode(
-		                       nullptr, Vector3(5.0f, 2.5f, 5.0f))));
-		float widthScale = 1.0f;
-		float heightScale = 1.0f;
-		sceneryNode->getTransform().scale(
-		Vector3(widthScale, heightScale, widthScale));
-		sceneryNode->addRenderable(ball);
-		sm.getSceneNodes().push_back(sceneryNode);
+		cout << "--------------------------------------" << endl;
+		cout << "parsing roadmap" << endl;
+		auto roadmap = make_shared<RoadMap>("./resources/Moonroads.txt");
+		cout << "done with roadmap" << endl;
+		cout << "--------------------------------------" << endl;
 
-		Transform pnt;
-		pnt.rotateDegrees(Vector3(90.0f, 0.0f, 0.0f));
-		pnt.scale(Vector3(6.0f));
-		pnt.setTranslation(Vector3(0.0f, 10.0f, 5.0f));
-		auto planeNode = make_shared<SceneNode>(nullptr, pnt);
-		auto rttMat = make_shared<Material>();
-		auto rtt = make_shared<Texture>(nullptr, 3, 512, 512, GL_RGBA, GL_UNSIGNED_BYTE, false);
-		rttMat->textures.push_back(rtt);
-		testBuffer->attachTexture(rtt);
-		rttPlane = make_shared<Plane>(rttMat);
-		planeNode->addRenderable(rttPlane);
-		sm.getSceneNodes().push_back(planeNode);
+		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
+		OBJFile carObj("./resources/models/sphere3.obj");
+		auto numcars = 10;
+		for (int i = 0; i < numcars; i++) {
+			caranimator->createCar(
+			    carObj.getModel(),
+			    make_shared<Texture>("./resources/textures/Awesome.png"));
+		}
+
+		am->addanimator(caranimator);
+
+		auto crateanimator = make_shared<CrateAnimator>(sr);
+		OBJFile crateObj("./resources/models/sat_pod.obj");
+		auto cratetext = make_shared<Texture>("./resources/textures/sat_pod.jpg");
+		// crate 1
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    cratetext,
+				Vector3(10, 0, 10),
+				6.28f);
+
+		// crate 2
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    cratetext,
+				Vector3(10, 0, -10),
+				12.56f);
+		
+		// crate 3
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    cratetext,
+				Vector3(-10, 0, 10),
+				3.14f);
+
+		// crate 4
+		crateanimator->createCrate(
+			    crateObj.getModel(),
+			    cratetext,
+				Vector3(-10, 0, -10),
+				9.42f);
+
+		am->addanimator(crateanimator);
+
+		/// experimentation on articulated objects:
+		
+		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(8.0f, 0.0f, 8.0f));
+		am->addanimator(crane);
+
+		/// end experimentation on articulated objects
+
 	}
-	catch (const Exceptions::Exception&) {
+	catch (const Exceptions::Exception& ex) {
 		MessageBox(GetActiveWindow(),
-		           "This computer does not support graphics features necessary"
-		           " for this demo.", "Insufficient graphics hardware",
+		           (string("Initialization error: ") + ex.message).c_str(),
+		           "Initialization Error",
 		           MB_OK | MB_ICONERROR);
 		exit(1);
 	}
 
-	// Enable our first (and only) light
-	//! \todo Support more lights later
-	glEnable(GL_LIGHT0);
-
 	// Set up shading model
 	glShadeModel(GL_SMOOTH);
-
-	// Enable transparent materials
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	try {
 		// Set up CEGUI
@@ -323,6 +387,28 @@ void init()
 		controls.radTop->setText("Top");
 		controls.radTop->setGroupID(0);
 		root->addChildWindow(controls.radTop);
+
+		controls.radLanding = static_cast<RadioButton*>(wmgr.createWindow(
+		                      radioName,
+		                      "SelectZoneRoot/Landing"));
+		controls.radLanding->setPosition(
+		    UVector2(UDim(0.8f, 0.0f), UDim(0.0f, 300.0f)));
+		controls.radLanding->setSize(
+		    UVector2(UDim(0.18f, 0.0f), UDim(0.0f, 20.0f)));
+		controls.radLanding->setText("Landing");
+		controls.radLanding->setGroupID(0);
+		root->addChildWindow(controls.radLanding);
+
+		controls.radPower = static_cast<RadioButton*>(wmgr.createWindow(
+		                      radioName,
+		                      "SelectZoneRoot/Power"));
+		controls.radPower->setPosition(
+		    UVector2(UDim(0.8f, 0.0f), UDim(0.0f, 340.0f)));
+		controls.radPower->setSize(
+		    UVector2(UDim(0.18f, 0.0f), UDim(0.0f, 20.0f)));
+		controls.radPower->setText("Power");
+		controls.radPower->setGroupID(0);
+		root->addChildWindow(controls.radPower);
 	}
 	catch (const CEGUI::Exception& ex) {
 		fprintf(stderr,
@@ -334,7 +420,7 @@ void init()
 void onDisplay()
 {
 	if (controls.radFree->isSelected()) {
-		sm.setActiveCamera(freeCam);
+		sr->setActiveCamera(freeCam);
 		// Rotate the camera
 		if (cameraMovement.rotation.up)
 			cameraPitch -= deltaTheta;
@@ -384,19 +470,22 @@ void onDisplay()
 		freeCam->setUpDirection(up);
 	}
 	else if (controls.radTop->isSelected()) {
-		sm.setActiveCamera(topCam);
+		sr->setActiveCamera(topCam);
 	}
+	else if (controls.radLanding->isSelected()) {
+		sr->setActiveCamera(landingCam);
+	}
+	else if (controls.radPower->isSelected()) {
+		sr->setActiveCamera(powerCam);
+	}
+
+	// update any Animators
+	am->animate();
 
 	// Enable depth testing and draw our scene
 	try {
 		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		rttPlane->setVisible(false);
-		testBuffer->setupRender();
-		sm.renderScene();
-		testBuffer->cleanupRender();
-		rttPlane->setVisible(true);
-		sm.renderScene();
+		sr->renderScene();
 		// Disable lighting and depth tests for rendering the GUI
 		setActiveMaterial(getDefaultMaterial());
 		glDisable(GL_DEPTH_TEST);
@@ -499,6 +588,26 @@ void onKeyboardDown(unsigned char key, int x, int y)
 
 	case 'q':
 		cameraMovement.movement.up = true;
+		break;
+
+	case '1':
+		sr->setDisplayMode(SceneRenderer::DM_UNLIT);
+		break;
+
+	case '2':
+		sr->setDisplayMode(SceneRenderer::DM_NORMALS);
+		break;
+
+	case '3':
+		sr->setDisplayMode(SceneRenderer::DM_DEPTH);
+		break;
+
+	case '4':
+		sr->setDisplayMode(SceneRenderer::DM_LIT);
+		break;
+
+	case '5':
+		sr->setDisplayMode(SceneRenderer::DM_FINAL);
 		break;
 	}
 }

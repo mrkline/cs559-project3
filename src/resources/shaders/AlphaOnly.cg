@@ -1,0 +1,7 @@
+// Copies the alpha channel into the rgb channels, and sets alpha to 1
+float4 main(float2 uv : TEXCOORD,
+            sampler2D tex) : COLOR
+{
+	float a = tex2D(tex, uv).a;
+	return float4(a, a, a, 1.0);
+}

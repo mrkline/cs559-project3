@@ -1,0 +1,57 @@
+struct VertexData
+{
+    float2 uv : TEXCOORD0;
+    float3 back : TEXCOORD1;
+    float4 position : POSITION;
+};
+
+VertexData VS_Main(float2 uv : TEXCOORD,
+                   float4 position : POSITION,
+                   uniform float4x4 invProj)
+{
+    VertexData OUT;
+    OUT.uv = uv;
+    OUT.position = position;
+    float4 bw = mul(invProj, position);
+    OUT.back = bw.rgb / bw.w;
+    return OUT;
+}
+
+// Lights the entire screen using a directional light
+float4 FS_Main(VertexData vd,
+            sampler2D baseTex, // The base image to add to
+            sampler2D normAndDepthTex, // The normal and depth 
+            sampler2D litTex, // Diffuse and specular coefficients
+            uniform float near, // Near clip value
+            uniform float far, //Far clip value
+            uniform float3 lightDirection, // Light direction, in view space
+            uniform float3 color) // light color
+            : COLOR
+{
+    float4 base = tex2D(baseTex, vd.uv);
+    float4 nd = tex2D(normAndDepthTex, vd.uv);
+    float4 l = tex2D(litTex, vd.uv);
+
+    // Reconstruct position from depth and use it as the eye vector
+    float3 eye = vd.back * (near + nd.a * (far - near)) / far;
+    eye *= -1;
+    eye = normalize(eye);
+    
+    // Unpack our normals
+    float3 normal;
+    normal.r = nd.r * 2.0f - 1.0f;
+    normal.g = nd.g * 2.0f - 1.0f;
+    normal.b = nd.b * 2.0f - 1.0f;
+
+    // Light direction is from the light to the object, so we need to invert it
+    float3 halfAngle = normalize(eye - lightDirection);
+    float4 coefficients = lit(dot(normal, -lightDirection),
+                              dot(normal, halfAngle), 100);
+
+    float4 ret = base;
+    // Diffuse
+    ret.rgb += coefficients.y * color * l.rgb;
+    // Specular
+    ret.rgb += coefficients.z * color * l.rgb;
+    return saturate(ret);
+}

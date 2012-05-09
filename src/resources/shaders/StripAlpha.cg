@@ -1,0 +1,6 @@
+// Returns the input color with full alpha
+float4 main(float2 uv : TEXCOORD,
+            sampler2D tex) : COLOR
+{
+	return float4(tex2D(tex, uv).rgb, 1.0f);
+}
