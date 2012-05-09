@@ -77,7 +77,7 @@ MAPFile::MAPFile(char* filename)
 				// set the material on the model
 				tile->setMaterial(mat);
 				// create the scene node, with the transform
-				auto tilenode = make_shared<SceneNode>(nullptr, Vector3(tmpx, tmpy, tmpz));
+				auto tilenode = make_shared<SceneNode>(Vector3(tmpx, tmpy, tmpz));
 				tilenode->getTransform().rotateDegrees(Vector3(0, (float)tmprot, 0));
 				// add the model to the scene node
 				tilenode->addRenderable(tile);

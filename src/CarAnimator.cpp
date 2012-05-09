@@ -34,7 +34,7 @@ void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
 	tmp->setDestination(mappoints.second);
 	auto loc = mappoints.first->getLocation();
 	// add the scenenode
-	auto sn = make_shared<SceneNode>(nullptr, Vector3(loc.X, CARHEIGHT, loc.Y));
+	auto sn = make_shared<SceneNode>(Vector3(loc.X, CARHEIGHT, loc.Y));
     sn->addRenderable(tmp);
 	sr->getSceneNodes().push_back(sn);
 

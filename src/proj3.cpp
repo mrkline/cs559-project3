@@ -145,8 +145,7 @@ void init()
 		freeCam = make_shared<Camera>();
 		freeCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
 		sr->setActiveCamera(freeCam);
-		freeCamNode = make_shared<SceneNode>(nullptr,
-		                                     Vector3(0.0f, 6.0f, -10.0f));
+		freeCamNode = make_shared<SceneNode>(Vector3(0.0f, 6.0f, -10.0f));
 		freeCamNode->addRenderable(freeCam);
 		sr->getSceneNodes().push_back(freeCamNode);
 
@@ -154,21 +153,21 @@ void init()
 		topCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
 		topCam->setTarget(Vector3());
 		topCam->setUpDirection(Vector3(0.0f, 0.0f, 1.0f));
-		topCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0, 180.0f, 0.0f));
+		topCamNode = make_shared<SceneNode>(Vector3(0.0, 180.0f, 0.0f));
 		topCamNode->addRenderable(topCam);
 		sr->getSceneNodes().push_back(topCamNode);
 
 		landingCam = make_shared<Camera>();
 		landingCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 90.0f);
 		landingCam->setTarget(Vector3(90.0f, 0.0f, -90.0f));
-		landingCamNode = make_shared<SceneNode>(nullptr, Vector3(30.0f, 20.0f, -30.0f));
+		landingCamNode = make_shared<SceneNode>(Vector3(30.0f, 20.0f, -30.0f));
 		landingCamNode->addRenderable(landingCam);
 		sr->getSceneNodes().push_back(landingCamNode);
 
 		powerCam = make_shared<Camera>();
 		powerCam->setPerspectiveProjection(60.0f, 4.0f / 3.0f, 0.3f, 200.0f);
 		powerCam->setTarget(Vector3());
-		powerCamNode = make_shared<SceneNode>(nullptr, Vector3(0.0f, 6.0f, -50.0f));
+		powerCamNode = make_shared<SceneNode>(Vector3(0.0f, 6.0f, -50.0f));
 		powerCamNode->addRenderable(powerCam);
 		sr->getSceneNodes().push_back(powerCamNode);
 

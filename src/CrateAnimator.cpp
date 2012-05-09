@@ -21,7 +21,7 @@ void CrateAnimator::createCrate(shared_ptr<Model> model,shared_ptr<Texture> text
 			CgSingleton::getSingleton().shaderSetMap["deferredTexture"]);
 	model->setMaterial(mat);
 
-	auto sn = make_shared<SceneNode>(nullptr, location);
+	auto sn = make_shared<SceneNode>(location);
     sn->getTransform().scale(Vector3(0.4f, 0.4f, 0.4f));
 	sn->addRenderable(tmp);
 	sr->getSceneNodes().push_back(sn);

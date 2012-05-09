@@ -25,8 +25,7 @@ public:
 	\param id An ID that can be used to identify the object
 	\param name A name that can be used to identify the object
 	*/
-	SceneNode(const std::shared_ptr<SceneNode>& parent = nullptr,
-	          const Transform& startingTransform = Transform(),
+	SceneNode(const Transform& startingTransform = Transform(),
 	          int id = -1, const std::string& name = std::string());
 
 	//! Updates the absolute transform of the object
