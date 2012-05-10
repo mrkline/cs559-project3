@@ -32,15 +32,9 @@ float4 FS_Main(VertexData vd,
     float4 nd = tex2D(normAndDepthTex, vd.uv);
     float4 l = tex2D(litTex, vd.uv);
 
-    // Reconstruct position from depth and use it as the eye vector
-    float3 eye = -vd.back * (near + (1.0f - nd.a) * (far - near)) / far;
+    // The eye vector is just the ray from the back of the frustum to the camera
+    float3 eye = normalize(-vd.back);
 
-    //float t = 1.0f - (eye.z - near) / (far - near);
-	//return float4(t, t, t, 1);
-
-    //eye *= -1;
-    eye = normalize(eye);
-    
     // Unpack our normals
     float3 normal;
     normal.r = nd.r * 2.0f - 1.0f;
@@ -50,7 +44,7 @@ float4 FS_Main(VertexData vd,
     // Light direction is from the light to the object, so we need to invert it
     float3 halfAngle = normalize(eye - lightDirection);
     float4 coefficients = lit(dot(normal, -lightDirection),
-                              dot(normal, halfAngle), 100);
+                              dot(normal, halfAngle), 5);
 
     float4 ret = base;
     // Diffuse
