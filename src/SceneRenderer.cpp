@@ -15,7 +15,8 @@
 using namespace std;
 
 SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
-	: mrtFB(screenWidth, screenHeight), compFB(screenWidth, screenHeight)
+	: mrtFB(screenWidth, screenHeight), compFB(screenWidth, screenHeight),
+	  dm(DM_FINAL)
 {
 	unlit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
