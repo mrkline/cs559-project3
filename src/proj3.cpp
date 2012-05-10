@@ -757,7 +757,7 @@ int main(int argc, char** argv)
 		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 		glutInitWindowSize(kWindowWidth, kWindowHeight);
 		glutInitWindowPosition(100, 100);
-		glutCreateWindow(argv[0]);
+		glutCreateWindow("CS 559 Moon Colony");
 		init();
 		glutReshapeFunc(onReshape);
 		glutDisplayFunc(onDisplay);
