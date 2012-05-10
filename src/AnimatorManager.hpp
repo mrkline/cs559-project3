@@ -17,7 +17,7 @@ public:
 	{ this->animators.push_back(in); }
 
 private:
-	double timelast, timenow;
+	unsigned int timelast, timenow;
 
 	std::list<std::shared_ptr<Animator>> animators;
 };
