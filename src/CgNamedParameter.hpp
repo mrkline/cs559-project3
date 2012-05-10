@@ -16,8 +16,7 @@ public:
 	//! Sets this parameter to a given 4x4 transform matrixc
 	void setTransform(const Transform& t)
 	{
-		//! \todo Should this be cgGLSetMatrixParameterfc?
-		cgGLSetMatrixParameterfr(param, t.getArray());
+		cgGLSetMatrixParameterfc(param, t.getArray());
 		throwCgExceptions(__FUNCTION__);
 	}
 

@@ -211,6 +211,7 @@ void init()
 			mat->fragmentShader->getNamedParameter("zFar").set1f(
 			    cam->getFar());
 		};
+
 		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
 		// Set up our sky box
