@@ -56,7 +56,6 @@ void ArticulatedRadio::waveMast()
 {
 	auto& mastxfrm = mastsn->getTransform();
 	auto rot = mastxfrm.getRotationDegrees().X;
-	printf("rot %g\n", rot);
 	if(mastangle < 45 && radioforward)
 	{
 		mastangle += dtheta;

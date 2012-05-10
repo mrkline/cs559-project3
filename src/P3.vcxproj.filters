@@ -233,5 +233,8 @@
     <ClInclude Include="ArticulatedRadio.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sun.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

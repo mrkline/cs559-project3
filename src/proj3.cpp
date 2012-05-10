@@ -25,6 +25,7 @@
 #include "OBJFile.hpp"
 #include "Model.hpp"
 #include "MAPFile.hpp"
+#include "Sun.hpp"
 
 // Animated things
 #include "RoadMap.hpp"
@@ -63,9 +64,6 @@ static struct {
 	CEGUI::RadioButton* radTop;
 	CEGUI::RadioButton* radLanding;
 	CEGUI::RadioButton* radPower;
-	//CEGUI::Slider* craneRotation;
-	//CEGUI::Slider* craneLoadHeight;
-	//CEGUI::Slider* craneLoadExt;
 } controls;
 
 //! Instead of being a simple enum, this struct is used to hold
@@ -219,14 +217,31 @@ void init()
 		};
 		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
+		// Create sun
+		auto sunMat = make_shared<Material>();
+		sunMat->unlit[0] = 1.0f;
+		sunMat->unlit[1] = 1.0f;
+		sunMat->unlit[2] = 0.0f;
+		sunMat->diffuse[0] = 1.0f;
+		sunMat->diffuse[1] = 1.0f;
+		sunMat->diffuse[2] = 0.0f;
+		auto sun = make_shared<Sun>(sunMat);
+		auto sunNode = make_shared<SceneNode>(Vector3(9.0f, 8.0f, 8.0f));
+		sunNode->addRenderable(sun);
+		sr->getSceneNodes().push_back(sunNode);
+
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
 		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
 		                    "./resources/shaders/DeferredSkybox.cg",
 		                    cgFragProfile, "main");
+		auto skyboxTex = make_shared<Texture>("./resources/textures/starfield.jpg");
 		for (int face = 0; face < 6; ++face)
+		{
+			skybox->getFaceMaterial((SkyBox::Face)face)->textures.push_back(skyboxTex);
 			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
 			    skyboxShader;
+		}
 
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(skybox);
@@ -289,16 +304,13 @@ void init()
 
 		am->addanimator(crateanimator);
 
-		/// experimentation on articulated objects:
-		
+
+		// add articultaed objects
 		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(60.0f, 0.0f, -60.0f));
 		am->addanimator(crane);
 
 		auto& radio = make_shared<ArticulatedRadio>(sr, Vector3(55.0f, 0.0f, -85.0f));
 		am->addanimator(radio);
-
-
-		/// end experimentation on articulated objects
 
 	}
 	catch (const Exceptions::Exception& ex) {
@@ -419,23 +431,6 @@ void init()
 		controls.radPower->setText("Power");
 		controls.radPower->setGroupID(0);
 		root->addChildWindow(controls.radPower);
-
-		/*CEGUI::Slider* craneRotation;
-		CEGUI::Slider* craneLoadHeight;
-		CEGUI::Slider* craneLoadExt;*/
-
-		/*controls.craneRotation = static_cast<Slider*>(wmgr.createWindow(
-								sliderName,
-								"SelectZoneRoot/CraneAngle"));
-		controls.craneRotation->setPosition(
-		    UVector2(UDim(0.8f, 0.0f), UDim(0.0f, 380.0f)));
-		controls.craneRotation->setSize(
-		    UVector2(UDim(0.18f, 0.0f), UDim(0.0f, 20.0f)));
-		controls.craneRotation->setText("Crane Angle");
-		controls.craneRotation->setMaxValue(360.0f);
-		controls.craneRotation->setClickStep(2.0f);
-		controls.craneRotation->setCurrentValue(0.0f);
-		root->addChildWindow(controls.craneRotation);*/
 	}
 	catch (const CEGUI::Exception& ex) {
 		fprintf(stderr,

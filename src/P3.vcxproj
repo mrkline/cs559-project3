@@ -175,6 +175,7 @@
     <ClInclude Include="SkyBox.hpp" />
     <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="StdAfx.hpp" />
+    <ClInclude Include="Sun.hpp" />
     <ClInclude Include="Teapot.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
