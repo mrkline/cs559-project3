@@ -218,19 +218,6 @@ void init()
 
 		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
-		// Create sun
-		auto sunMat = make_shared<Material>();
-		sunMat->unlit[0] = 1.0f;
-		sunMat->unlit[1] = 1.0f;
-		sunMat->unlit[2] = 0.0f;
-		sunMat->diffuse[0] = 1.0f;
-		sunMat->diffuse[1] = 1.0f;
-		sunMat->diffuse[2] = 0.0f;
-		auto sun = make_shared<Sun>(sunMat);
-		auto sunNode = make_shared<SceneNode>(Vector3(9.0f, 8.0f, 8.0f));
-		sunNode->addRenderable(sun);
-		sr->getSceneNodes().push_back(sunNode);
-
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
 		auto skyboxMat = make_shared<Material>();
@@ -245,6 +232,18 @@ void init()
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(skybox);
 		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
+
+		// Create sun
+		auto sunMat = make_shared<Material>();
+		sunMat->depthTest = false;
+		sunMat->fragmentShader = skyboxMat->fragmentShader;
+		sunMat->textures.push_back(make_shared<Texture>("./resources/textures/Sun.png"));
+		sunMat->textures[0]->intParams[GL_TEXTURE_WRAP_S] = GL_REPEAT;
+		sunMat->textures[0]->intParams[GL_TEXTURE_WRAP_T] = GL_REPEAT;
+		auto sun = make_shared<Sun>(sunMat);
+		auto sunNode = make_shared<SceneNode>();
+		sunNode->addRenderable(sun);
+		sr->getSceneNodes().push_back(sunNode);
 
 		// load the map file that will import all the building and road models
 		// and textures. Add those to the SceneRenderer.
