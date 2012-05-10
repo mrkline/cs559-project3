@@ -1,0 +1,10 @@
+float4 main(float2 uv : TEXCOORD,
+            sampler2D baseTex : register(s0), // The base image to add to
+            sampler2D litTex : register(s2), // Diffuse and specular coefficients
+            uniform float3 ambient) : COLOR // ambient light coefficients
+{
+    float3 base = tex2D(baseTex, uv).rgb;
+    float3 d = tex2D(litTex, uv).rgb;
+    return float4(base + d * ambient, 1.0f);
+}
+

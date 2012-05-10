@@ -38,7 +38,7 @@ FragmentShaderOutput FS_Main(VertexShaderOutput vsOut,
     FragmentShaderOutput OUT;
     OUT.unlit = vsOut.unlit;
     OUT.normAndDepth.rgb = (vsOut.normal + 1.0f) / 2.0f;
-    OUT.normAndDepth.a = 1.0f - (vsOut.depth - zNear) / zFar;
+    OUT.normAndDepth.a = 1.0f - (vsOut.depth - zNear) / (zFar - zNear);
     OUT.diffuse.rgb = diffuse;
     OUT.diffuse.a = shininess;
     return OUT;

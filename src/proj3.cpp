@@ -42,8 +42,8 @@
 
 using namespace std;
 
-static const int kWindowWidth = 800;
-static const int kWindowHeight = 600;
+static const int kWindowWidth = 1024;
+static const int kWindowHeight = 768;
 
 static SceneRenderer* sr;
 static AnimatorManager* am;
@@ -215,6 +215,7 @@ void init()
 			mat->fragmentShader->getNamedParameter("zFar").set1f(
 			    cam->getFar());
 		};
+
 		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
 		// Create sun
