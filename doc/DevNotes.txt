@@ -41,7 +41,8 @@ Your town must have:
 [X]	You must attempt "enough" technical challenges (see the technical challenges page).
 		Deferred shading, above, multitexture support. others?
 		
-[ ]	You must have an articulated object (that moves its articulation) per person.
+[X]	You must have an articulated object (that moves its articulation) per person.
+		waving satellite dish and crane
 
 [X]	You program must work at a sufficient frame rate (which isn't hard since the storm computers are so fast).
 		certainly does with out debug

@@ -33,6 +33,7 @@
 
 // Articulated Objects
 #include "ArticulatedCrane.hpp"
+#include "ArticulatedRadio.hpp"
 
 // Cg support
 #include "CgSingleton.hpp"
@@ -62,6 +63,9 @@ static struct {
 	CEGUI::RadioButton* radTop;
 	CEGUI::RadioButton* radLanding;
 	CEGUI::RadioButton* radPower;
+	//CEGUI::Slider* craneRotation;
+	//CEGUI::Slider* craneLoadHeight;
+	//CEGUI::Slider* craneLoadExt;
 } controls;
 
 //! Instead of being a simple enum, this struct is used to hold
@@ -101,6 +105,8 @@ bool onShowGUIClicked(const CEGUI::EventArgs& e)
 	controls.lblCam->setVisible(selected);
 	controls.radFree->setVisible(selected);
 	controls.radTop->setVisible(selected);
+	controls.radLanding->setVisible(selected);
+	controls.radPower->setVisible(selected);
 	return true;
 }
 
@@ -285,8 +291,12 @@ void init()
 
 		/// experimentation on articulated objects:
 		
-		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(8.0f, 0.0f, 8.0f));
+		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(60.0f, 0.0f, -60.0f));
 		am->addanimator(crane);
+
+		auto& radio = make_shared<ArticulatedRadio>(sr, Vector3(55.0f, 0.0f, -85.0f));
+		am->addanimator(radio);
+
 
 		/// end experimentation on articulated objects
 
@@ -340,7 +350,7 @@ void init()
 		std::string checkboxName = CEGUIStyleManager::getCheckboxName();
 		std::string labelName = CEGUIStyleManager::getStaticTextName();
 		std::string radioName = CEGUIStyleManager::getRadioButtonName();
-
+		//std::string sliderName = CEGUIStyleManager::getSliderName();
 		// Add our controls
 		controls.chkEnableGUI = static_cast<Checkbox*>(wmgr.createWindow(
 		                            checkboxName,
@@ -409,6 +419,23 @@ void init()
 		controls.radPower->setText("Power");
 		controls.radPower->setGroupID(0);
 		root->addChildWindow(controls.radPower);
+
+		/*CEGUI::Slider* craneRotation;
+		CEGUI::Slider* craneLoadHeight;
+		CEGUI::Slider* craneLoadExt;*/
+
+		/*controls.craneRotation = static_cast<Slider*>(wmgr.createWindow(
+								sliderName,
+								"SelectZoneRoot/CraneAngle"));
+		controls.craneRotation->setPosition(
+		    UVector2(UDim(0.8f, 0.0f), UDim(0.0f, 380.0f)));
+		controls.craneRotation->setSize(
+		    UVector2(UDim(0.18f, 0.0f), UDim(0.0f, 20.0f)));
+		controls.craneRotation->setText("Crane Angle");
+		controls.craneRotation->setMaxValue(360.0f);
+		controls.craneRotation->setClickStep(2.0f);
+		controls.craneRotation->setCurrentValue(0.0f);
+		root->addChildWindow(controls.craneRotation);*/
 	}
 	catch (const CEGUI::Exception& ex) {
 		fprintf(stderr,

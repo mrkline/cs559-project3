@@ -20,12 +20,15 @@ private:
 	Vector3 basevector;
 	Vector3 armvector;
 	Vector3 loadvector;
-	float armangle;
 	float loaddistance;
 	float loadheight;
 	float dtheta;
 	float dx;
 	float dy;
+	float outmax;
+	float downmax;
+	bool loaddirout;
+	bool loaddirdown;
 	shared_ptr<Model> basemodel;
 	shared_ptr<Model> armmodel;
 	shared_ptr<Model> loadmodel;
