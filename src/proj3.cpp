@@ -210,6 +210,43 @@ void init()
 
 		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
+		auto deferredMultitextureSet = make_shared<ShaderSet>();
+		deferredMultitextureSet->vertexShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredMultitexture.cg",
+		                           cgVertProfile, "VS_Main");
+		deferredMultitextureSet->fragmentShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredMultitexture.cg",
+		                           cgFragProfile, "FS_Main");
+		deferredMultitextureSet->callback = [&](const shared_ptr<Material>& mat) {
+			mat->vertexShader->getNamedParameter("modelViewProj").
+			setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelView").
+			setStateMatrix(CG_GL_MODELVIEW_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelViewIT").setStateMatrix(
+			    CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE_TRANSPOSE);
+
+			mat->fragmentShader->getNamedParameter("diffuse").set3fv(
+			    mat->diffuse);
+
+			mat->fragmentShader->getNamedParameter("shininess").set1f(
+			    mat->shininess);
+
+			auto& cam = sr->getActiveCamera();
+			mat->fragmentShader->getNamedParameter("zNear").set1f(
+			    cam->getNear());
+			mat->fragmentShader->getNamedParameter("zFar").set1f(
+			    cam->getFar());
+
+			mat->fragmentShader->getNamedParameter("t").set1f(
+				(float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC);
+		};
+
+		cgs.shaderSetMap["deferredMultitexture"] = deferredMultitextureSet;
+
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
 		auto skyboxMat = make_shared<Material>();
@@ -260,12 +297,15 @@ void init()
 
 		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
 		OBJFile carObj("./resources/models/sphere3.obj");
-		auto numcars = 10;
-		for (int i = 0; i < numcars; i++) {
-			caranimator->createCar(
-			    carObj.getModel(),
-			    make_shared<Texture>("./resources/textures/Awesome.png"));
-		}
+		auto carMaterial = make_shared<Material>();
+		carMaterial->textures.push_back(make_shared<Texture>("./resources/textures/Car.png"));
+		carMaterial->textures.push_back(make_shared<Texture>("./resources/textures/Matrix.png"));
+		carMaterial->textures[1]->intParams[GL_TEXTURE_WRAP_S] = GL_REPEAT;
+		carMaterial->textures[1]->intParams[GL_TEXTURE_WRAP_T] = GL_REPEAT;
+		carMaterial->setShaderSet(cgs.shaderSetMap["deferredMultitexture"]);
+		const auto numcars = 10;
+		for (int i = 0; i < numcars; i++)
+			caranimator->createCar(carObj.getModel(),carMaterial);
 
 		am->addanimator(caranimator);
 

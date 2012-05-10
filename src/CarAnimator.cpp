@@ -13,7 +13,7 @@ CarAnimator::CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr)
 	srand((unsigned int)time(NULL));
 }
 
-void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
+void CarAnimator::createCar(shared_ptr<Model> model, shared_ptr<Material> mat)
 {
 	const float CARHEIGHT = 5.0f;	// keep the cars off the ground just a tad
 	const float CARSPEED = 10.0f;	// default speed in units per second
@@ -21,10 +21,6 @@ void CarAnimator::createCar(shared_ptr<Model> model,shared_ptr<Texture> texture)
 	auto tmp = make_shared<Car>(model, CARSPEED);
 	
 	// create the material and set properties
-	auto mat = make_shared<Material>();
-    mat->textures.push_back(texture);
-	mat->setShaderSet(
-			CgSingleton::getSingleton().shaderSetMap["deferredTexture"]);
 	model->setMaterial(mat);
 
 	// get a roadmapnode to set location and destination
