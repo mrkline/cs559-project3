@@ -37,12 +37,12 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	mrtFB.attachTexture(lit, 2);
 	mrtFB.setNumRenderTargets(3);
 
-	comp0 = make_shared<Texture>(nullptr, 3, screenWidth, screenHeight,
+	comp0 = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
 	comp0->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
 	comp0->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
 
-	comp1 = make_shared<Texture>(nullptr, 3, screenWidth, screenHeight,
+	comp1 = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
 	comp1->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
 	comp1->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
@@ -56,6 +56,9 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	alphaOnlyShader = make_shared<CgProgram>(cgContext, false,
 	                  "./resources/shaders/AlphaOnly.cg",
 	                  fragProfile, "main");
+	setupEAShader = make_shared<CgProgram>(cgContext, false,
+			"./resources/shaders/SetupEA.cg",
+			fragProfile, "main");
 	directionalLightVert = make_shared<CgProgram>(cgContext, false,
 			"./resources/shaders/DirectionalLight.cg",
 			vertProfile, "VS_Main");
@@ -75,6 +78,7 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 	lightingMat->depthTest = false;
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	ambient[0] = ambient[1] = ambient[2] = 0.4f;
 }
 
 //! Utility function to save from some verbosity below
@@ -217,10 +221,13 @@ void SceneRenderer::renderScene()
 		break;
 
 	case DM_FINAL:
-		// Step one of the deferred process: copy the unlit colors to comp0
-		singleTexMat->textures[0] = unlit;
-		singleTexMat->fragmentShader = stripAlphaShader;
-		setActiveMaterial(singleTexMat);
+		// Step one of the deferred process: copy the unlit colors and
+		// ambient to comp0
+		lightingMat->textures[0] = unlit;
+		lightingMat->fragmentShader = setupEAShader;
+		setActiveMaterial(lightingMat);
+		setupEAShader->getNamedParameter("ambient").
+			set3fv(ambient);
 		compFB.attachTexture(comp0);
 		compFB.setupRender();
 		drawQuad();

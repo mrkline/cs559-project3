@@ -25,7 +25,7 @@ Material::Material()
 	diffuse[0] = 0.0f;
 	diffuse[1] = 0.0f;
 	diffuse[2] = 0.0f;
-	shininess = 1.0f;
+	shininess = 0.5f;
 }
 
 void Material::setShaderSet(const shared_ptr<ShaderSet>& set)

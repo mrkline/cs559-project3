@@ -37,6 +37,8 @@ public:
 
 	void setDisplayMode(DisplayMode mode) { dm = mode; }
 
+	float* getAmbientCoefficients() { return ambient; }
+
 private:
 	//! The frame buffer used to render to multiple target textures
 	FrameBuffer mrtFB;
@@ -72,6 +74,9 @@ private:
 	//! A shader used to show the alpha channel fo a texture
 	std::shared_ptr<CgProgram> alphaOnlyShader;
 
+	//! A shader used to copy emissive lights and add ambient lighting
+	std::shared_ptr<CgProgram> setupEAShader;
+
 	//! A shader used for screen-wide directional lights
 	std::shared_ptr<CgProgram> directionalLightVert;
 	std::shared_ptr<CgProgram> directionalLightFrag;
@@ -84,4 +89,7 @@ private:
 
 	//! Display mode
 	DisplayMode dm;
+
+	//! Ambient coefficients
+	float ambient[3];
 };
