@@ -33,10 +33,9 @@ float4 FS_Main(VertexData vd,
     float4 l = tex2D(litTex, vd.uv);
 
     // Reconstruct position from depth and use it as the eye vector
-	// todo: Figure out a way to lerp between near and far without adding near every time
     float3 eye = -vd.back * (near + (1.0f - nd.a) * (far - near)) / far;
 
-	//float t = 1.0f - (eye.z - near) / far;
+    //float t = 1.0f - (eye.z - near) / (far - near);
 	//return float4(t, t, t, 1);
 
     //eye *= -1;
