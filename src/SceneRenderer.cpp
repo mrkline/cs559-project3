@@ -19,12 +19,18 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 {
 	unlit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
+	unlit->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
+	unlit->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
 
 	normAndDepth = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                                    GL_RGBA, GL_UNSIGNED_BYTE, false);
+	normAndDepth->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
+	normAndDepth->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
 
 	lit = make_shared<Texture>(nullptr, 4, screenWidth, screenHeight,
 	                           GL_RGBA, GL_UNSIGNED_BYTE, false);
+	lit->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
+	lit->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
 
 	mrtFB.attachTexture(unlit, 0);
 	mrtFB.attachTexture(normAndDepth, 1);
@@ -33,9 +39,13 @@ SceneRenderer::SceneRenderer(size_t screenWidth, size_t screenHeight)
 
 	comp0 = make_shared<Texture>(nullptr, 3, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
+	comp0->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
+	comp0->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
 
 	comp1 = make_shared<Texture>(nullptr, 3, screenWidth, screenHeight,
 	                             GL_RGBA, GL_UNSIGNED_BYTE, false);
+	comp1->intParams[GL_TEXTURE_MIN_FILTER] = GL_LINEAR;
+	comp1->intParams[GL_TEXTURE_MAG_FILTER] = GL_LINEAR;
 
 	auto& cgContext = CgSingleton::getSingleton().getContext();
 	auto& fragProfile = CgSingleton::getSingleton().getFragmentProfile();

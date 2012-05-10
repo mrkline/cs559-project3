@@ -43,10 +43,9 @@ public:
 	unsigned int getID() { return id; }
 
 	//! Gets the map of integer parameters set when the texture is activated
-	std::map<GLenum, int>& getIntParams() { return intParams; }
-
+	std::map<GLenum, int> intParams;
 	//! Gets the map of float parameters set when the texture is activated
-	std::map<GLenum, float>& getFloatParams() { return floatParams; }
+	std::map<GLenum, float> floatParams;
 
 private:
 	void init(const void* data, int colorComponents,
@@ -57,6 +56,4 @@ private:
 	size_t width;
 	size_t height;
 	bool hasMipmaps;
-	std::map<GLenum, int> intParams;
-	std::map<GLenum, float> floatParams;
 };
