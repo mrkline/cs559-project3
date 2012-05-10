@@ -175,14 +175,6 @@ void init()
 		powerCamNode->addRenderable(powerCam);
 		sr->getSceneNodes().push_back(powerCamNode);
 
-		// Create a directional light
-		auto dirLight = make_shared<DirectionalLight>();
-		dirLight->direction = Vector3(1.0f, -1.0f, 1.0f);
-		dirLight->direction.normalize();
-		auto lightSceneNode = make_shared<SceneNode>();
-		lightSceneNode->addRenderable(dirLight);
-		sr->getSceneNodes().push_back(lightSceneNode);
-
 		// Set up commonly used texture sets
 		auto deferredTextureSet = make_shared<ShaderSet>();
 		deferredTextureSet->vertexShader =
@@ -233,6 +225,12 @@ void init()
 		skyboxNode->addRenderable(skybox);
 		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
 
+		// Create a directional light
+		auto dirLight = make_shared<DirectionalLight>();
+		auto lightSceneNode = make_shared<SceneNode>();
+		lightSceneNode->addRenderable(dirLight);
+		sr->getSceneNodes().push_back(lightSceneNode);
+
 		// Create sun
 		auto sunMat = make_shared<Material>();
 		sunMat->depthTest = false;
@@ -240,10 +238,12 @@ void init()
 		sunMat->textures.push_back(make_shared<Texture>("./resources/textures/Sun.png"));
 		sunMat->textures[0]->intParams[GL_TEXTURE_WRAP_S] = GL_REPEAT;
 		sunMat->textures[0]->intParams[GL_TEXTURE_WRAP_T] = GL_REPEAT;
-		auto sun = make_shared<Sun>(sunMat);
+		auto sun = make_shared<Sun>(dirLight, sunMat);
 		auto sunNode = make_shared<SceneNode>();
 		sunNode->addRenderable(sun);
 		sr->getSceneNodes().push_back(sunNode);
+		// Animate the sun
+		am->addanimator(sun);
 
 		// load the map file that will import all the building and road models
 		// and textures. Add those to the SceneRenderer.

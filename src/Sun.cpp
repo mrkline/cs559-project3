@@ -3,9 +3,15 @@
 
 #include "Material.hpp"
 #include "Transform.hpp"
+#include "DirectionalLight.hpp"
 
-Sun::Sun(const std::shared_ptr<Material>& m)
-	: mat(m), quadric(gluNewQuadric())
+// Change in theta per second
+static const float dTheta = Math::kPi / 30.0f;
+static const float twoPi = Math::kPi * 2.0f;
+
+Sun::Sun(const std::shared_ptr<DirectionalLight>& dl,
+		const std::shared_ptr<Material>& m)
+	: mat(m), dirLight(dl), quadric(gluNewQuadric()), theta(0.0f)
 {
 	gluQuadricTexture(quadric, GL_TRUE);
 }
@@ -21,11 +27,20 @@ void Sun::render()
 	// Draw the sky box directly around the camera
 	glPushMatrix();
 	glLoadMatrixf(camTrans.getArray());
-	glTranslatef(0, 1, 0);
+	glTranslatef(cos(theta), sin(theta), 0.0f);
 	setActiveMaterial(mat);
 	gluSphere(quadric, 0.1f, 50, 50);
 	glPopMatrix();
 
 	// Restore our previous stack level so the engine doesn't get hosed
 	glPushMatrix();
+}
+
+void Sun::animate(double dt)
+{
+	theta += dTheta * (float)dt;
+	while (theta > twoPi)
+		theta -= twoPi;
+
+	dirLight->direction = Vector3(-cos(theta), -sin(theta), 0.0f);
 }

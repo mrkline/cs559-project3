@@ -3,13 +3,17 @@
 
 #include <memory>
 
-#include "Material.hpp"
+#include "Animator.hpp"
 #include "Renderable.hpp"
 
-class Sun : public Sphere
+struct Material;
+class DirectionalLight;
+
+class Sun : public Sphere, public Animator
 {
 public:
-	Sun(const std::shared_ptr<Material>& m = nullptr);
+	Sun(const std::shared_ptr<DirectionalLight>& dl,
+		const std::shared_ptr<Material>& m = nullptr);
 
 	~Sun() { gluDeleteQuadric(quadric); }
 
@@ -17,12 +21,18 @@ public:
 
 	void render();
 
+	void animate(double dt);
+
 	const std::shared_ptr<Material>& getMaterial() { return mat; }
 
 	void setMaterial(const std::shared_ptr<Material>& m) { mat = m; }
 
 private:
 	std::shared_ptr<Material> mat;
+	std::shared_ptr<DirectionalLight> dirLight;
+
 	GLUquadric* quadric;
+
+	float theta;
 };
 
