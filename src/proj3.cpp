@@ -233,16 +233,14 @@ void init()
 
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
-		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
+		auto skyboxMat = make_shared<Material>();
+		skyboxMat->fragmentShader = make_shared<CgProgram>(cgContext, false,
 		                    "./resources/shaders/DeferredSkybox.cg",
 		                    cgFragProfile, "main");
-		auto skyboxTex = make_shared<Texture>("./resources/textures/starfield.jpg");
+		skyboxMat->writeToDepth = false;
+		skyboxMat->textures.push_back(make_shared<Texture>("./resources/textures/starfield.jpg"));
 		for (int face = 0; face < 6; ++face)
-		{
-			skybox->getFaceMaterial((SkyBox::Face)face)->textures.push_back(skyboxTex);
-			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
-			    skyboxShader;
-		}
+			skybox->setFaceMaterial((SkyBox::Face)face, skyboxMat);
 
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(skybox);

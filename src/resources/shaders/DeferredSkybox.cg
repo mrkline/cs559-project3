@@ -1,5 +1,4 @@
 // Skybox shader. We don't want to output depth or normal info.
-// todo: Add texture support
 
 struct FragmentShaderOutput {
 	float4 unlit : COLOR0;
@@ -7,10 +6,10 @@ struct FragmentShaderOutput {
     float4 diffuse: COLOR2;
 };
 
-FragmentShaderOutput main(float4 c : COLOR)
+FragmentShaderOutput main(float2 uv : TEXCOORD, sampler2D tex)
 {
 	FragmentShaderOutput OUT;
-	OUT.unlit = c;
+	OUT.unlit = tex2D(tex, uv);
 	OUT.normAndDepth = float4(0, 0, 0, 0);
     OUT.diffuse = float4(0, 0, 0, 0);
 	return OUT;
