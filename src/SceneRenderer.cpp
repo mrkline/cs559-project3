@@ -238,10 +238,12 @@ void SceneRenderer::renderScene()
 		//! \todo Put lists of other light types here
 
 		for (auto it = lights.begin(); it != lights.end(); ++it) {
-			switch (static_cast<Light*>(*it)->getLightType()) {
-			case Light::LT_DIRECTIONAL:
-				dirLights.push_back(static_cast<DirectionalLight*>(*it));
-				break;
+			if ((*it)->isVisible()) {
+				switch (static_cast<Light*>(*it)->getLightType()) {
+				case Light::LT_DIRECTIONAL:
+					dirLights.push_back(static_cast<DirectionalLight*>(*it));
+					break;
+				}
 			}
 		}
 		// Done sorting lights

@@ -43,4 +43,6 @@ void Sun::animate(double dt)
 		theta -= twoPi;
 
 	dirLight->direction = Vector3(-cos(theta), -sin(theta), 0.0f);
+	// Don't light from below the plane
+	dirLight->setVisible(theta < Math::kPi);
 }
