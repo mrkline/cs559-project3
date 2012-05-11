@@ -21,8 +21,9 @@ private:
 public:
 	CrateAnimator(SceneRenderer* sr);
 	// create a crate
-	void createCrate(shared_ptr<Model> model, shared_ptr<Texture> texture,
-		Vector3 location, float rotationspeed);
+	void createCrate(const shared_ptr<Model>& model,
+	                 const shared_ptr<Texture>& texture,
+	                 const Vector3& location, float rotationspeed);
 	void animate(double dt);
 	~CrateAnimator(void);
 };

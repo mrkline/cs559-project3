@@ -67,7 +67,7 @@ RoadMap::RoadMap(const char* filename)
 	}
 }
 
-shared_ptr<RoadMapNode> RoadMap::getNodeAt(size_t loc)
+const shared_ptr<RoadMapNode>& RoadMap::getNodeAt(size_t loc)
 {
 	if(loc < nodes->size())
 		return (*nodes)[loc];

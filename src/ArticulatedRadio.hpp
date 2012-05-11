@@ -13,9 +13,14 @@ using namespace std;
 
 //! An articulated object that allows rotating the dish about the base,
 //! and moving the mast to different angles.
-
 class ArticulatedRadio: public Animator
 {
+public:
+	ArticulatedRadio(SceneRenderer* sr, Vector3 location);
+	void animate(double dt);
+	void rotateDish();
+	void waveMast();
+
 private:
 	Vector3 basevector;
 	Vector3 mastvector;
@@ -29,12 +34,5 @@ private:
 	shared_ptr<SceneNode> basesn;
 	shared_ptr<SceneNode> mastsn;
 	shared_ptr<SceneNode> dishsn;
-
-public:
-	ArticulatedRadio(SceneRenderer* sr, Vector3 location);
-	void animate(double dt);
-	void rotateDish();
-	void waveMast();
-	~ArticulatedRadio(void);
 };
 

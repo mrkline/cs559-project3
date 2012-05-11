@@ -12,12 +12,16 @@ class Crate: public Renderable
 {
 public:
 	Crate(const std::shared_ptr<Model>& model, float ds);
+
 	void render();
+
 	Vector3 getLocation() const;
+
 	void setLocation(Vector3 newLoc);
+
 	void updateRotation(double dt);
+
 	std::weak_ptr<Model> getModel() { return std::weak_ptr<Model>(model); }
-	~Crate(void);
 
 private:
 	std::shared_ptr<Model> model;

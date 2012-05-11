@@ -71,7 +71,3 @@ void ArticulatedRadio::waveMast()
 			radioforward = true;
 	}
 }
-
-ArticulatedRadio::~ArticulatedRadio(void)
-{
-}

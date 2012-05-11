@@ -40,8 +40,3 @@ void Crate::updateRotation(double dt)
 		currXfrm.rotateRadians(Vector3(0, (float) rotate, 0));
 	}
 }
-
-
-Crate::~Crate(void)
-{
-}

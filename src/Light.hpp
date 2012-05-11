@@ -18,6 +18,7 @@ public:
 	Light(float r, float g, float b)
 	{ color[0] = r; color[1] = g; color[2] = b; }
 
+	//! Used in lieu of RTTI (since virtual function dispatch is faster)
 	virtual LightType getLightType() const = 0;
 
 	RenderableType getRenderableType() const { return RT_LIGHT; }

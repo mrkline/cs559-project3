@@ -84,7 +84,3 @@ void Car::updateRotation()
 		currXfrm.rotateDegrees(Vector3(0, rotate, 0));
 	}
 }
-
-Car::~Car(void)
-{
-}

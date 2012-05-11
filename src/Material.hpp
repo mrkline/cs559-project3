@@ -27,7 +27,7 @@ struct Material
 	//! that functors and lambdas can be used.
 	std::function<void(const std::shared_ptr<Material>&)> callback;
 
-	// The constructor initializes the material to default values
+	//! The constructor initializes the material to default values
 	Material();
 
 	// A quick method for setting a vertex and fragment shader

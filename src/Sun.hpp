@@ -9,6 +9,7 @@
 struct Material;
 class DirectionalLight;
 
+//! A sphere that sits in the skybox and controls a directional light
 class Sun : public Sphere, public Animator
 {
 public:

@@ -13,7 +13,8 @@ CarAnimator::CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr)
 	srand((unsigned int)time(NULL));
 }
 
-void CarAnimator::createCar(shared_ptr<Model> model, shared_ptr<Material> mat)
+void CarAnimator::createCar(const shared_ptr<Model>& model,
+		const shared_ptr<Material>& mat)
 {
 	const float CARHEIGHT = 5.0f;	// keep the cars off the ground just a tad
 	const float CARSPEED = 10.0f;	// default speed in units per second

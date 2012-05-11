@@ -9,7 +9,7 @@ class OBJFile
 {
 public:
 	OBJFile(const char* filename);
-	const std::shared_ptr<Model> getModel() { return model; }
+	const std::shared_ptr<Model>& getModel() { return model; }
 
 private:
 	std::shared_ptr<Model> model;

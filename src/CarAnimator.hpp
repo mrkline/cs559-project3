@@ -21,13 +21,18 @@ private:
 
 public:
 	CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr);
-	// create a car of the given model at a random, valid locationon the map.
-	void createCar(shared_ptr<Model> model, shared_ptr<Material> mat);
+
+	//! create a car with the given model at a random, valid locationon the map.
+	void createCar(const shared_ptr<Model>& model,
+			const shared_ptr<Material>& mat);
+
 	void animate(double dt);
-	// returns a postion that is sure to be on the roadmap and a random
-	// connection to that node to set as destination.
+
+	//! returns a postion that is sure to be on the roadmap and a random
+	//! connection to that node to set as destination.
 	pair<shared_ptr<RoadMapNode>, shared_ptr<RoadMapNode>> 
 		getRandomLocationAndDestination();
+
 	~CarAnimator(void);
 };
 

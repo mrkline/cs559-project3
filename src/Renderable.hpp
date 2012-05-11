@@ -19,7 +19,7 @@ public:
 
 	Renderable() : visible(true) { }
 
-	//! Used by the SceneManager to properly render cameras and lights
+	//! Used in lieu of RTTI (since virtual function dispatch is faster)
 	virtual RenderableType getRenderableType() const { return RT_NORMAL; }
 
 	virtual void render() = 0;

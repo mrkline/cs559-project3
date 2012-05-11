@@ -1,7 +1,7 @@
 #include "StdAfx.hpp"
 #include "RoadMapNode.hpp"
 
-void RoadMapNode::addConnection(shared_ptr<RoadMapNode> conn)
+void RoadMapNode::addConnection(const shared_ptr<RoadMapNode>& conn)
 {
 	connections.push_back(conn);
 }
@@ -20,8 +20,4 @@ shared_ptr<RoadMapNode> RoadMapNode::getConnection(size_t idx)
 size_t RoadMapNode::getNumConnections()
 {
 	return connections.size();
-}
-
-RoadMapNode::~RoadMapNode(void)
-{
 }
