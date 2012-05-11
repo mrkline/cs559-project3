@@ -13,7 +13,7 @@ public:
 
 	size_t getSize() { return nodes->size(); }
 
-	const shared_ptr<RoadMapNode>& getNodeAt(size_t loc);
+	shared_ptr<RoadMapNode> getNodeAt(size_t loc);
 
 private:
 	shared_ptr<vector<shared_ptr<RoadMapNode>>> nodes;
