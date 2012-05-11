@@ -37,51 +37,52 @@
   using shaders as a screen-wide post-process. Deferred shading has the
   following advantages over forward shading:
   
-      - Lighting calculations are not spent on occluded pixels
+    - Lighting calculations are not spent on occluded pixels
 
-      - Lights can be added to the scene without the need for additional
-        transform and rasterization passes, allowing deferred rendering to
-        quickly handle many more light sources than forward shading.
+    - Lights can be added to the scene without the need for additional
+      transform and rasterization passes, allowing deferred rendering to
+      quickly handle many more light sources than forward shading.
 
-      - For point and spot lights, stencil operations can be used to perform
-        lighting calculations only on pixels affected by the light, further
-        speeding up lighting passes.
+    - For point and spot lights, stencil operations can be used to perform
+      lighting calculations only on pixels affected by the light, further
+      speeding up lighting passes.
 
   It also has the following disadvantages over forward shading:
 
-      - Because it stores screen-size intermediate textures, the memory overhead
-        for deferred shading is massive. Even our demo with a resolution
-        of 1024x768 requires several megabytes of texture data.
+    - Because it stores screen-size intermediate textures, the memory overhead
+      for deferred shading is massive. Even our demo with a resolution
+      of 1024x768 requires several megabytes of texture data.
 
-      - Issues related to the accuracy of the depth buffer in forward shading
-        are exacerbated in deferred shading, since 3D position for each pixel is
-        often recalculated using the depth buffer in order to avoid having to
-        save pixel position as an intermediate.
+    - Issues related to the accuracy of the depth buffer in forward shading
+      are exacerbated in deferred shading, since 3D position for each pixel is
+      often recalculated using the depth buffer in order to avoid having to
+      save pixel position as an intermediate.
 
-      - Deferred shading has even more problems with transparent objects than
-        forward shading, since lighting is calculated based only on the closest
-        pixels to the camera in the scene. Deferred systems usually get around
-        this problem by using traditional forward shading techniques for
-        transparent objects.
+    - Deferred shading has even more problems with transparent objects than
+      forward shading, since lighting is calculated based only on the closest
+      pixels to the camera in the scene. Deferred systems usually get around
+      this problem by using traditional forward shading techniques for
+      transparent objects.
         
   Our deferred shading technique uses MRT (see below) to store the following
   information at each pixel (all textures are 8-bit per channel RGBA textures):
 
-      - One texture stores colors unaffected by dynamic lighting
-        (such as emissive light and skybox colors).
+    - One texture stores colors unaffected by dynamic lighting
+      (such as emissive light and skybox colors).
 
-      - One texture uses the first three channels to store view space normals.
-        The fourth channel stores normalized depth, interpolating between
-        the near to far clip planes.
+    - One texture uses the first three channels to store view space normals.
+      The fourth channel stores normalized depth, interpolating between
+      the near to far clip planes.
 
-      - One texture stores the color to be used in dynamic lighting in the first
-        three channels and a specular coefficient in the fourth. Ambient,
-        diffuse, and specular lighting is all supported.
+    - One texture stores the color to be used in dynamic lighting in the first
+      three channels and a specular coefficient in the fourth. Ambient,
+      diffuse, and specular lighting is all supported.
 
   See View Controls for information on viewing the intermediates in real time.
   Deferred shading is a complex system since it essentially replaces the entire
   lighting pipeline provided by OpenGL. Most of the technical features listed
-  below are used by our deferred shading system.
+  below are used by our deferred shading system. Currently only directional
+  lights are supported (see Planned Features for details).
 
 - Shader support: Our project features full vertex and fragment shader support.
   Deferred shading depends heavily on shaders, but using shaders also gives us
@@ -103,18 +104,38 @@
   of field were planned but not implemented due to time constraints (see Planned
   Features).
 
-<!--- Add more features here -->
+- Sky boxes - Each face of the sky box has its own material (see the description
+  of the material system below), and is therefore completely customizable with
+  shaders and multiple textures.
+
+- OBJ support - 3D models can be loaded from OBJ files exported from programs
+  such as 3DS Max or Blender.
+
+- Texture loading - Textures can be loaded from PNG or JPEG images.
+
+- World loading - The layout of the colony and the navigation graph for the
+  drones are both loaded from files (based on the OBJ format). This allows
+  modification to the world without recompiling.
 
 - The demo is built around an extensible graphics engine which supports all of
   the above features as well as:
 
-      - The use of C++11 smart pointers to simplify memory management and help
-        prevent memory leaks
+    - The use of C++11 smart pointers to simplify memory management and help
+      prevent memory leaks
 
-      - A scene graph system which allows objects to be arranged and transformed
-        in arbitrary heirarchies.
+    - A scene graph system which allows objects to be arranged and transformed
+      in arbitrary heirarchies.
 
-      <!--- Material system, etc. -->
+    - Renderable objects, varying from lights to cameras to meshes, which can
+      be attached to scene nodes. This makes switching cameras and adding new
+      objects extremely simple.
+
+    - A material system. Materials are attached to renderable objects and
+      contain textures, lighting parameters, shaders, and a callback for
+      setting shader parameters.
+
+    - A generic animation system which issues animation callbacks with the
+      change in time since the last callback.
 
   Code specific to the demo is fairly small; the engine was designed for future
   general-purpose use.
@@ -123,6 +144,31 @@
   to be highly customizable, and the UI can be collapsed via the
   "Show Controls" checkbox to allow for a full-window experience free of GUI
   elements when they aren't needed.
+
+##Planned Features
+The following features were originally planned for the demo. Most could be very
+easily implemented given the current state of the graphics engine and were cut
+only due to time constraints.
+
+- Point and Spot lights - Unlike directional lights, which are implemented as
+  full-screen effects, point and spot lights in deferred shading are best
+  rendered by using a stencil buffer technique similar to shadow volumes. This
+  allows the light to only be drawn in areas of the screen where it intersects
+  with the scene geometry. Original design plans called for dozens of point
+  lights to be circling the colony's central tower as a demonstration of how
+  well deferred shading supports a high number of lights. Problems with
+  performing stencil operations in shaders and a lack of time led to this being
+  cut. See the `point_lights` branch for current progress in this area.
+
+- Additional Post Processing - Modern video games and 3D graphics applications
+  often feature screen-wide post processing effects such as bloom, depth of
+  field, and motion blur. Such effects could be easily implemented using the
+  post processing system already in place for deferred shading.
+
+- Specular maps - Since the deferred system already has a channel reserved for
+  a specular coefficient, using a specular map to control shininess would be
+  simple to implement. The only things stopping us from doing so was the time it
+  would have taken to create the textures.
 
 ##Dependencies:
 
