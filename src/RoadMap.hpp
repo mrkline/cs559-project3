@@ -10,7 +10,9 @@ class RoadMap
 {
 public:
 	RoadMap(const char* filename);
-	size_t getSize(){return this->nodes->size();};
+
+	size_t getSize() { return nodes->size(); }
+
 	shared_ptr<RoadMapNode> getNodeAt(size_t loc);
 
 private:

@@ -11,13 +11,15 @@ class AnimatorManager
 public:
 	AnimatorManager(void);
 
+	//! Sends an animate call out to all added animators
 	void animate();
 
-	void addanimator(std::shared_ptr<Animator> in)
+	//! Adds an animator the list of subscribed animators
+	void addanimator(const std::shared_ptr<Animator>& in)
 	{ this->animators.push_back(in); }
 
 private:
-	double timelast, timenow;
+	unsigned int timelast, timenow;
 
 	std::list<std::shared_ptr<Animator>> animators;
 };

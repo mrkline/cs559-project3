@@ -3,6 +3,7 @@
 #include "Light.hpp"
 #include "Vector3.hpp"
 
+//! A directional light. Shines on the entire screen from an infinite distance
 class DirectionalLight : public Light
 {
 public:

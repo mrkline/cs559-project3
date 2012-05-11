@@ -9,8 +9,9 @@ CrateAnimator::CrateAnimator(SceneRenderer* sr)
 	this->sr = shared_ptr<SceneRenderer>(sr);
 }
 
-void CrateAnimator::createCrate(shared_ptr<Model> model,shared_ptr<Texture> texture,
-								Vector3 location, float rotationspeed)
+void CrateAnimator::createCrate(const shared_ptr<Model>& model,
+                                const shared_ptr<Texture>& texture,
+                                const Vector3& location, float rotationspeed)
 {
 	auto tmp = make_shared<Crate>(model, rotationspeed);
 	

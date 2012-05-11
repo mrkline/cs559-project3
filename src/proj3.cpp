@@ -25,6 +25,7 @@
 #include "OBJFile.hpp"
 #include "Model.hpp"
 #include "MAPFile.hpp"
+#include "Sun.hpp"
 
 // Animated things
 #include "RoadMap.hpp"
@@ -33,6 +34,7 @@
 
 // Articulated Objects
 #include "ArticulatedCrane.hpp"
+#include "ArticulatedRadio.hpp"
 
 // Cg support
 #include "CgSingleton.hpp"
@@ -101,6 +103,8 @@ bool onShowGUIClicked(const CEGUI::EventArgs& e)
 	controls.lblCam->setVisible(selected);
 	controls.radFree->setVisible(selected);
 	controls.radTop->setVisible(selected);
+	controls.radLanding->setVisible(selected);
+	controls.radPower->setVisible(selected);
 	return true;
 }
 
@@ -171,14 +175,6 @@ void init()
 		powerCamNode->addRenderable(powerCam);
 		sr->getSceneNodes().push_back(powerCamNode);
 
-		// Create a directional light
-		auto dirLight = make_shared<DirectionalLight>();
-		dirLight->direction = Vector3(1.0f, -1.0f, 1.0f);
-		dirLight->direction.normalize();
-		auto lightSceneNode = make_shared<SceneNode>();
-		lightSceneNode->addRenderable(dirLight);
-		sr->getSceneNodes().push_back(lightSceneNode);
-
 		// Set up commonly used texture sets
 		auto deferredTextureSet = make_shared<ShaderSet>();
 		deferredTextureSet->vertexShader =
@@ -214,18 +210,77 @@ void init()
 
 		cgs.shaderSetMap["deferredTexture"] = deferredTextureSet;
 
+		auto deferredMultitextureSet = make_shared<ShaderSet>();
+		deferredMultitextureSet->vertexShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredMultitexture.cg",
+		                           cgVertProfile, "VS_Main");
+		deferredMultitextureSet->fragmentShader =
+		    make_shared<CgProgram>(cgContext, false,
+		                           "./resources/shaders/DeferredMultitexture.cg",
+		                           cgFragProfile, "FS_Main");
+		deferredMultitextureSet->callback = [&](const shared_ptr<Material>& mat) {
+			mat->vertexShader->getNamedParameter("modelViewProj").
+			setStateMatrix(CG_GL_MODELVIEW_PROJECTION_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelView").
+			setStateMatrix(CG_GL_MODELVIEW_MATRIX);
+
+			mat->vertexShader->getNamedParameter("modelViewIT").setStateMatrix(
+			    CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE_TRANSPOSE);
+
+			mat->fragmentShader->getNamedParameter("diffuse").set3fv(
+			    mat->diffuse);
+
+			mat->fragmentShader->getNamedParameter("shininess").set1f(
+			    mat->shininess);
+
+			auto& cam = sr->getActiveCamera();
+			mat->fragmentShader->getNamedParameter("zNear").set1f(
+			    cam->getNear());
+			mat->fragmentShader->getNamedParameter("zFar").set1f(
+			    cam->getFar());
+
+			mat->fragmentShader->getNamedParameter("t").set1f(
+				(float)(clock() % CLOCKS_PER_SEC) / (float)CLOCKS_PER_SEC);
+		};
+
+		cgs.shaderSetMap["deferredMultitexture"] = deferredMultitextureSet;
+
 		// Set up our sky box
 		auto skybox = make_shared<SkyBox>();
-		auto skyboxShader = make_shared<CgProgram>(cgContext, false,
+		auto skyboxMat = make_shared<Material>();
+		skyboxMat->fragmentShader = make_shared<CgProgram>(cgContext, false,
 		                    "./resources/shaders/DeferredSkybox.cg",
 		                    cgFragProfile, "main");
+		skyboxMat->writeToDepth = false;
+		skyboxMat->textures.push_back(make_shared<Texture>("./resources/textures/starfield.jpg"));
 		for (int face = 0; face < 6; ++face)
-			skybox->getFaceMaterial((SkyBox::Face)face)->fragmentShader =
-			    skyboxShader;
+			skybox->setFaceMaterial((SkyBox::Face)face, skyboxMat);
 
 		auto skyboxNode = make_shared<SceneNode>();
 		skyboxNode->addRenderable(skybox);
 		sr->getSceneNodes().push_back(shared_ptr<SceneNode>(skyboxNode));
+
+		// Create a directional light
+		auto dirLight = make_shared<DirectionalLight>();
+		auto lightSceneNode = make_shared<SceneNode>();
+		lightSceneNode->addRenderable(dirLight);
+		sr->getSceneNodes().push_back(lightSceneNode);
+
+		// Create sun
+		auto sunMat = make_shared<Material>();
+		sunMat->depthTest = false;
+		sunMat->fragmentShader = skyboxMat->fragmentShader;
+		sunMat->textures.push_back(make_shared<Texture>("./resources/textures/Sun.png"));
+		sunMat->textures[0]->intParams[GL_TEXTURE_WRAP_S] = GL_REPEAT;
+		sunMat->textures[0]->intParams[GL_TEXTURE_WRAP_T] = GL_REPEAT;
+		auto sun = make_shared<Sun>(dirLight, sunMat);
+		auto sunNode = make_shared<SceneNode>();
+		sunNode->addRenderable(sun);
+		sr->getSceneNodes().push_back(sunNode);
+		// Animate the sun
+		am->addanimator(sun);
 
 		// load the map file that will import all the building and road models
 		// and textures. Add those to the SceneRenderer.
@@ -242,12 +297,15 @@ void init()
 
 		auto caranimator = make_shared<CarAnimator>(roadmap, sr);
 		OBJFile carObj("./resources/models/sphere3.obj");
-		auto numcars = 10;
-		for (int i = 0; i < numcars; i++) {
-			caranimator->createCar(
-			    carObj.getModel(),
-			    make_shared<Texture>("./resources/textures/Awesome.png"));
-		}
+		auto carMaterial = make_shared<Material>();
+		carMaterial->textures.push_back(make_shared<Texture>("./resources/textures/Car.png"));
+		carMaterial->textures.push_back(make_shared<Texture>("./resources/textures/Matrix.png"));
+		carMaterial->textures[1]->intParams[GL_TEXTURE_WRAP_S] = GL_REPEAT;
+		carMaterial->textures[1]->intParams[GL_TEXTURE_WRAP_T] = GL_REPEAT;
+		carMaterial->setShaderSet(cgs.shaderSetMap["deferredMultitexture"]);
+		const auto numcars = 10;
+		for (int i = 0; i < numcars; i++)
+			caranimator->createCar(carObj.getModel(),carMaterial);
 
 		am->addanimator(caranimator);
 
@@ -284,12 +342,13 @@ void init()
 
 		am->addanimator(crateanimator);
 
-		/// experimentation on articulated objects:
-		
-		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(8.0f, 0.0f, 8.0f));
+
+		// add articultaed objects
+		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(60.0f, 0.0f, -60.0f));
 		am->addanimator(crane);
 
-		/// end experimentation on articulated objects
+		auto& radio = make_shared<ArticulatedRadio>(sr, Vector3(55.0f, 0.0f, -85.0f));
+		am->addanimator(radio);
 
 	}
 	catch (const Exceptions::Exception& ex) {
@@ -341,7 +400,7 @@ void init()
 		std::string checkboxName = CEGUIStyleManager::getCheckboxName();
 		std::string labelName = CEGUIStyleManager::getStaticTextName();
 		std::string radioName = CEGUIStyleManager::getRadioButtonName();
-
+		//std::string sliderName = CEGUIStyleManager::getSliderName();
 		// Add our controls
 		controls.chkEnableGUI = static_cast<Checkbox*>(wmgr.createWindow(
 		                            checkboxName,
@@ -698,7 +757,7 @@ int main(int argc, char** argv)
 		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 		glutInitWindowSize(kWindowWidth, kWindowHeight);
 		glutInitWindowPosition(100, 100);
-		glutCreateWindow(argv[0]);
+		glutCreateWindow("CS 559 Moon Colony");
 		init();
 		glutReshapeFunc(onReshape);
 		glutDisplayFunc(onDisplay);

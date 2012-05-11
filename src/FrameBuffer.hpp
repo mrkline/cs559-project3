@@ -4,6 +4,7 @@
 
 class Texture;
 
+//! A wrapper around OpenGL's framebuffer objects
 class FrameBuffer
 {
 public:

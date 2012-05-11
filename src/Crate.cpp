@@ -36,12 +36,7 @@ void Crate::updateRotation(double dt)
 		// get hold of the current transform and rotate based on 
 		// the amount of time passed
 		auto& currXfrm = ptr->getTransform();
-		double rotate = (rotationspeed / 1000.0f) * dt;
+		double rotate = rotationspeed * dt;
 		currXfrm.rotateRadians(Vector3(0, (float) rotate, 0));
 	}
-}
-
-
-Crate::~Crate(void)
-{
 }

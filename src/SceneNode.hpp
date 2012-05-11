@@ -20,7 +20,6 @@ public:
 
 	/*!
 	\brief Constructor.
-	\param parent The parent of the object, or null if it has none
 	\param startingTransform The object's starting local transform
 	\param id An ID that can be used to identify the object
 	\param name A name that can be used to identify the object

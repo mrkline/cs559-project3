@@ -11,7 +11,7 @@ void AnimatorManager::animate()
 	double dt = 0;
 	timenow = timeGetTime();
 	if(timelast != 0)
-		dt = timenow - timelast;
+		dt = (double)(timenow - timelast) / 1000.0;
 	timelast = timenow;
 	if(animators.size() > 0)
 	{

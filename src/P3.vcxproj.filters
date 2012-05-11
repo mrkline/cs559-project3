@@ -96,6 +96,12 @@
     <ClCompile Include="ArticulatedCrane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ArticulatedRadio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arrow.hpp">
@@ -225,6 +231,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArticulatedCrane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArticulatedRadio.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sun.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

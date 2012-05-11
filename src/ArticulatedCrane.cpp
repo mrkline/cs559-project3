@@ -6,10 +6,14 @@
 ArticulatedCrane::ArticulatedCrane(SceneRenderer* sr, Vector3 location)
 {
 	// set the variables for movement
-	dtheta = 5.0f;
-	dx = 0.5f;
-	dy = 0.5f;
+	dtheta = 2.0f;
+	dx = 0.2f;
+	dy = 0.2f;
+	outmax = 12;
+	downmax = 8;
 	basevector = location;
+	loaddistance = loadheight = 0;
+	loaddirout = loaddirdown = true;
 	// get the renderable models
 	basemodel = OBJFile("./resources/models/crane_base.obj").getModel();
 	armmodel = OBJFile("./resources/models/crane_arm.obj").getModel();
@@ -30,8 +34,7 @@ ArticulatedCrane::ArticulatedCrane(SceneRenderer* sr, Vector3 location)
 	armsn->setParent(basesn);
 	armsn->addRenderable(armmodel);
 	// create the load with an offset from the base
-	//loadvector = Vector3(-3.0f, 9.5f, 0.0f);
-	loadvector = Vector3(1.0f, 1.0f, 1.0f);
+	loadvector = Vector3(-10.0f, 9.5f, 0.0f);
 	loadsn = make_shared<SceneNode>(loadvector);
 	loadsn->setParent(basesn);
 	loadsn->addRenderable(loadmodel);
@@ -41,37 +44,71 @@ ArticulatedCrane::ArticulatedCrane(SceneRenderer* sr, Vector3 location)
 
 void ArticulatedCrane::animate(double dt)
 {
+	
+	if(loaddirdown)
+		lowerLoad();
+	else
+		raiseLoad();
+	/*if(loaddirout)
+		extendLoad();
+	else
+		retractLoad();*/
 	this->rotateArm();
 }
 
 void ArticulatedCrane::rotateArm()
 {
-	armangle += dtheta;
-	while(armangle > 360)
-		armangle -= 360;
-	
-	auto& xlat = loadsn->getTransform();
-	xlat.translate(-loadvector);
-	xlat.rotateDegrees(Vector3(0, dtheta, 0));
-	xlat.translate(loadvector);
+	auto& loadxfrm = loadsn->getTransform();
+	loadxfrm.translate(-loadvector);
+	loadxfrm.rotateDegrees(Vector3(0, dtheta, 0));
+	loadxfrm.translate(loadvector);
+
+	auto& armxfrm = armsn->getTransform();
+	armxfrm.translate(-armvector);
+	armxfrm.rotateDegrees(Vector3(0, dtheta, 0));
+	armxfrm.translate(armvector);
 }
 
 void ArticulatedCrane::extendLoad()
 {
-
+	if(loaddistance + dx < outmax)
+	{
+		loaddistance += dx;
+		loadsn->getTransform().translate(Vector3(-dx, 0, 0));
+	}
+	else
+		loaddirout = false;
 }
 
 void ArticulatedCrane::retractLoad()
 {
-
+	if(loaddistance - dx  > 0)
+	{
+		loaddistance -= dx;
+		loadsn->getTransform().translate(Vector3(dx, 0, 0));
+	}
+	else
+		loaddirout = true;
 }
 
 void ArticulatedCrane::raiseLoad()
 {
-
+	if(loadheight - dy  > 0)
+	{
+		loadheight -= dy;
+		loadsn->getTransform().translate(Vector3(0, dy, 0));
+	}
+	else
+		loaddirdown = true;
 }
 
 void ArticulatedCrane::lowerLoad()
 {
-
+	if(loadheight + dy < downmax)
+	{
+		loadheight += dx;
+		loadsn->getTransform().translate(Vector3(0, -dy, 0));
+	}
+	else
+		loaddirdown = false;
 }
