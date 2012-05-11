@@ -58,6 +58,7 @@ void ArticulatedCrane::animate(double dt)
 
 void ArticulatedCrane::rotateArm()
 {
+	// move both the arm and the load back to the modelspace origin and rotate.
 	auto& loadxfrm = loadsn->getTransform();
 	loadxfrm.translate(-loadvector);
 	loadxfrm.rotateDegrees(Vector3(0, dtheta, 0));

@@ -46,6 +46,7 @@ void ArticulatedRadio::animate(double dt)
 
 void ArticulatedRadio::rotateDish()
 {
+	// move the dish back to the origin of its parent (mast) and rotate
 	auto& dishxfrm = dishsn->getTransform();
 	dishxfrm.translate(-dishvector);
 	dishxfrm.rotateDegrees(Vector3(0, dtheta, 0));
@@ -54,6 +55,8 @@ void ArticulatedRadio::rotateDish()
 
 void ArticulatedRadio::waveMast()
 {
+	// move the mast back to the origin of its parent (base) and rotate
+	// back and forth
 	auto& mastxfrm = mastsn->getTransform();
 	auto rot = mastxfrm.getRotationDegrees().X;
 	if(mastangle < 45 && radioforward)
