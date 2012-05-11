@@ -20,12 +20,19 @@ private:
 	shared_ptr<SceneRenderer> sr;
 
 public:
+	//! Initialize the CarAnimator which will add and manage Car objects.
+	//! \param map The RoadMap used to keep Cars in valid locations.
+	//! \param sr The SceneRender to which we should add the SceneNodes
 	CarAnimator(shared_ptr<RoadMap> map, SceneRenderer* sr);
 
-	//! create a car with the given model at a random, valid locationon the map.
+	//! create and add a car with at a random, valid location on the map.
+	//! \param model The model to use to render the new Car
+	//! \param mat The material used on this car
 	void createCar(const shared_ptr<Model>& model,
 			const shared_ptr<Material>& mat);
-
+	
+	//! update based on the amount of time passed, dt.
+	//! \param dt The amount of time since this was last called, in seconds.
 	void animate(double dt);
 
 	//! returns a postion that is sure to be on the roadmap and a random

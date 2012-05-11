@@ -16,9 +16,20 @@ using namespace std;
 class ArticulatedRadio: public Animator
 {
 public:
+	//! create the radio at the specified location and add the constiuent nodes
+	//! to the scenerender
+	//! \param sr The SceneRender to which we should add the SceneNodes
+	//! \param location The Vector3 representing the location of the base
 	ArticulatedRadio(SceneRenderer* sr, Vector3 location);
+	
+	//! update based on the amount of time passed, dt.
+	//! \param dt The amount of time since this was last called, in seconds.
 	void animate(double dt);
+	
+	//! rotate the dish around the base a preset number of degrees.
 	void rotateDish();
+	
+	//! move the mast back and forth, around the base.
 	void waveMast();
 
 private:

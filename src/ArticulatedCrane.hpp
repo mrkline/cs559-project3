@@ -37,12 +37,29 @@ private:
 	shared_ptr<SceneNode> loadsn;
 
 public:
+	//! create the crane at the specified location and add the constiuent nodes
+	//! to the scenerender
+	//! \param sr The SceneRender to which we should add the SceneNodes
+	//! \param location The Vector3 representing the location of the base
 	ArticulatedCrane(SceneRenderer* sr, Vector3 location);
+	
+	//! update based on the amount of time passed, dt.
+	//! \param dt The amount of time since this was last called, in seconds.
 	void animate(double dt);
+	
+	//! rotate the arm of the crane a preset number of degrees.
 	void rotateArm();
+	
+	//! move the load object out a preset amount along the arm.
 	void extendLoad();
+	
+	//! retract the load object in a preset amount along the arm.
 	void retractLoad();
+	
+	//! raise the load object a preset amount.
 	void raiseLoad();
+	
+	//! lower the load object a preset amount.
 	void lowerLoad();
 };
 
