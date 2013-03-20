@@ -99,13 +99,13 @@ void setActiveMaterial(const shared_ptr<Material>& mat)
 
 	// Activate this material's vertex shader (if it has one)
 	if (activeMat->vertexShader) {
-		activeMat->vertexShader->bind();
 		activeMat->vertexShader->getProfile().enable();
+		activeMat->vertexShader->bind();
 	}
 	// Activate this material's pixel shader (if it has one)
 	if (activeMat->fragmentShader) {
-		activeMat->fragmentShader->bind();
 		activeMat->fragmentShader->getProfile().enable();
+		activeMat->fragmentShader->bind();
 	}
 
 	// Issue this material's callback (if it has one)
