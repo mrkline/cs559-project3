@@ -333,7 +333,7 @@ void init()
 				Vector3(-10, 0, 10),
 				3.14f);
 
-		// crate 4
+		// cate 4
 		crateanimator->createCrate(
 			    crateObj.getModel(),
 			    cratetext,
@@ -344,10 +344,10 @@ void init()
 
 
 		// add articultaed objects
-		auto& crane = make_shared<ArticulatedCrane>(sr, Vector3(60.0f, 0.0f, -60.0f));
+		auto crane = make_shared<ArticulatedCrane>(sr, Vector3(60.0f, 0.0f, -60.0f));
 		am->addanimator(crane);
 
-		auto& radio = make_shared<ArticulatedRadio>(sr, Vector3(55.0f, 0.0f, -85.0f));
+		auto radio = make_shared<ArticulatedRadio>(sr, Vector3(55.0f, 0.0f, -85.0f));
 		am->addanimator(radio);
 
 	}
